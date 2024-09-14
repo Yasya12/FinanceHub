@@ -1,0 +1,6 @@
+﻿services:
+  financehub:
+    image: financehub
+    build:
+      context: .
+      dockerfile: FinanceHub/Dockerfile

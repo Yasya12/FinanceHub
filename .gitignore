@@ -1,0 +1,29 @@
+# Build output directories
+bin/
+obj/
+
+# NuGet packages
+/packages/
+
+# Rider specific files
+riderModule.iml
+/_ReSharper.Caches/
+
+# Docker
+docker-compose.override.yml
+.env
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.csproj.user
+
+# Logs
+*.log
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
