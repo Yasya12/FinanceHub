@@ -8,6 +8,11 @@
 
     <ItemGroup>
       <Folder Include="Features\" />
+      <Folder Include="Interfaces\Servises\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FinanceHub.Domain\FinanceHub.Domain.csproj" />
     </ItemGroup>
 
 </Project>
