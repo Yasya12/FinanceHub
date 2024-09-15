@@ -1,4 +1,10 @@
+using FinanceHub.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<FinHubDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Додаємо сервіси до контейнера
 builder.Services.AddEndpointsApiExplorer();
