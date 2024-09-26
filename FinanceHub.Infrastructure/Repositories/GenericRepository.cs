@@ -1,10 +1,11 @@
 using FinanceGub.Application.Interfaces.Repositories;
+using FinanceHub.Core.Entities;
 using FinanceHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceHub.Infrastructure.Repositories;
 
-public class GenericRepository<T>: IGenericRepository<T> where T:class
+public class GenericRepository<T>: IGenericRepository<T> where T: Base
 {
     protected readonly DbContext _context;
     protected readonly DbSet<T> _dbSet;
@@ -15,14 +16,33 @@ public class GenericRepository<T>: IGenericRepository<T> where T:class
         _dbSet = _context.Set<T>();
     }
     
-    public virtual async Task<T> GetByIdAsync(Guid id)
+    public virtual async Task<T> GetByIdAsync(Guid id, string? includeProperties = null)
     {
-        return await _dbSet.FindAsync(id);
+        var query = _context.Set<T>().AsQueryable();
+        
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            foreach (var prop in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(prop);
+            }
+        }
+        return await query.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync(string? includeProperties = null)
     {
-        return await _dbSet.ToListAsync();
+        var query = _context.Set<T>().AsQueryable();
+
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            foreach (var prop in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(prop);
+            }
+        }
+        
+        return await query.ToListAsync();
     }
 
     public virtual async Task AddAsync(T entity)
