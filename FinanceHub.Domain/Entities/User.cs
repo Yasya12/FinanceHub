@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinanceHub.Core.Entities;
 
-public class User
+public class User : Base
 {
-    public Guid Id { get; set; }
-    
     [Required]
     [StringLength(20, MinimumLength = 3)]
     [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
