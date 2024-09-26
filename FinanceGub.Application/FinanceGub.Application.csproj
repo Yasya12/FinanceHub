@@ -7,12 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Features\" />
+      <Folder Include="Features\UserFeatures\Commands\" />
       <Folder Include="Interfaces\Servises\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\FinanceHub.Domain\FinanceHub.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="12.4.1" />
     </ItemGroup>
 
 </Project>
