@@ -1,3 +1,4 @@
+using FinanceGub.Application;
 using FinanceHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ builder.Services.AddDbContext<FinHubDbContext>(options =>
 // Додаємо сервіси до контейнера
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddApplication();
 
 var app = builder.Build();
 
