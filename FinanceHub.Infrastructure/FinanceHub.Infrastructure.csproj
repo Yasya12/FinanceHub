@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FinanceGub.Application\FinanceGub.Application.csproj" />
+      <ProjectReference Include="..\FinanceHub.Application\FinanceHub.Application.csproj" />
       <ProjectReference Include="..\FinanceHub.Domain\FinanceHub.Domain.csproj" />
     </ItemGroup>
 

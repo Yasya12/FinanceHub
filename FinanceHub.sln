@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceHub.Domain", "Financ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceHub.Infrastructure", "FinanceHub.Infrastructure\FinanceHub.Infrastructure.csproj", "{6A871F6B-3D74-4936-9379-081331362E76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceGub.Application", "FinanceGub.Application\FinanceGub.Application.csproj", "{176115CB-95E5-4036-94F3-183600D3B0C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceHub.Application", "FinanceHub.Application\FinanceHub.Application.csproj", "{176115CB-95E5-4036-94F3-183600D3B0C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
