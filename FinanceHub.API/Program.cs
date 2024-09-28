@@ -4,6 +4,7 @@ using FinanceHub.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Додаємо сервіси до контейнера
+builder.Services.AddControllers(); 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -20,5 +21,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
