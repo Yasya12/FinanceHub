@@ -1,33 +1,35 @@
-using FinanceHub.Core.Entities;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+    using FinanceHub.Core.Entities;
+    using MediatR;
+    using Microsoft.AspNetCore.Mvc;
 
-namespace FinanceHub.Controllers;
+    namespace FinanceHub.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class BaseController: Controller 
-{
-    private readonly IMediator _mediator;
-    private readonly ILogger _logger;
-
-    public BaseController(IMediator mediator, ILogger<BaseController> logger)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BaseController: Controller 
     {
-        _mediator = mediator;
-        _logger = logger;
-    }
-    
-    public async Task<ActionResult<TResult>> Send<TResult>(IRequest<TResult> request)
-    {
-        try
+        private readonly IMediator _mediator;
+        protected readonly ILogger Logger;
+
+        public BaseController(IMediator mediator, ILogger<BaseController> logger)
         {
-            _logger.LogInformation("Sending request: {Request}", request);
-            return Ok(await _mediator.Send(request));
+            _mediator = mediator;
+            Logger = logger;
         }
-        catch (Exception ex)
+        
+        public async Task<TResult> Send<TResult>(IRequest<TResult> request)
         {
-            _logger.LogError(ex, "Error sending request: {Request}", request);
-            return StatusCode(500, "An error occurred.");
+            try
+            {
+                Logger.LogInformation("Sending request: {Request}", request);
+                var result = await _mediator.Send(request);
+
+                return result != null ?  result : throw new Exception($"No data found for request: {request}");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error sending request: {Request}", request);
+                throw;
+            }
         }
     }
-}
