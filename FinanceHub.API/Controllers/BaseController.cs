@@ -19,17 +19,9 @@
         
         public async Task<TResult> Send<TResult>(IRequest<TResult> request)
         {
-            try
-            {
-                Logger.LogInformation("Sending request: {Request}", request);
-                var result = await _mediator.Send(request);
+            Logger.LogInformation("Sending request: {Request}", request);
+            var result = await _mediator.Send(request);
 
-                return result != null ?  result : throw new Exception($"No data found for request: {request}");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error sending request: {Request}", request);
-                throw;
-            }
+            return result != null ?  result : throw new Exception($"No data found for request: {request}");
         }
     }
