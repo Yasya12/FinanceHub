@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <Folder Include="Features\UserFeatures\Commands\" />
-      <Folder Include="Interfaces\Servises\" />
     </ItemGroup>
 
     <ItemGroup>
