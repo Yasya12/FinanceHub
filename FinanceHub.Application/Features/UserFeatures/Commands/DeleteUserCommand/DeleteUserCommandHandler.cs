@@ -1,5 +1,6 @@
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceHub.Core.Entities;
+using FinanceHub.Core.Exceptions;
 using MediatR;
 
 namespace FinanceGub.Application.Features.UserFeatures.Commands.DeleteUserCommand;
@@ -19,7 +20,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, User>
 
         if (user == null)
         {
-            throw new Exception($"User with ID {userCommand.Id} not found.");
+            throw new NotFoundException($"User with ID {userCommand.Id} not found.");
         }
 
         await _userRepository.DeleteAsync(userCommand.Id);
