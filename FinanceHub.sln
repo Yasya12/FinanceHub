@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceHub.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceHub.Application", "FinanceHub.Application\FinanceHub.Application.csproj", "{176115CB-95E5-4036-94F3-183600D3B0C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceHub.TestProject", "FinanceHub.TestProject\FinanceHub.TestProject.csproj", "{878EA490-464F-47B0-997F-61675730627F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{176115CB-95E5-4036-94F3-183600D3B0C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{176115CB-95E5-4036-94F3-183600D3B0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{176115CB-95E5-4036-94F3-183600D3B0C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{878EA490-464F-47B0-997F-61675730627F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{878EA490-464F-47B0-997F-61675730627F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{878EA490-464F-47B0-997F-61675730627F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{878EA490-464F-47B0-997F-61675730627F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
