@@ -48,21 +48,21 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4cc20ada-5757-449d-be89-c1b222fae340"),
+                            Id = new Guid("9edc80bb-adba-4618-968e-69d80fd2b949"),
                             Email = "admin@example.com",
                             PasswordHash = "hashed_password_1",
                             Username = "admin"
                         },
                         new
                         {
-                            Id = new Guid("47d684e4-ef4b-4553-98a9-d16296903a24"),
+                            Id = new Guid("48a4fe48-e716-46c3-88f3-45c0ea3ee47f"),
                             Email = "user1@example.com",
                             PasswordHash = "hashed_password_2",
                             Username = "user1"
                         },
                         new
                         {
-                            Id = new Guid("12ea67ea-af71-44fc-888c-620de1b6c089"),
+                            Id = new Guid("eaa3dc89-f501-4d62-b5d2-5daa2c0dabb5"),
                             Email = "user2@example.com",
                             PasswordHash = "hashed_password_3",
                             Username = "user2"

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FinanceHub.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,9 +32,9 @@ namespace FinanceHub.Infrastructure.Migrations
                 columns: new[] { "Id", "Email", "PasswordHash", "Username" },
                 values: new object[,]
                 {
-                    { new Guid("12ea67ea-af71-44fc-888c-620de1b6c089"), "user2@example.com", "hashed_password_3", "user2" },
-                    { new Guid("47d684e4-ef4b-4553-98a9-d16296903a24"), "user1@example.com", "hashed_password_2", "user1" },
-                    { new Guid("4cc20ada-5757-449d-be89-c1b222fae340"), "admin@example.com", "hashed_password_1", "admin" }
+                    { new Guid("48a4fe48-e716-46c3-88f3-45c0ea3ee47f"), "user1@example.com", "hashed_password_2", "user1" },
+                    { new Guid("9edc80bb-adba-4618-968e-69d80fd2b949"), "admin@example.com", "hashed_password_1", "admin" },
+                    { new Guid("eaa3dc89-f501-4d62-b5d2-5daa2c0dabb5"), "user2@example.com", "hashed_password_3", "user2" }
                 });
         }
 
