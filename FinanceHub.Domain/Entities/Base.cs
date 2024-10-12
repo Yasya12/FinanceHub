@@ -1,6 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace FinanceHub.Core.Entities;
 
 public class Base
 {
-    public Guid Id { get; init; }
+    [Key]
+    public Guid Id { get; set; }
 }
