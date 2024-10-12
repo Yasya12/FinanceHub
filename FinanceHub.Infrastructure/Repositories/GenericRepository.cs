@@ -31,7 +31,7 @@ public class GenericRepository<T>: IGenericRepository<T> where T: Base
             }
         }
         
-        var entity = await query.FirstOrDefaultAsync(x => x.Id == id);
+        var entity = await query.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
         if (entity == null)
         {
@@ -55,7 +55,7 @@ public class GenericRepository<T>: IGenericRepository<T> where T: Base
                 }
             }
     
-            var results = await query.ToListAsync();
+            var results = await query.AsNoTracking().ToListAsync();
 
             if (!results.Any())
             {
