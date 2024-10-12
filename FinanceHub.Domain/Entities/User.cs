@@ -12,9 +12,10 @@ public class User : Base
     [Required]
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
     public string Email { get; set; }
-
+    
     [Required]
     public string PasswordHash { get; set; }
+    public string Role { get; set; }
     //public virtual Profile Profile { get; set; }
     //public virtual ICollection<Post> Posts { get; set; }
 
