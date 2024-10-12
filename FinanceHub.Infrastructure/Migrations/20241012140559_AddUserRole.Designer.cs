@@ -3,6 +3,7 @@ using System;
 using FinanceHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceHub.Infrastructure.Migrations
 {
     [DbContext(typeof(FinHubDbContext))]
-    partial class FinHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241012140559_AddUserRole")]
+    partial class AddUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,25 +55,25 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ec7268df-1b2c-44c5-8f90-1b31aacfacd3"),
+                            Id = new Guid("2d151243-a963-4cba-b02a-f6c9bee00528"),
                             Email = "admin@example.com",
-                            PasswordHash = "$2a$11$WoX2aNlGJxSBeBEd9wdHe.9ORoNh8WLTCgEWmvqNaoKx3C2AnkEzm",
+                            PasswordHash = "hashed_password_1",
                             Role = "Admin",
                             Username = "admin"
                         },
                         new
                         {
-                            Id = new Guid("1fad48fc-635c-4da8-a911-98bb81d402e1"),
+                            Id = new Guid("6b2fb6cf-5c66-4ba8-ba4a-2cd2f7ca76af"),
                             Email = "user1@example.com",
-                            PasswordHash = "$2a$11$wUPCnQfGB6HN6LJEwjL1Cuepd7/82UFCrAejL9PG4UqaOUvv5fTCS",
+                            PasswordHash = "hashed_password_2",
                             Role = "User",
                             Username = "user1"
                         },
                         new
                         {
-                            Id = new Guid("779b75ba-a218-4292-a370-0fd208b22f54"),
+                            Id = new Guid("59c37103-a4bb-4f0a-a059-5e0d90706e82"),
                             Email = "user2@example.com",
-                            PasswordHash = "$2a$11$BEKQaUpp8UI6n/KOSWaFZ.0Vwo7kch/8p9YdbiXSCpPptjfXnEh0C",
+                            PasswordHash = "hashed_password_3",
                             Role = "User",
                             Username = "user2"
                         });

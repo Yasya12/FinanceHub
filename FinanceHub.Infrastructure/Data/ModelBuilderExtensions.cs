@@ -1,4 +1,5 @@
 using FinanceHub.Core.Entities;
+using FinanceHub.Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceHub.Infrastructure.Data;
@@ -14,21 +15,24 @@ public static class ModelBuilderExtensions
                 Id = Guid.NewGuid(),
                 Username = "admin",
                 Email = "admin@example.com",
-                PasswordHash = "hashed_password_1"
+                PasswordHash = PasswordHasher.HashPassword("hashed_password_1"),
+                Role = "Admin" 
             },
             new User
             {
                 Id = Guid.NewGuid(),
                 Username = "user1",
                 Email = "user1@example.com",
-                PasswordHash = "hashed_password_2"
+                PasswordHash = PasswordHasher.HashPassword("hashed_password_2"),
+                Role = "User" 
             },
             new User
             {
                 Id = Guid.NewGuid(),
                 Username = "user2",
                 Email = "user2@example.com",
-                PasswordHash = "hashed_password_3"
+                PasswordHash = PasswordHasher.HashPassword("hashed_password_3"),
+                Role = "User" 
             }
         );
     }
