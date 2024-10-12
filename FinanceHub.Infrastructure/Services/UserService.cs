@@ -2,6 +2,7 @@ using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Servises;
 using FinanceHub.Core.Entities;
 using FinanceHub.Core.Exceptions;
+using FinanceHub.Infrastructure.Helpers;
 
 namespace FinanceHub.Infrastructure.Services;
 
@@ -36,6 +37,23 @@ public class UserService : IUserService
         {
             throw new Exception("An unexpected error occurred while creating the user.", ex);
         }
+    }
+    
+    public async Task<User> GetUserByCredentialsAsync(string userEmail, string password)
+    {
+        var user = await _userRepository.GetByEmailAsync(userEmail);
+        if (user == null)
+        {
+            return null; 
+        }
+
+        var result =  PasswordHasher.VerifyPassword(password, user.PasswordHash);
+        if (!result)
+        {
+            return null; 
+        }
+
+        return user;
     }
 
 }
