@@ -6,6 +6,7 @@ namespace FinanceHub.Infrastructure.Data;
 public class FinHubDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<Profile> Profiles { get; set; }
     public FinHubDbContext(DbContextOptions<FinHubDbContext> options):base(options) {}
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

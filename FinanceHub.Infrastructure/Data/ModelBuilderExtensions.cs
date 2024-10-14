@@ -8,31 +8,53 @@ public static class ModelBuilderExtensions
 {
     public static void Seed(this ModelBuilder modelBuilder)
     {
-        //User
+        // Define fixed Guids for users
+        var user1Id = Guid.NewGuid(); 
+        var user2Id = Guid.NewGuid();
+        
+        // Seed data for Users
         modelBuilder.Entity<User>().HasData(
             new User
             {
-                Id = Guid.NewGuid(),
+                Id = user1Id,
+                Username = "johndoe",
+                Email = "johndoe@example.com",
+                PasswordHash = "hashedpassword",
+                Role = "User"
+            },
+            new User
+            {
+                Id = user2Id,
                 Username = "admin",
                 Email = "admin@example.com",
-                PasswordHash = PasswordHasher.HashPassword("hashed_password_1"),
-                Role = "Admin" 
-            },
-            new User
+                PasswordHash = "adminhashedpassword",
+                Role = "Admin"
+            }
+        );
+
+        // Seed data for Profiles
+        modelBuilder.Entity<Profile>().HasData(
+            new Profile
             {
                 Id = Guid.NewGuid(),
-                Username = "user1",
-                Email = "user1@example.com",
-                PasswordHash = PasswordHasher.HashPassword("hashed_password_2"),
-                Role = "User" 
+                UserId = user1Id, 
+                FullName = "John Doe",
+                PhoneNumber = "+1234567890",
+                Country = "USA",
+                CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                DateOfBirth =  DateTime.SpecifyKind(new DateTime(1990, 1, 1), DateTimeKind.Utc)
             },
-            new User
+            new Profile
             {
                 Id = Guid.NewGuid(),
-                Username = "user2",
-                Email = "user2@example.com",
-                PasswordHash = PasswordHasher.HashPassword("hashed_password_3"),
-                Role = "User" 
+                UserId = user2Id, 
+                FullName = "Admin",
+                PhoneNumber = "+9876543210",
+                Country = "Canada",
+                CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                DateOfBirth =  DateTime.SpecifyKind(new DateTime(2000, 10, 10), DateTimeKind.Utc)
             }
         );
     }
