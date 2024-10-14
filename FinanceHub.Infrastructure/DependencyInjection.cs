@@ -15,6 +15,7 @@ public static class DependencyInjection
     public static void AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
+        serviceCollection.AddScoped<IProfileRepository, ProfileRepository>();
         serviceCollection.AddScoped<IUserService, UserService>(); 
         serviceCollection.AddScoped<IJwtService, JwtService>();
     }
