@@ -1,8 +1,9 @@
-using FinanceGub.Application.Features.ProfileFeatures.Commands.CreateProfileCommand;
+using FinanceGub.Application.DTOs.Profile;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.DeleteProfileCommand;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
 using FinanceGub.Application.Features.ProfileFeatures.Queries.GetAllProfileQuery;
 using FinanceGub.Application.Features.ProfileFeatures.Queries.GetProfileQuery;
+using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,10 @@ namespace FinanceHub.Controllers;
 [Route("api/[controller]")]
 public class ProfileController : BaseController
 {
-    public ProfileController(IMediator mediator, ILogger<BaseController> logger): base(mediator, logger)
+    private readonly IProfileService _profileService;
+    public ProfileController(IMediator mediator, ILogger<BaseController> logger, IProfileService profileService): base(mediator, logger)
     {
-        
+        _profileService = profileService;
     }
     
     [HttpGet]
@@ -31,10 +33,10 @@ public class ProfileController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateProfile(Profile profile)
+    public async Task<IActionResult> CreateProfile(CreateProfileDto profileDto)
     {
-        await Send(new CreateProfileCommand(profile));
-        return CreatedAtAction(nameof(profile), new { id = profile.Id }, profile);
+        var profile = await _profileService.CreateProfileAsync(profileDto);
+        return CreatedAtAction(nameof(CreateProfile), new { id = profile.Id }, profile);
     }
     
     [HttpPut("{id:guid}")]
