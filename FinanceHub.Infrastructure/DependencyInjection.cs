@@ -1,3 +1,4 @@
+using System.Reflection;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Servises;
 using FinanceGub.Application.Interfaces.Serviсes;
@@ -16,8 +17,12 @@ public static class DependencyInjection
     {
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
         serviceCollection.AddScoped<IProfileRepository, ProfileRepository>();
+        
         serviceCollection.AddScoped<IUserService, UserService>(); 
+        serviceCollection.AddScoped<IProfileService, ProfileService>(); 
         serviceCollection.AddScoped<IJwtService, JwtService>();
+        
+        serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
     }
     
     
