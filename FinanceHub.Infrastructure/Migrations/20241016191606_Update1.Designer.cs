@@ -3,6 +3,7 @@ using System;
 using FinanceHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceHub.Infrastructure.Migrations
 {
     [DbContext(typeof(FinHubDbContext))]
-    partial class FinHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241016191606_Update1")]
+    partial class Update1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,23 +68,23 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2f3b94da-4bea-435c-8db9-fb30945c8761"),
+                            Id = new Guid("2e582211-6f5b-459b-b35e-a7cf63e07351"),
                             Country = "USA",
-                            CreatedAt = new DateTime(2024, 10, 16, 19, 31, 46, 366, DateTimeKind.Utc).AddTicks(6292),
+                            CreatedAt = new DateTime(2024, 10, 16, 19, 16, 4, 880, DateTimeKind.Utc).AddTicks(7853),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             PhoneNumber = "+1234567890",
-                            UpdatedAt = new DateTime(2024, 10, 16, 19, 31, 46, 366, DateTimeKind.Utc).AddTicks(6297),
-                            UserId = new Guid("34de7233-8e20-42c2-883c-928dcf836197")
+                            UpdatedAt = new DateTime(2024, 10, 16, 19, 16, 4, 880, DateTimeKind.Utc).AddTicks(7857),
+                            UserId = new Guid("b1da7d6f-f848-4614-82d0-5a7560face41")
                         },
                         new
                         {
-                            Id = new Guid("544a72f7-cfad-463b-ae2d-37100d146b48"),
+                            Id = new Guid("c938c8b6-9219-477d-b8ff-98db667c7dd8"),
                             Country = "Canada",
-                            CreatedAt = new DateTime(2024, 10, 16, 19, 31, 46, 366, DateTimeKind.Utc).AddTicks(6302),
+                            CreatedAt = new DateTime(2024, 10, 16, 19, 16, 4, 880, DateTimeKind.Utc).AddTicks(7880),
                             DateOfBirth = new DateTime(2000, 10, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             PhoneNumber = "+9876543210",
-                            UpdatedAt = new DateTime(2024, 10, 16, 19, 31, 46, 366, DateTimeKind.Utc).AddTicks(6303),
-                            UserId = new Guid("e5a3c644-c3fd-4510-8bba-14d8092b9cd9")
+                            UpdatedAt = new DateTime(2024, 10, 16, 19, 16, 4, 880, DateTimeKind.Utc).AddTicks(7880),
+                            UserId = new Guid("7032bbd2-bcae-4d3e-9777-f8101e3bd2b7")
                         });
                 });
 
@@ -115,17 +118,17 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("34de7233-8e20-42c2-883c-928dcf836197"),
+                            Id = new Guid("b1da7d6f-f848-4614-82d0-5a7560face41"),
                             Email = "johndoe@example.com",
-                            PasswordHash = "$2a$11$AWexz4OCTnc5mt3DQo/tEe/XS.r64wh6tdcC0gJXV1lxsjqqqtFg6",
+                            PasswordHash = "hashedpassword",
                             Role = "User",
                             Username = "johndoe"
                         },
                         new
                         {
-                            Id = new Guid("e5a3c644-c3fd-4510-8bba-14d8092b9cd9"),
+                            Id = new Guid("7032bbd2-bcae-4d3e-9777-f8101e3bd2b7"),
                             Email = "admin@example.com",
-                            PasswordHash = "$2a$11$GAyqJXEsl18Coa8KAotQiOZ1AJVB57S3m8VgwPlr.HF1qqxmewvVK",
+                            PasswordHash = "adminhashedpassword",
                             Role = "Admin",
                             Username = "admin"
                         });

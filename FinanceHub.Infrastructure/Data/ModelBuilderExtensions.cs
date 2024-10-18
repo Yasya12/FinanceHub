@@ -19,7 +19,7 @@ public static class ModelBuilderExtensions
                 Id = user1Id,
                 Username = "johndoe",
                 Email = "johndoe@example.com",
-                PasswordHash = "hashedpassword",
+                PasswordHash = PasswordHasher.HashPassword("hashedpassword"),
                 Role = "User"
             },
             new User
@@ -27,7 +27,7 @@ public static class ModelBuilderExtensions
                 Id = user2Id,
                 Username = "admin",
                 Email = "admin@example.com",
-                PasswordHash = "adminhashedpassword",
+                PasswordHash = PasswordHasher.HashPassword("adminhashedpassword"),
                 Role = "Admin"
             }
         );
@@ -38,7 +38,6 @@ public static class ModelBuilderExtensions
             {
                 Id = Guid.NewGuid(),
                 UserId = user1Id, 
-                FullName = "John Doe",
                 PhoneNumber = "+1234567890",
                 Country = "USA",
                 CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
@@ -49,7 +48,6 @@ public static class ModelBuilderExtensions
             {
                 Id = Guid.NewGuid(),
                 UserId = user2Id, 
-                FullName = "Admin",
                 PhoneNumber = "+9876543210",
                 Country = "Canada",
                 CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
