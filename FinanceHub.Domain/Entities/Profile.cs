@@ -7,13 +7,8 @@ public class Profile : Base
     [Required(ErrorMessage = "User ID is required.")]
     public Guid UserId { get; set; }
 
-    [Required(ErrorMessage = "Full Name is required.")]
-    [StringLength(100, ErrorMessage = "Full Name cannot be longer than 100 characters.")]
-    public string FullName { get; set; }
-
-    [Required(ErrorMessage = "Phone Number is required.")]
     [Phone(ErrorMessage = "Invalid phone number format.")]
-    public string PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
     [Required(ErrorMessage = "Country is required.")]
     [StringLength(50, ErrorMessage = "Country name cannot be longer than 50 characters.")]
