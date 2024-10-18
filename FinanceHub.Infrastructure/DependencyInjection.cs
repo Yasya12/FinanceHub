@@ -1,11 +1,8 @@
 using System.Reflection;
 using FinanceGub.Application.Interfaces.Repositories;
-using FinanceGub.Application.Interfaces.Servises;
 using FinanceGub.Application.Interfaces.Serviсes;
-using FinanceHub.Infrastructure.Data;
 using FinanceHub.Infrastructure.Repositories;
 using FinanceHub.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

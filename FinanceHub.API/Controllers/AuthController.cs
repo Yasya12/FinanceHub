@@ -1,5 +1,4 @@
 using FinanceGub.Application.DTOs.Authentication;
-using FinanceGub.Application.Interfaces.Servises;
 using FinanceGub.Application.Interfaces.Serviсes;
 using Microsoft.AspNetCore.Mvc;
 
