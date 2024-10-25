@@ -6,6 +6,7 @@ namespace FinanceGub.Application.Interfaces.Serviсes;
 public interface IUserService
 {
     Task<IEnumerable<GetUserDto>> GetAllUsersAsync();
+    Task<GetUserDto> GetUserAsync(Guid id);
     Task<User> CreateUserAsync(CreateUserDto createUserDto);
     Task<User> GetUserByCredentialsAsync(string userName, string password);
 }
