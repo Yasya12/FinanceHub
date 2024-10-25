@@ -1,5 +1,5 @@
 using AutoMapper;
-using FinanceGub.Application.DTOs.Profile;
+using FinanceGub.Application.DTOs.User;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
@@ -22,6 +22,15 @@ public class UserService : IUserService
         _mapper = mapper;
     }
     
+    public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
+    {
+        var users = await _userRepository.GetAllAsync();
+
+        var userDtos = _mapper.Map<IEnumerable<GetUserDto>>(users);
+
+        return userDtos;
+    }
+
     public async Task<User> CreateUserAsync(CreateUserDto createUserDto)
     {
         try
