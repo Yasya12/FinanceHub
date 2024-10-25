@@ -27,9 +27,10 @@ public class UserController : BaseController
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<User>> GetUser(Guid id)
+    public async Task<ActionResult<GetUserDto>> GetUser(Guid id)
     {
-        return Ok(await Send(new GetUserQuery(id)));
+        var userDto = await _userService.GetUserAsync(id);
+        return Ok(userDto); 
     }
 
     [HttpPost]
