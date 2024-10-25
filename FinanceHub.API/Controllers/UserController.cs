@@ -1,13 +1,10 @@
-using FinanceGub.Application.DTOs.Profile;
+using FinanceGub.Application.DTOs.User;
 using FinanceGub.Application.Features.UserFeatures.Commands.DeleteUserCommand;
 using FinanceGub.Application.Features.UserFeatures.Commands.UpdateUserCommand;
-using FinanceGub.Application.Features.UserFeatures.Queries.GetAllUserQuery;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetUserQuery;
-using FinanceGub.Application.Identity;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceHub.Controllers;
@@ -22,11 +19,11 @@ public class UserController : BaseController
         _userService = userService;
     }
 
-    [Authorize]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetAllUser()
+    public async Task<ActionResult<IEnumerable<GetUserDto>>> GetAllUser()
     {
-        return Ok(await Send(new GetAllUserQuery())); 
+        var userDto = await _userService.GetAllUsersAsync();
+        return Ok(userDto); 
     }
 
     [HttpGet("{id:guid}")]
@@ -53,7 +50,6 @@ public class UserController : BaseController
         return Ok(await Send(new UpdateUserCommand(user)));
     }
 
-    [Authorize(Policy = IdentityData.AdminUserPolicyName)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
