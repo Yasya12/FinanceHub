@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FinanceGub.Application.DTOs.Profile;
+namespace FinanceGub.Application.DTOs.User;
 
 public class CreateUserDto
 {
