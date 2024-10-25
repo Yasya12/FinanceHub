@@ -1,4 +1,4 @@
-using FinanceGub.Application.DTOs.Profile;
+using FinanceGub.Application.DTOs.User;
 using FinanceHub.Core.Entities;
 using FinanceHub.Infrastructure.Helpers;
 using Profile = AutoMapper.Profile;
