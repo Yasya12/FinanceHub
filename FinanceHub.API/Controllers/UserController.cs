@@ -41,20 +41,16 @@ public class UserController : BaseController
     }
     
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateUser(Guid id, User user)
+    public async Task<IActionResult> UpdateUser(Guid id, UpdateUserDto updateUserDto)
     {
-        if (id != user.Id)
-        {
-            return BadRequest("User ID mismatch.");
-        }
-    
-        return Ok(await Send(new UpdateUserCommand(user)));
+        var updateUser = await _userService.UpdateUserAsync(id, updateUserDto);
+        return Ok(updateUser);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
-        await Send(new DeleteUserCommand(id));
-        return NoContent();
+        var message = await Send(new DeleteUserCommand(id));
+        return Content(message); 
     }
 }
