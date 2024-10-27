@@ -113,7 +113,7 @@ public class GenericRepository<T>: IGenericRepository<T> where T: Base
         }
     }
 
-    public virtual async Task DeleteAsync(Guid id)
+    public virtual async Task<string> DeleteAsync(Guid id)
     {
         try
         {
@@ -125,6 +125,7 @@ public class GenericRepository<T>: IGenericRepository<T> where T: Base
 
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
+            return $"Entity of type {typeof(T).Name} with ID {id} was successfully deleted.";
         }
         catch (DbUpdateException ex)
         {
