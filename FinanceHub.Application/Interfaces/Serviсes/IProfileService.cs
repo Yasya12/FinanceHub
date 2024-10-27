@@ -5,5 +5,6 @@ namespace FinanceGub.Application.Interfaces.Serviсes;
 
 public interface IProfileService
 {
+    Task<IEnumerable<GetProfileDto>> GetAllProfile();
     Task<Profile> CreateProfileAsync(CreateProfileDto createProfileDto);
 }
