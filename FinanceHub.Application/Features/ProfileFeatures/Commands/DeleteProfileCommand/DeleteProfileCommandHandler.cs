@@ -5,7 +5,7 @@ using MediatR;
 
 namespace FinanceGub.Application.Features.ProfileFeatures.Commands.DeleteProfileCommand;
 
-public class DeleteProfileCommandHandler : IRequestHandler<DeleteProfileCommand, Profile>
+public class DeleteProfileCommandHandler : IRequestHandler<DeleteProfileCommand, string>
 {
     private readonly IProfileRepository _profileRepository;
 
@@ -14,7 +14,7 @@ public class DeleteProfileCommandHandler : IRequestHandler<DeleteProfileCommand,
         _profileRepository = profileRepository;
     }
     
-    public async Task<Profile> Handle(DeleteProfileCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(DeleteProfileCommand request, CancellationToken cancellationToken)
     {
         var profile = await _profileRepository.GetByIdAsync(request.Id);
 
@@ -23,7 +23,7 @@ public class DeleteProfileCommandHandler : IRequestHandler<DeleteProfileCommand,
             throw new NotFoundException($"Profile with ID {request.Id} not found.");
         }
         
-        await _profileRepository.DeleteAsync(request.Id);
-        return profile;
+        var message = await _profileRepository.DeleteAsync(request.Id);
+        return message;
     }
 }
