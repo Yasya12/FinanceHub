@@ -11,6 +11,11 @@ public class FinHubDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.Entity<User>()
+            .Property(u => u.Role)
+            .HasDefaultValue(FinanceGub.Application.Identity.IdentityData.UserUserClaimName); 
+
         modelBuilder.Seed();
     }
 }
