@@ -22,14 +22,15 @@ public class ProfileController : BaseController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GetProfileDto>>> GetAllProfile()
     {
-        var profileDto = await _profileService.GetAllProfile();
+        var profileDto = await _profileService.GetAllProfileAsync();
         return Ok(profileDto); 
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Profile>> GetProfile(Guid id)
+    public async Task<ActionResult<GetProfileDto>> GetProfile(Guid id)
     {
-        return Ok(await Send(new GetProfileQuery(id, "User")));
+        var profileDto = await _profileService.GetProfileAsync(id);
+        return Ok(profileDto); 
     }
 
     [HttpPost]
