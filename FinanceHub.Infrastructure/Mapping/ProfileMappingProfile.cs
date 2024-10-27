@@ -12,5 +12,13 @@ public class ProfileMappingProfile : Profile
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow)) 
             .ForMember(dest => dest.User, opt => opt.Ignore()) 
             .ReverseMap();
+        
+        CreateMap<FinanceHub.Core.Entities.Profile, GetProfileDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Username))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+            .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.ProfilePictureUrl))
+            .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.Bio))
+            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth));
     }
 }
