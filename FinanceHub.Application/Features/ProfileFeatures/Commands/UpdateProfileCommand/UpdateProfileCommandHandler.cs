@@ -16,7 +16,7 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
     
     public async Task<Profile> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
-        var profile = _profileRepository.GetByIdAsync(request.Profile.Id);
+        var profile = await _profileRepository.GetByIdAsync(request.Profile.Id);
 
         if (profile == null)
         {
