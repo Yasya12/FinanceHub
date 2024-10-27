@@ -1,5 +1,7 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.User;
+using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
+using FinanceGub.Application.Features.UserFeatures.Commands.UpdateUserCommand;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetUserQuery;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
@@ -55,7 +57,6 @@ public class UserService : IUserService
             }
             
             var user = _mapper.Map<User>(createUserDto);
-            user.Role = FinanceGub.Application.Identity.IdentityData.UserUserClaimName;
             await _userRepository.AddAsync(user);
 
             var profile = _mapper.Map<Profile>(createUserDto);
@@ -74,6 +75,39 @@ public class UserService : IUserService
         {
             throw;
         }
+    }
+    
+    public async Task<User> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
+    {
+        var existingUser = await _userRepository.GetByIdAsync(id);
+        if (existingUser == null)
+        {
+            throw new ValidationException($"User with ID {id} does not exist.");
+        }
+
+        if (existingUser.Email != updateUserDto.Email)
+        {
+            var emailCheckUser = await _userRepository.GetByEmailAsync(updateUserDto.Email);
+            if (emailCheckUser != null)
+            {
+                throw new ValidationException($"Email {updateUserDto.Email} is already taken.");
+            }
+        }
+
+        _mapper.Map(updateUserDto, existingUser);
+        await _mediator.Send(new UpdateUserCommand(existingUser));
+
+        var existingProfile = await _profileRepository.GetByUserIdAsync(id);
+        if (existingProfile == null)
+        {
+            throw new ValidationException($"Profile for user with ID {id} does not exist."); 
+        }
+        
+        _mapper.Map(updateUserDto, existingProfile); 
+        existingProfile.DateOfBirth = DateTime.UtcNow;
+        await _mediator.Send(new UpdateProfileCommand(existingProfile));
+
+        return existingUser;
     }
     
     public async Task<User> GetUserByCredentialsAsync(string userEmail, string password)
