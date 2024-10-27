@@ -1,11 +1,10 @@
 using FinanceGub.Application.Interfaces.Repositories;
-using FinanceHub.Core.Entities;
 using FinanceHub.Core.Exceptions;
 using MediatR;
 
 namespace FinanceGub.Application.Features.UserFeatures.Commands.DeleteUserCommand;
 
-public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, User>
+public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, string>
 {
     private readonly IUserRepository _userRepository;
     
@@ -14,7 +13,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, User>
         _userRepository = userRepository;
     }
 
-    public async Task<User> Handle(DeleteUserCommand userCommand, CancellationToken token)
+    public async Task<string> Handle(DeleteUserCommand userCommand, CancellationToken token)
     {
         var user = await _userRepository.GetByIdAsync(userCommand.Id);
 
@@ -23,8 +22,8 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, User>
             throw new NotFoundException($"User with ID {userCommand.Id} not found.");
         }
 
-        await _userRepository.DeleteAsync(userCommand.Id);
+        var message = await _userRepository.DeleteAsync(userCommand.Id);
         
-        return user; 
+        return message; 
     }
 }
