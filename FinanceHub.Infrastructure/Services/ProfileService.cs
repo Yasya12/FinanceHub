@@ -1,6 +1,7 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.Profile;
 using FinanceGub.Application.Features.ProfileFeatures.Queries.GetAllProfileQuery;
+using FinanceGub.Application.Features.ProfileFeatures.Queries.GetProfileQuery;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
 using MediatR;
@@ -23,13 +24,22 @@ public class ProfileService : IProfileService
         _mediator = mediator;
     }
     
-    public async Task<IEnumerable<GetProfileDto>> GetAllProfile()
+    public async Task<IEnumerable<GetProfileDto>> GetAllProfileAsync()
     {
         var profiles = await _mediator.Send(new GetAllProfileQuery("User"));
 
         var profileDtos = _mapper.Map<IEnumerable<GetProfileDto>>(profiles);
 
         return profileDtos;
+    }
+    
+    public async Task<GetProfileDto> GetProfileAsync(Guid id)
+    {
+        var profile = await _mediator.Send(new GetProfileQuery(id, "User"));
+        
+        var profileDto = _mapper.Map<GetProfileDto>(profile);
+
+        return profileDto;
     }
     
     public async Task<Profile> CreateProfileAsync(CreateProfileDto createProfileDto)
