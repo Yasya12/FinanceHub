@@ -1,7 +1,6 @@
 using FinanceGub.Application.DTOs.Profile;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.DeleteProfileCommand;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
-using FinanceGub.Application.Features.ProfileFeatures.Queries.GetAllProfileQuery;
 using FinanceGub.Application.Features.ProfileFeatures.Queries.GetProfileQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
@@ -21,9 +20,10 @@ public class ProfileController : BaseController
     }
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Profile>>> GetAllProfile()
+    public async Task<ActionResult<IEnumerable<GetProfileDto>>> GetAllProfile()
     {
-        return Ok(await Send(new GetAllProfileQuery("User"))); 
+        var profileDto = await _profileService.GetAllProfile();
+        return Ok(profileDto); 
     }
 
     [HttpGet("{id:guid}")]
