@@ -53,8 +53,8 @@ public class ProfileController : BaseController
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteProfile(Guid id)
     {
-        await Send(new DeleteProfileCommand(id));
-        return NoContent();
+        var message = await Send(new DeleteProfileCommand(id));
+        return Content(message); 
     }
     
     [HttpPost("upload-profile-picture")]
