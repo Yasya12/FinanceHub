@@ -1,9 +1,11 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.Profile;
+using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
 using FinanceGub.Application.Features.ProfileFeatures.Queries.GetAllProfileQuery;
 using FinanceGub.Application.Features.ProfileFeatures.Queries.GetProfileQuery;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
+using FinanceHub.Core.Exceptions;
 using MediatR;
 using Profile = FinanceHub.Core.Entities.Profile;
 
@@ -66,5 +68,19 @@ public class ProfileService : IProfileService
         await _profileRepository.AddAsync(profile);
         
         return createProfileDto;
+    }
+    
+    public async Task<Profile> UpdateProfileAsync(Guid id, UpdateProfileDto updateProfileDto)
+    {
+        var existingProfile = await _profileRepository.GetByIdAsync(id, "User");
+        if (existingProfile == null)
+        {
+            throw new ValidationException($"Profile with ID {id} does not exist.");
+        }
+        _mapper.Map(updateProfileDto, existingProfile);
+        existingProfile.DateOfBirth = DateTime.SpecifyKind(updateProfileDto.DateOfBirth, DateTimeKind.Utc);
+        await _mediator.Send(new UpdateProfileCommand(existingProfile));
+        
+        return existingProfile;
     }
 }
