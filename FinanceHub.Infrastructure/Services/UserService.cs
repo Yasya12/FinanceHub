@@ -61,7 +61,7 @@ public class UserService : IUserService
 
             var profile = _mapper.Map<Profile>(createUserDto);
             profile.UserId = user.Id;
-            profile.DateOfBirth = DateTime.UtcNow;
+            profile.DateOfBirth = DateTime.SpecifyKind(createUserDto.DateOfBirth, DateTimeKind.Utc);
             
             await _profileRepository.AddAsync(profile);
 
@@ -104,7 +104,7 @@ public class UserService : IUserService
         }
         
         _mapper.Map(updateUserDto, existingProfile); 
-        existingProfile.DateOfBirth = DateTime.UtcNow;
+        existingProfile.DateOfBirth = DateTime.SpecifyKind(updateUserDto.DateOfBirth, DateTimeKind.Utc);
         await _mediator.Send(new UpdateProfileCommand(existingProfile));
 
         return existingUser;
