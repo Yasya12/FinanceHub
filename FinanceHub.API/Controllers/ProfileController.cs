@@ -1,8 +1,6 @@
 using FinanceGub.Application.DTOs.Profile;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.DeleteProfileCommand;
-using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
 using FinanceGub.Application.Interfaces.Serviсes;
-using FinanceHub.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,14 +38,10 @@ public class ProfileController : BaseController
     }
     
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateProfile(Guid id, Profile profile)
+    public async Task<IActionResult> UpdateProfile(Guid id, UpdateProfileDto updateProfileDto)
     {
-        if (id != profile.Id)
-        {
-            return BadRequest("User ID mismatch.");
-        }
-    
-        return Ok(await Send(new UpdateProfileCommand(profile)));
+        var updateProfile = await _profileService.UpdateProfileAsync(id, updateProfileDto);
+        return Ok(updateProfileDto);
     }
 
     [HttpDelete("{id:guid}")]
