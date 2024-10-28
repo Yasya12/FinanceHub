@@ -1,9 +1,6 @@
 using FinanceGub.Application.DTOs.User;
 using FinanceGub.Application.Features.UserFeatures.Commands.DeleteUserCommand;
-using FinanceGub.Application.Features.UserFeatures.Commands.UpdateUserCommand;
-using FinanceGub.Application.Features.UserFeatures.Queries.GetUserQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
-using FinanceHub.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +34,7 @@ public class UserController : BaseController
     public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
     {
         var createdUser = await _userService.CreateUserAsync(createUserDto);
-        return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
+        return Created(string.Empty, createdUser);
     }
     
     [HttpPut("{id:guid}")]

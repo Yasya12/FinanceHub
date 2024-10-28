@@ -46,7 +46,7 @@ public class UserService : IUserService
         return userDto;
     }
 
-    public async Task<User> CreateUserAsync(CreateUserDto createUserDto)
+    public async Task<CreateUserDto> CreateUserAsync(CreateUserDto createUserDto)
     {
         try
         {
@@ -65,7 +65,7 @@ public class UserService : IUserService
             
             await _profileRepository.AddAsync(profile);
 
-            return user;
+            return createUserDto;
         }
         catch (RepositoryException ex)
         {

@@ -7,7 +7,7 @@ public interface IUserService
 {
     Task<IEnumerable<GetUserDto>> GetAllUsersAsync();
     Task<GetUserDto> GetUserAsync(Guid id);
-    Task<User> CreateUserAsync(CreateUserDto createUserDto);
+    Task<CreateUserDto> CreateUserAsync(CreateUserDto createUserDto);
     Task<User> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto);
     Task<User> GetUserByCredentialsAsync(string userName, string password);
 }
