@@ -1,7 +1,6 @@
 using FinanceGub.Application.DTOs.Profile;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.DeleteProfileCommand;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
-using FinanceGub.Application.Features.ProfileFeatures.Queries.GetProfileQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using MediatR;
@@ -37,7 +36,7 @@ public class ProfileController : BaseController
     public async Task<IActionResult> CreateProfile(CreateProfileDto profileDto)
     {
         var profile = await _profileService.CreateProfileAsync(profileDto);
-        return CreatedAtAction(nameof(CreateProfile), new { id = profile.Id }, profile);
+        return Created(string.Empty, profile);
     }
     
     [HttpPut("{id:guid}")]

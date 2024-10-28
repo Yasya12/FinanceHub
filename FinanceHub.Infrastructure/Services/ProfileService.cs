@@ -42,22 +42,29 @@ public class ProfileService : IProfileService
         return profileDto;
     }
     
-    public async Task<Profile> CreateProfileAsync(CreateProfileDto createProfileDto)
+    public async Task<CreateProfileDto> CreateProfileAsync(CreateProfileDto createProfileDto)
     {
         var profile = _mapper.Map<Profile>(createProfileDto);
-        
+
         var user = await _userRepository.GetByEmailAsync(createProfileDto.UserEmail);
         if (user == null)
         {
             throw new Exception("User with the specified email not found.");
         }
-        
+
+        var existingProfile = await _profileRepository.GetByUserIdAsync(user.Id);
+        if (existingProfile != null)
+        {
+            throw new Exception("A profile with this user email already exists.");
+        }
+
         profile.UserId = user.Id;
         profile.CreatedAt = DateTime.UtcNow;
         profile.UpdatedAt = DateTime.UtcNow;
-        profile.DateOfBirth = DateTime.UtcNow;
-        
+        profile.DateOfBirth = DateTime.SpecifyKind(createProfileDto.DateOfBirth, DateTimeKind.Utc);
+
         await _profileRepository.AddAsync(profile);
-        return profile;
+        
+        return createProfileDto;
     }
 }
