@@ -16,7 +16,13 @@ public class ProfileMappingProfile : Profile
         
         CreateMap<UpdateProfileDto, FinanceHub.Core.Entities.Profile>()
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) 
-            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))  
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.Country, opt => 
+                opt.Condition(src => src.Country != null))
+            .ForMember(dest => dest.DateOfBirth, opt => 
+                opt.Condition(src => src.DateOfBirth.HasValue))
+            .ForMember(dest => dest.ProfilePictureUrl, opt => 
+                opt.Condition(src => src.ProfilePictureUrl != null))
             .ReverseMap();
         
         CreateMap<FinanceHub.Core.Entities.Profile, GetProfileDto>()
