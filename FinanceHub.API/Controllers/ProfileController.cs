@@ -40,7 +40,7 @@ public class ProfileController : BaseController
     public async Task<IActionResult> UpdateProfile(Guid id, UpdateProfileDto updateProfileDto)
     {
         var updateProfile = await _profileService.UpdateProfileAsync(id, updateProfileDto);
-        return Ok(updateProfileDto);
+        return Ok(updateProfile);
     }
 
     [HttpDelete("{id:guid}")]
