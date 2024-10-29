@@ -10,6 +10,7 @@ public class ProfileMappingProfile : Profile
         CreateMap<CreateProfileDto, FinanceHub.Core.Entities.Profile>()
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow)) 
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow)) 
+            .ForMember(dest => dest.ProfilePictureUrl, opt => opt.Ignore())
             .ForMember(dest => dest.User, opt => opt.Ignore()) 
             .ReverseMap();
         
