@@ -91,18 +91,44 @@ public class ProfileService : IProfileService
         return responseProfile;
     }
     
-    public async Task<Profile> UpdateProfileAsync(Guid id, UpdateProfileDto updateProfileDto)
+    public async Task<GetProfileDto> UpdateProfileAsync(Guid id, UpdateProfileDto updateProfileDto)
     {
         var existingProfile = await _profileRepository.GetByIdAsync(id, "User");
         if (existingProfile == null)
         {
             throw new ValidationException($"Profile with ID {id} does not exist.");
         }
+        
+        string profilePictureUrl = null;
+        if (updateProfileDto.ProfilePictureUrl != null)
+        {
+            try
+            {
+                await DeleteProfilePicture(existingProfile.ProfilePictureUrl);
+                profilePictureUrl = await UploadProfilePicture(updateProfileDto.ProfilePictureUrl);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new Exception($"Failed to upload profile picture: {ex.Message}");
+            }
+        }
+        
         _mapper.Map(updateProfileDto, existingProfile);
-        existingProfile.DateOfBirth = DateTime.SpecifyKind(updateProfileDto.DateOfBirth, DateTimeKind.Utc);
+
+        if (updateProfileDto.DateOfBirth.HasValue)
+        {
+            existingProfile.DateOfBirth = DateTime.SpecifyKind(updateProfileDto.DateOfBirth.Value, DateTimeKind.Utc);
+        }
+
+        if (profilePictureUrl != null)
+        {
+            existingProfile.ProfilePictureUrl = profilePictureUrl;
+        }
+        
         await _mediator.Send(new UpdateProfileCommand(existingProfile));
         
-        return existingProfile;
+        var responseProfile = _mapper.Map<GetProfileDto>(existingProfile);
+        return responseProfile;
     }
     
     public async Task<string> UploadProfilePicture(IFormFile file)
