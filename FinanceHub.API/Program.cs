@@ -3,8 +3,10 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using FinanceGub.Application;
 using FinanceGub.Application.Identity;
+using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Infrastructure;
 using FinanceHub.Infrastructure.Data;
+using FinanceHub.Infrastructure.Services;
 using FinanceHub.Middleware;
 using FinanceHub.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connectionString, jwtIssuerSecret, jwtAudienceSecret, jwtKeySecret;
+string connectionString, jwtIssuerSecret, jwtAudienceSecret, jwtKeySecret, blobStorageConnectionString, containerName;
 
 try
 {
@@ -24,10 +26,18 @@ try
     jwtIssuerSecret = (await client.GetSecretAsync("JwtIssuer")).Value.Value;
     jwtAudienceSecret = (await client.GetSecretAsync("JwtAudience")).Value.Value;
     jwtKeySecret = (await client.GetSecretAsync("JwtKey")).Value.Value;
+    //pictures
+    blobStorageConnectionString = (await client.GetSecretAsync("AzureBlobStorageConnectionString")).Value.Value;
+    containerName = (await client.GetSecretAsync("ProfilePicturesContainer")).Value.Value;
 
+    builder.Services.AddTransient<IAzureBlobStorageService>(provider => 
+        new AzureBlobStorageService(blobStorageConnectionString, containerName));
+    
     builder.Configuration["JwtKey"] = jwtKeySecret;
     builder.Configuration["JwtIssuer"] = jwtIssuerSecret;
     builder.Configuration["JwtAudience"] = jwtAudienceSecret;
+    builder.Configuration["AzureBlobStorageConnectionString"] = blobStorageConnectionString;
+    builder.Configuration["ProfilePicturesContainer"] = containerName;
 }
 catch (Exception ex)
 {
