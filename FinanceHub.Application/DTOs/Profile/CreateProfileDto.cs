@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace FinanceGub.Application.DTOs.Profile;
 
@@ -15,8 +16,7 @@ public class CreateProfileDto
     [StringLength(50, ErrorMessage = "Country name cannot be longer than 50 characters.")]
     public string Country { get; set; }
 
-    [Url(ErrorMessage = "Invalid URL format for profile picture.")]
-    public string? ProfilePictureUrl { get; set; }
+    public IFormFile? ProfilePictureUrl { get; set; }
 
     [StringLength(500, ErrorMessage = "Bio cannot be longer than 500 characters.")]
     public string? Bio { get; set; }
