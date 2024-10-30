@@ -19,6 +19,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IUserService, UserService>(); 
         serviceCollection.AddScoped<IProfileService, ProfileService>(); 
         serviceCollection.AddScoped<IJwtService, JwtService>();
+        serviceCollection.AddScoped<IPostService, PostService>();
         
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
     }
