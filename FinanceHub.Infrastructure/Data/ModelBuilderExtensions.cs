@@ -55,5 +55,26 @@ public static class ModelBuilderExtensions
                 DateOfBirth =  DateTime.SpecifyKind(new DateTime(2000, 10, 10), DateTimeKind.Utc)
             }
         );
+
+        //Seed data for Post
+        modelBuilder.Entity<Post>().HasData(
+            new Post
+            {
+                Id = Guid.NewGuid(),
+                AuthorId = user1Id,
+                Title = "Introduction to Finance",
+                Content = "This is an introductory post about finance.",
+                CreatedAt = DateTime.UtcNow.AddDays(-10),
+                UpdatedAt = DateTime.UtcNow.AddDays(-5)
+            },
+            new Post
+            {
+                Id = Guid.NewGuid(),
+                AuthorId = user2Id,
+                Title = "Advanced Financial Strategies",
+                Content = "Exploring advanced strategies in finance.",
+                CreatedAt = DateTime.UtcNow.AddDays(-20),
+                UpdatedAt = DateTime.UtcNow.AddDays(-2)
+            });
     }
 }
