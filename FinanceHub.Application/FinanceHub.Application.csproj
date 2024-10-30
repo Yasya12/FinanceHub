@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Features\PostFeatures\Queries\" />
       <Folder Include="Features\UserFeatures\Commands\" />
     </ItemGroup>
 
