@@ -4,12 +4,13 @@ namespace FinanceGub.Application.DTOs.Post;
 
 public class CreatePostDto
 {
-    [Required]
-    public string Email { get; set; }
+    [Required(ErrorMessage = "User Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email address format.")]
+    public string UserEmail { get; set; }
 
     [StringLength(100, ErrorMessage = "Title cannot exceed 100 characters.")]
     public string Title { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Content is required.")]
     public string Content { get; set; }
 }
