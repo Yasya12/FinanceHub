@@ -11,5 +11,5 @@ public class Category : Base
     [StringLength(200, ErrorMessage = "Description cannot exceed 200 characters")]
     public string Description { get; set; }
 
-    public virtual ICollection<PostCategory > PostCategory  { get; set; }
+    public virtual ICollection<PostCategory> PostCategory  { get; set; }
 }
