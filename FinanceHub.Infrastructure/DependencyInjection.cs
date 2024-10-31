@@ -21,6 +21,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IProfileService, ProfileService>(); 
         serviceCollection.AddScoped<IJwtService, JwtService>();
         serviceCollection.AddScoped<IPostService, PostService>();
+        serviceCollection.AddScoped<ICategoryService, CategoryService>();
         
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
     }
