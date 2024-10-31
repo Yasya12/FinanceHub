@@ -11,6 +11,13 @@ public static class ModelBuilderExtensions
         // Define fixed Guids for users
         var user1Id = Guid.NewGuid(); 
         var user2Id = Guid.NewGuid();
+        // Define fixed Guids for posts
+        var post1Id = Guid.NewGuid();
+        var post2Id = Guid.NewGuid();
+        // Define fixed Guids for categories
+        var category1Id = Guid.NewGuid();
+        var category2Id = Guid.NewGuid();
+        var category3Id = Guid.NewGuid();
         
         // Seed data for Users
         modelBuilder.Entity<User>().HasData(
@@ -60,7 +67,7 @@ public static class ModelBuilderExtensions
         modelBuilder.Entity<Post>().HasData(
             new Post
             {
-                Id = Guid.NewGuid(),
+                Id = post1Id,
                 AuthorId = user1Id,
                 Title = "Introduction to Finance",
                 Content = "This is an introductory post about finance.",
@@ -69,12 +76,55 @@ public static class ModelBuilderExtensions
             },
             new Post
             {
-                Id = Guid.NewGuid(),
+                Id = post2Id,
                 AuthorId = user2Id,
                 Title = "Advanced Financial Strategies",
                 Content = "Exploring advanced strategies in finance.",
                 CreatedAt = DateTime.UtcNow.AddDays(-20),
                 UpdatedAt = DateTime.UtcNow.AddDays(-2)
+            });
+        
+        modelBuilder.Entity<Category>().HasData(
+            new Category
+            {
+                Id = category1Id,
+                Name = "Technology",
+                Description = "Posts related to the latest technology trends"
+            },
+            new Category
+            {
+                Id = category2Id,
+                Name = "Health",
+                Description = "Health tips and news"
+            },
+            new Category
+            {
+                Id = category3Id,
+                Name = "Education",
+                Description = "Educational articles and resources"
+            }
+        );
+        
+        modelBuilder.Entity<PostCategory>().HasData(
+            new PostCategory
+            {
+                PostId = post1Id,
+                CategoryId = category1Id
+            },
+            new PostCategory
+            {
+                PostId = post1Id,
+                CategoryId = category3Id
+            },
+            new PostCategory
+            {
+                PostId = post2Id,
+                CategoryId = category2Id
+            },
+            new PostCategory
+            {
+                PostId = post2Id,
+                CategoryId = category3Id
             });
     }
 }
