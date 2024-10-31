@@ -22,7 +22,7 @@ public class Post : Base
     [Required]
     public virtual User Author { get; set; }
 
-    //public virtual ICollection<Category> Categories { get; set; }
+    public virtual ICollection<PostCategory> PostCategory { get; set; }
     //public virtual ICollection<Comment> Comments { get; set; }
 
 }
