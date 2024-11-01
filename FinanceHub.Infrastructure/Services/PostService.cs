@@ -18,19 +18,21 @@ public class PostService : IPostService
     private readonly IMapper _mapper;
     private readonly IPostRepository _postRepository;
     private readonly IUserRepository _userRepository;
+    private readonly ICategoryRepository _categoryRepository;
     private readonly IMediator _mediator;
 
-    public PostService(IMapper mapper, IPostRepository postRepository, IUserRepository userRepository, IMediator mediator)
+    public PostService(IMapper mapper, IPostRepository postRepository, IUserRepository userRepository, ICategoryRepository categoryRepository, IMediator mediator)
     {
         _mapper = mapper;
         _postRepository = postRepository;
         _userRepository = userRepository;
+        _categoryRepository = categoryRepository;
         _mediator = mediator;
     }
     
     public async Task<IEnumerable<GetPostDto>> GetAllPostAsync()
     {
-        var posts = await _mediator.Send(new GetAllPostQuery("Author"));
+        var posts = await _mediator.Send(new GetAllPostQuery("Author,PostCategory,PostCategory.Category"));
 
         var postDtos = _mapper.Map<IEnumerable<GetPostDto>>(posts);
 
@@ -39,7 +41,7 @@ public class PostService : IPostService
     
     public async Task<GetPostDto> GetPostAsync(Guid id)
     {
-        var posts = await _mediator.Send(new GetPostQuery(id, "Author"));
+        var posts = await _mediator.Send(new GetPostQuery(id, "Author,PostCategory,PostCategory.Category"));
         
         var postDtos = _mapper.Map<GetPostDto>(posts);
         
@@ -48,23 +50,42 @@ public class PostService : IPostService
 
     public async Task<GetPostDto> CreatePostAsync(CreatePostDto createPostDto)
     {
-        var post = _mapper.Map<Post>(createPostDto);
-
         var user = await _userRepository.GetByEmailAsync(createPostDto.UserEmail);
         if (user == null)
         {
             throw new Exception("User with the specified email not found.");
         }
 
+        var existingCategories = await _categoryRepository.GetCategoriesByNamesAsync(createPostDto.CategoryNames);
+        
+        var categoryNames = createPostDto.CategoryNames ?? Enumerable.Empty<string>();
+        var invalidCategoryNames = categoryNames
+            .Where(name => !existingCategories.Any(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+
+
+        if (invalidCategoryNames.Any())
+        {
+            throw new Exception($"The following categories do not exist: {string.Join(", ", invalidCategoryNames)}");
+        }
+
+        var post = _mapper.Map<Post>(createPostDto);
         post.AuthorId = user.Id;
 
-        await _mediator.Send(new CreatePostCommand(post));
+        post.PostCategory = existingCategories.Select(c => new PostCategory
+        {
+            PostId = post.Id, 
+            CategoryId = c.Id,
+            Category = c
+        }).ToList();
 
-        var responseProfile = _mapper.Map<GetPostDto>(post);
-        return responseProfile;
+        await _mediator.Send(new CreatePostCommand(post));
+        
+        var responsePost = _mapper.Map<GetPostDto>(post);
+        return responsePost;
     }
     
-    public async Task<GetPostDto> UpdateProfileAsync(Guid id, UpdatePostDto updatePostDto)
+    public async Task<GetPostDto> UpdatePostAsync(Guid id, UpdatePostDto updatePostDto)
     {
         var existingPost = await _postRepository.GetByIdAsync(id, "Author");
         if (existingPost == null)

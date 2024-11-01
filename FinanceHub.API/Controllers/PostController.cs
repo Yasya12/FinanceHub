@@ -40,12 +40,12 @@ public class PostController : BaseController
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePost(Guid id, UpdatePostDto updatePostDto)
     {
-        var updatePost = await _postService.UpdateProfileAsync(id, updatePostDto);
+        var updatePost = await _postService.UpdatePostAsync(id, updatePostDto);
         return Ok(updatePost);
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteProfile(Guid id)
+    public async Task<IActionResult> DeletePost(Guid id)
     {
         var message = await _postService.DeletePostAsync(id);
         return Content(message); 
