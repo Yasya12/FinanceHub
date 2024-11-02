@@ -16,6 +16,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IProfileRepository, ProfileRepository>();
         serviceCollection.AddScoped<IPostRepository, PostRepository>();
         serviceCollection.AddScoped<ICategoryRepository, CategoryRepository>();
+        serviceCollection.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
         
         serviceCollection.AddScoped<IUserService, UserService>(); 
         serviceCollection.AddScoped<IProfileService, ProfileService>(); 
