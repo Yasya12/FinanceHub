@@ -1,5 +1,7 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.Post;
+using FinanceGub.Application.Features.PostCategoryFeatures.Commands.AddRangePostCategoryCommand;
+using FinanceGub.Application.Features.PostCategoryFeatures.Commands.RemoveRangePostCategoryCommand;
 using FinanceGub.Application.Features.PostFeatures.Commands.CreatePostCommand;
 using FinanceGub.Application.Features.PostFeatures.Commands.DeletePostCommand;
 using FinanceGub.Application.Features.PostFeatures.Commands.UpdatePostCommand;
@@ -87,19 +89,39 @@ public class PostService : IPostService
     
     public async Task<GetPostDto> UpdatePostAsync(Guid id, UpdatePostDto updatePostDto)
     {
-        var existingPost = await _postRepository.GetByIdAsync(id, "Author");
+        var existingPost = await _postRepository.GetByIdAsync(id, "Author,PostCategory");
         if (existingPost == null)
         {
             throw new ValidationException($"Post with ID {id} does not exist.");
         }
-        
+
         _mapper.Map(updatePostDto, existingPost);
-        
+
+        if (existingPost.PostCategory != null && existingPost.PostCategory.Any())
+        {
+            await _mediator.Send(new RemoveRangePostCategoryCommand(existingPost.PostCategory));
+        }
+            
+        var existingCategories = await _categoryRepository.GetCategoriesByNamesAsync(updatePostDto.CategoryNames);
+
+        var categoryNames = updatePostDto.CategoryNames ?? Enumerable.Empty<string>();
+        var invalidCategoryNames = categoryNames
+            .Where(name => !existingCategories.Any(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+
+        if (invalidCategoryNames.Any())
+        {
+            throw new Exception($"The following categories do not exist: {string.Join(", ", invalidCategoryNames)}");
+        }
+
+        await _mediator.Send(new AddRangePostCategoryCommand(existingPost, existingCategories));
+
         await _mediator.Send(new UpdatePostCommand(existingPost));
-        
+
         var responsePost = _mapper.Map<GetPostDto>(existingPost);
         return responsePost;
     }
+
     
     public async Task<string> DeletePostAsync(Guid postId)
     {
