@@ -27,6 +27,7 @@ public class PostMappingProfile : Profile
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow)) 
             .ForMember(dest => dest.Author, opt => opt.Ignore())
             .ForMember(dest => dest.Title, opt => opt.Condition(src => src.Title != null)) 
-            .ForMember(dest => dest.Content, opt => opt.Condition(src => src.Content != null)); 
+            .ForMember(dest => dest.Content, opt => opt.Condition(src => src.Content != null))
+            .ForMember(dest => dest.PostCategory, opt => opt.Ignore()); 
     }
 }
