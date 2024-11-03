@@ -23,6 +23,6 @@ public class Post : Base
     public virtual User Author { get; set; }
 
     public virtual ICollection<PostCategory> PostCategory { get; set; }
-    //public virtual ICollection<Comment> Comments { get; set; }
+    public virtual ICollection<Comment> Comments { get; set; }
 
 }
