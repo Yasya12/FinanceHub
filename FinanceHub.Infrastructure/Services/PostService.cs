@@ -142,7 +142,7 @@ public class PostService : IPostService
         var post = await _postRepository.GetByIdAsync(postId);
         if (post == null)
         {
-            throw new Exception("Profile not found.");
+            throw new Exception("Post not found.");
         }
 
         return await _mediator.Send(new DeletePostCommand(postId));
