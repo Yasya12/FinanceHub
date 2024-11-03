@@ -1,5 +1,6 @@
 using FinanceGub.Application.DTOs.Post;
 using FinanceGub.Application.Interfaces.Serviсes;
+using FinanceHub.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +18,10 @@ public class PostController : BaseController
     }
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GetPostDto>>> GetAllPost()
+    public async Task<ActionResult<PaginatedResult<GetPostDto>>> GetAllPost(int pageNumber = 1, int pageSize = 10)
     {
-        var postDtos = await _postService.GetAllPostAsync();
-        return Ok(postDtos); 
+        var paginatedPosts = await _postService.GetPostsPaginatedAsync(pageNumber, pageSize);
+        return Ok(paginatedPosts); 
     }
 
     [HttpGet("{id:guid}")]
