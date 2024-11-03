@@ -32,13 +32,27 @@ public class PostService : IPostService
         _mediator = mediator;
     }
     
-    public async Task<IEnumerable<GetPostDto>> GetAllPostAsync()
+    public async Task<PaginatedResult<GetPostDto>> GetPostsPaginatedAsync(int pageNumber, int pageSize)
     {
         var posts = await _mediator.Send(new GetAllPostQuery("Author,PostCategory,PostCategory.Category"));
+ 
+        var postList = posts.ToList();
 
-        var postDtos = _mapper.Map<IEnumerable<GetPostDto>>(posts);
+        var pagedPosts = postList
+            .OrderByDescending(post => post.CreatedAt)
+            .Skip((pageNumber - 1) * pageSize) 
+            .Take(pageSize) 
+            .ToList();
 
-        return postDtos;
+        var postDtos = _mapper.Map<IEnumerable<GetPostDto>>(pagedPosts);
+        
+        return new PaginatedResult<GetPostDto>
+        {
+            Items = postDtos,
+            TotalCount = postList.Count, 
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
     
     public async Task<GetPostDto> GetPostAsync(Guid id)

@@ -1,10 +1,11 @@
 using FinanceGub.Application.DTOs.Post;
+using FinanceHub.Core.Entities;
 
 namespace FinanceGub.Application.Interfaces.Serviсes;
 
 public interface IPostService
 {
-    Task<IEnumerable<GetPostDto>> GetAllPostAsync();
+    Task<PaginatedResult<GetPostDto>> GetPostsPaginatedAsync(int pageNumber, int pageSize);
     Task<GetPostDto> GetPostAsync(Guid id);
     Task<GetPostDto> CreatePostAsync(CreatePostDto createProfileDto);
     Task<GetPostDto> UpdatePostAsync(Guid id, UpdatePostDto updatePostDto);
