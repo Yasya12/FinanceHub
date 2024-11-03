@@ -2,9 +2,9 @@ using FinanceGub.Application.Interfaces.Repositories;
 using FinanceHub.Core.Exceptions;
 using MediatR;
 
-namespace FinanceGub.Application.Features.CommentFeatures.Command.DeleteCommentCommand;
+namespace FinanceGub.Application.Features.CommentFeatures.Commands.DeleteCommentCommand;
 
-public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand, string>
+public class DeleteCommentCommandHandler : IRequestHandler<Commands.DeleteCommentCommand.DeleteCommentCommand, string>
 {
     private readonly ICommentRepository _commentRepository;
 
@@ -13,7 +13,7 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand,
         _commentRepository = commentRepository;
     }
     
-    public async Task<string> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(Commands.DeleteCommentCommand.DeleteCommentCommand request, CancellationToken cancellationToken)
     {
         var comment = await _commentRepository.GetByIdAsync(request.Id);
 

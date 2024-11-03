@@ -3,9 +3,9 @@ using FinanceHub.Core.Entities;
 using FinanceHub.Core.Exceptions;
 using MediatR;
 
-namespace FinanceGub.Application.Features.CommentFeatures.Command.UpdateCommentCommand;
+namespace FinanceGub.Application.Features.CommentFeatures.Commands.UpdateCommentCommand;
 
-public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, Comment>
+public class UpdateCommentCommandHandler : IRequestHandler<Commands.UpdateCommentCommand.UpdateCommentCommand, Comment>
 {
     private readonly ICommentRepository _commentRepository;
 
@@ -14,7 +14,7 @@ public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand,
         _commentRepository = commentRepository;
     }
     
-    public async Task<Comment> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
+    public async Task<Comment> Handle(Commands.UpdateCommentCommand.UpdateCommentCommand request, CancellationToken cancellationToken)
     {
         var comment = await _commentRepository.GetByIdAsync(request.Comment.Id);
 
