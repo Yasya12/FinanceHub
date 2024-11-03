@@ -10,6 +10,7 @@ public class FinHubDbContext : DbContext
     public DbSet<Post> Posts { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<PostCategory> PostCategories { get; set; }
+    public DbSet<Comment> Comments { get; set; }
     public FinHubDbContext(DbContextOptions<FinHubDbContext> options):base(options) {}
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -18,6 +18,11 @@ public static class ModelBuilderExtensions
         var category1Id = Guid.NewGuid();
         var category2Id = Guid.NewGuid();
         var category3Id = Guid.NewGuid();
+        // Define fixed Guids for comments
+        var comment1Id = Guid.NewGuid();
+        var comment2Id = Guid.NewGuid();
+        var comment3Id = Guid.NewGuid();
+
         
         // Seed data for Users
         modelBuilder.Entity<User>().HasData(
@@ -84,6 +89,7 @@ public static class ModelBuilderExtensions
                 UpdatedAt = DateTime.UtcNow.AddDays(-2)
             });
         
+        //Seed data for Category
         modelBuilder.Entity<Category>().HasData(
             new Category
             {
@@ -105,6 +111,7 @@ public static class ModelBuilderExtensions
             }
         );
         
+        //Seed data for PostCategory
         modelBuilder.Entity<PostCategory>().HasData(
             new PostCategory
             {
@@ -126,5 +133,36 @@ public static class ModelBuilderExtensions
                 PostId = post2Id,
                 CategoryId = category3Id
             });
+        
+        // Seed data for Comments
+        modelBuilder.Entity<Comment>().HasData(
+            new Comment
+            {
+                Id = comment1Id,
+                PostId = post1Id, 
+                AuthorId = user1Id, 
+                Content = "Great introduction! Looking forward to learning more.",
+                CreatedAt = DateTime.UtcNow.AddDays(-5),
+                IsModified = false
+            },
+            new Comment
+            {
+                Id = comment2Id,
+                PostId = post1Id, 
+                AuthorId = user2Id, 
+                Content = "Interesting perspective on finance.",
+                CreatedAt = DateTime.UtcNow.AddDays(-4),
+                IsModified = false
+            },
+            new Comment
+            {
+                Id = comment3Id,
+                PostId = post2Id, 
+                AuthorId = user1Id,
+                Content = "I found this article very helpful!",
+                CreatedAt = DateTime.UtcNow.AddDays(-3),
+                IsModified = false
+            }
+        );
     }
 }
