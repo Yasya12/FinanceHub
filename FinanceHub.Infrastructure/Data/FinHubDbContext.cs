@@ -20,7 +20,6 @@ public class FinHubDbContext : DbContext
             .Property(u => u.Role)
             .HasDefaultValue(FinanceGub.Application.Identity.IdentityData.UserUserClaimName); 
         
-        
         modelBuilder.Entity<PostCategory>()
             .HasKey(pc => new { pc.PostId, pc.CategoryId });
 
@@ -33,6 +32,16 @@ public class FinHubDbContext : DbContext
             .HasOne(pc => pc.Category)
             .WithMany(c => c.PostCategory)
             .HasForeignKey(pc => pc.CategoryId);
+        
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.Author)
+            .WithMany() 
+            .HasForeignKey(c => c.AuthorId);
+
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.Post)
+            .WithMany(p => p.Comments) 
+            .HasForeignKey(c => c.PostId);
 
         modelBuilder.Seed();
     }
