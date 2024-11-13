@@ -1,6 +1,42 @@
-﻿services:
+﻿version: '3.8'
+
+services:
   financehub:
-    image: financehub
     build:
-      context: .
-      dockerfile: FinanceHub/Dockerfile
+      context: .  # Вказує на корінь проекту
+      dockerfile: FinanceHub.API/Dockerfile  # Шлях до Dockerfile
+    ports:
+      - "8080:8080"  # Мапуємо порт 8080 контейнера на порт 8080 хосту
+    volumes:
+      - ~/.azure:/root/.azure  # Монтируемо Azure конфігураційні файли
+    environment:
+      - NODE_ENV=production  # Змінна середовища для додатку
+      - PORT=8080  # Встановлюємо порт додатку в контейнері
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}  # Підключаємо змінні середовища для Azure
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+    networks:
+      - app-network
+        
+        
+  db:
+    image: postgres:latest
+    container_name: finhub-db1
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+    app-network:
+      driver: bridge
+
+volumes:
+    data-protection-keys:
+    postgres-data:
