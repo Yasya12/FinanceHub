@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connectionString, jwtIssuerSecret, jwtAudienceSecret, jwtKeySecret, blobStorageConnectionString, containerName;
+string connectionString, jwtIssuerSecret, jwtAudienceSecret, jwtKeySecret, blobStorageConnectionString, containerName, googleClientId, googleClientSecret;
 
 try
 {
@@ -26,6 +26,8 @@ try
     jwtIssuerSecret = (await client.GetSecretAsync("JwtIssuer")).Value.Value;
     jwtAudienceSecret = (await client.GetSecretAsync("JwtAudience")).Value.Value;
     jwtKeySecret = (await client.GetSecretAsync("JwtKey")).Value.Value;
+    googleClientId = (await client.GetSecretAsync("GoogleClientId")).Value.Value;
+    googleClientSecret = (await client.GetSecretAsync("GoogleClientSecret")).Value.Value;
     //pictures
     blobStorageConnectionString = (await client.GetSecretAsync("AzureBlobStorageConnectionString")).Value.Value;
     containerName = (await client.GetSecretAsync("ProfilePicturesContainer")).Value.Value;
@@ -38,11 +40,18 @@ try
     builder.Configuration["JwtAudience"] = jwtAudienceSecret;
     builder.Configuration["AzureBlobStorageConnectionString"] = blobStorageConnectionString;
     builder.Configuration["ProfilePicturesContainer"] = containerName;
+    builder.Configuration["GoogleClientId"] = googleClientId;
+    builder.Configuration["GoogleClientSecret"] = googleClientSecret;
 }
 catch (Exception ex)
 {
     Console.WriteLine($"Error retrieving secrets from Key Vault: {ex.Message}");
     throw; 
+}
+
+if (builder.Environment.IsDevelopment())
+{
+    connectionString = "Host=localhost;Port=5432;Database=finhub;Username=finhub;Password=finhub";
 }
 
 builder.Services.AddDbContext<FinHubDbContext>(options =>
@@ -68,6 +77,15 @@ builder.Services.AddAuthentication(x =>
         };
     });
 
+// Налаштування аутентифікації через Google
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+        options.CallbackPath = "/user";
+    });
+
 builder.Services.AddAuthorization(options => {
     options.AddPolicy(IdentityData.AdminUserPolicyName, p =>
         p.RequireClaim(IdentityData.AdminUserClaimName, "true"));
@@ -84,6 +102,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -92,7 +112,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

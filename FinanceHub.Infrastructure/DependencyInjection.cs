@@ -12,6 +12,17 @@ public static class DependencyInjection
 {
     public static void AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
+        serviceCollection.AddCors(opt =>
+        {
+            opt.AddPolicy("CorsPolicy",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
+        
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
         serviceCollection.AddScoped<IProfileRepository, ProfileRepository>();
         serviceCollection.AddScoped<IPostRepository, PostRepository>();
