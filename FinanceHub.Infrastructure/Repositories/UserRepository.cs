@@ -21,5 +21,16 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             throw new RepositoryException("An error occurred while trying to retrieve the user by email.", ex);
         }
     }
-
+    
+    public async Task<User> GetByGoogleIdAsync(string googleId)
+    {
+        try
+        {
+            return await _dbSet.FirstOrDefaultAsync(u => u.GoogleId == googleId);
+        }
+        catch (RepositoryException ex)
+        {
+            throw new RepositoryException("An error occurred while trying to retrieve the user by Google ID.", ex);
+        }
+    }
 }
