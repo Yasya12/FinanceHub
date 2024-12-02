@@ -3,6 +3,7 @@ using System;
 using FinanceHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceHub.Infrastructure.Migrations
 {
     [DbContext(typeof(FinHubDbContext))]
-    partial class FinHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241202213549_AddUpdatePaswordUser")]
+    partial class AddUpdatePaswordUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,19 +48,19 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("8ac31ba7-8a58-4692-ae0a-cf02d6743574"),
+                            Id = new Guid("e29af721-d028-41c3-8d38-84e6527b4dee"),
                             Description = "Posts related to the latest technology trends",
                             Name = "Technology"
                         },
                         new
                         {
-                            Id = new Guid("e25175a8-f9e9-41bc-864a-5eeea13c5860"),
+                            Id = new Guid("774c66ff-c56b-4bca-aa33-4ab870b69c4c"),
                             Description = "Health tips and news",
                             Name = "Health"
                         },
                         new
                         {
-                            Id = new Guid("29ecf203-8066-4efd-a810-8cd9d2c68d5b"),
+                            Id = new Guid("8eae2d60-414a-4c70-a644-0920606919de"),
                             Description = "Educational articles and resources",
                             Name = "Education"
                         });
@@ -96,30 +99,30 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5e81fbc7-fd97-458d-95e0-87401a32879a"),
-                            AuthorId = new Guid("02b849df-5183-4e7d-bae4-03b27dc99a27"),
+                            Id = new Guid("d228ea83-93e5-4be3-a551-2aefb2f5de45"),
+                            AuthorId = new Guid("cc3e5bdb-8f05-436d-b52d-6ea1c1a671b3"),
                             Content = "Great introduction! Looking forward to learning more.",
-                            CreatedAt = new DateTime(2024, 11, 27, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6518),
+                            CreatedAt = new DateTime(2024, 11, 27, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(5011),
                             IsModified = false,
-                            PostId = new Guid("d54fea16-b1af-4dcf-8ab9-6172f80769fe")
+                            PostId = new Guid("131909b1-e68e-4406-b869-56bab3aa19ea")
                         },
                         new
                         {
-                            Id = new Guid("c44b8658-6757-40f3-87e4-184d3fbd572b"),
-                            AuthorId = new Guid("e4726877-6f39-40ac-b501-6b99ccf4075c"),
+                            Id = new Guid("b2ea5cdc-8f8c-4228-9aa8-d5e4a73c1e9f"),
+                            AuthorId = new Guid("8f80892e-ca32-4f1b-a8cd-22871d9dc17c"),
                             Content = "Interesting perspective on finance.",
-                            CreatedAt = new DateTime(2024, 11, 28, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6521),
+                            CreatedAt = new DateTime(2024, 11, 28, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(5015),
                             IsModified = false,
-                            PostId = new Guid("d54fea16-b1af-4dcf-8ab9-6172f80769fe")
+                            PostId = new Guid("131909b1-e68e-4406-b869-56bab3aa19ea")
                         },
                         new
                         {
-                            Id = new Guid("32689cf2-a423-41c9-8340-d0e4a05a8414"),
-                            AuthorId = new Guid("02b849df-5183-4e7d-bae4-03b27dc99a27"),
+                            Id = new Guid("2102a8fb-05ac-4682-a1f7-4cfe27a26c8d"),
+                            AuthorId = new Guid("cc3e5bdb-8f05-436d-b52d-6ea1c1a671b3"),
                             Content = "I found this article very helpful!",
-                            CreatedAt = new DateTime(2024, 11, 29, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6524),
+                            CreatedAt = new DateTime(2024, 11, 29, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(5018),
                             IsModified = false,
-                            PostId = new Guid("9987e0b5-c220-4e3f-9a0e-6b9354326e3d")
+                            PostId = new Guid("419e9abc-c1a6-4906-bdb9-248930e91310")
                         });
                 });
 
@@ -156,21 +159,21 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d54fea16-b1af-4dcf-8ab9-6172f80769fe"),
-                            AuthorId = new Guid("02b849df-5183-4e7d-bae4-03b27dc99a27"),
+                            Id = new Guid("131909b1-e68e-4406-b869-56bab3aa19ea"),
+                            AuthorId = new Guid("cc3e5bdb-8f05-436d-b52d-6ea1c1a671b3"),
                             Content = "This is an introductory post about finance.",
-                            CreatedAt = new DateTime(2024, 11, 22, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6326),
+                            CreatedAt = new DateTime(2024, 11, 22, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4790),
                             Title = "Introduction to Finance",
-                            UpdatedAt = new DateTime(2024, 11, 27, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6340)
+                            UpdatedAt = new DateTime(2024, 11, 27, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4803)
                         },
                         new
                         {
-                            Id = new Guid("9987e0b5-c220-4e3f-9a0e-6b9354326e3d"),
-                            AuthorId = new Guid("e4726877-6f39-40ac-b501-6b99ccf4075c"),
+                            Id = new Guid("419e9abc-c1a6-4906-bdb9-248930e91310"),
+                            AuthorId = new Guid("8f80892e-ca32-4f1b-a8cd-22871d9dc17c"),
                             Content = "Exploring advanced strategies in finance.",
-                            CreatedAt = new DateTime(2024, 11, 12, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6343),
+                            CreatedAt = new DateTime(2024, 11, 12, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4806),
                             Title = "Advanced Financial Strategies",
-                            UpdatedAt = new DateTime(2024, 11, 30, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6344)
+                            UpdatedAt = new DateTime(2024, 11, 30, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4808)
                         });
                 });
 
@@ -191,23 +194,23 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            PostId = new Guid("d54fea16-b1af-4dcf-8ab9-6172f80769fe"),
-                            CategoryId = new Guid("8ac31ba7-8a58-4692-ae0a-cf02d6743574")
+                            PostId = new Guid("131909b1-e68e-4406-b869-56bab3aa19ea"),
+                            CategoryId = new Guid("e29af721-d028-41c3-8d38-84e6527b4dee")
                         },
                         new
                         {
-                            PostId = new Guid("d54fea16-b1af-4dcf-8ab9-6172f80769fe"),
-                            CategoryId = new Guid("29ecf203-8066-4efd-a810-8cd9d2c68d5b")
+                            PostId = new Guid("131909b1-e68e-4406-b869-56bab3aa19ea"),
+                            CategoryId = new Guid("8eae2d60-414a-4c70-a644-0920606919de")
                         },
                         new
                         {
-                            PostId = new Guid("9987e0b5-c220-4e3f-9a0e-6b9354326e3d"),
-                            CategoryId = new Guid("e25175a8-f9e9-41bc-864a-5eeea13c5860")
+                            PostId = new Guid("419e9abc-c1a6-4906-bdb9-248930e91310"),
+                            CategoryId = new Guid("774c66ff-c56b-4bca-aa33-4ab870b69c4c")
                         },
                         new
                         {
-                            PostId = new Guid("9987e0b5-c220-4e3f-9a0e-6b9354326e3d"),
-                            CategoryId = new Guid("29ecf203-8066-4efd-a810-8cd9d2c68d5b")
+                            PostId = new Guid("419e9abc-c1a6-4906-bdb9-248930e91310"),
+                            CategoryId = new Guid("8eae2d60-414a-4c70-a644-0920606919de")
                         });
                 });
 
@@ -254,23 +257,23 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e44c3a89-380b-4d3c-a2de-3fe88c8b1196"),
+                            Id = new Guid("d6d475a8-17ed-4dfe-8a74-00ef8ed66d9c"),
                             Country = "USA",
-                            CreatedAt = new DateTime(2024, 12, 2, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6235),
+                            CreatedAt = new DateTime(2024, 12, 2, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4664),
                             DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             PhoneNumber = "+1234567890",
-                            UpdatedAt = new DateTime(2024, 12, 2, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6241),
-                            UserId = new Guid("02b849df-5183-4e7d-bae4-03b27dc99a27")
+                            UpdatedAt = new DateTime(2024, 12, 2, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4671),
+                            UserId = new Guid("cc3e5bdb-8f05-436d-b52d-6ea1c1a671b3")
                         },
                         new
                         {
-                            Id = new Guid("9558b8ca-1bc0-4c8d-be21-838885c5f275"),
+                            Id = new Guid("f06c1cf3-0e06-4546-a655-dede99eb8728"),
                             Country = "Canada",
-                            CreatedAt = new DateTime(2024, 12, 2, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6249),
+                            CreatedAt = new DateTime(2024, 12, 2, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4680),
                             DateOfBirth = new DateTime(2000, 10, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             PhoneNumber = "+9876543210",
-                            UpdatedAt = new DateTime(2024, 12, 2, 21, 50, 14, 822, DateTimeKind.Utc).AddTicks(6252),
-                            UserId = new Guid("e4726877-6f39-40ac-b501-6b99ccf4075c")
+                            UpdatedAt = new DateTime(2024, 12, 2, 21, 35, 46, 870, DateTimeKind.Utc).AddTicks(4681),
+                            UserId = new Guid("8f80892e-ca32-4f1b-a8cd-22871d9dc17c")
                         });
                 });
 
@@ -288,6 +291,7 @@ namespace FinanceHub.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
@@ -308,17 +312,17 @@ namespace FinanceHub.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("02b849df-5183-4e7d-bae4-03b27dc99a27"),
+                            Id = new Guid("cc3e5bdb-8f05-436d-b52d-6ea1c1a671b3"),
                             Email = "johndoe@example.com",
-                            PasswordHash = "$2a$11$1OgqRLlP414t//YYHJEl1u7Y82rX.PKbWUKIZ5Zi1pkXgE3O26jGm",
+                            PasswordHash = "$2a$11$LGHvkTHCijEYsZupfrxwiO.PDz/WEfD6sBuc3dNDnlpQpX38HKYJu",
                             Role = "User",
                             Username = "johndoe"
                         },
                         new
                         {
-                            Id = new Guid("e4726877-6f39-40ac-b501-6b99ccf4075c"),
+                            Id = new Guid("8f80892e-ca32-4f1b-a8cd-22871d9dc17c"),
                             Email = "admin@example.com",
-                            PasswordHash = "$2a$11$vx76nutefJewLkSLttyhtujYrsyCahjJef9SbIc4ksoios6hKCofS",
+                            PasswordHash = "$2a$11$tZwdxvnzU0HM0j/WeVuQk.oJeUTZGRHJih9Knp0YcHsWblc5k/RfO",
                             Role = "Admin",
                             Username = "admin"
                         });
