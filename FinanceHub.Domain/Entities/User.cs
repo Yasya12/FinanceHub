@@ -14,9 +14,12 @@ public class User : Base
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
     public string Email { get; set; }
     
-    [Required]
-    public string PasswordHash { get; set; }
+    //[Required]
+    //becayse with google there are no passsword, but i have dto for creating + front and it will chech for password without google
+    public string? PasswordHash { get; set; }
     public string Role { get; set; }
+    
+    public string? GoogleId { get; set; }
     [JsonIgnore]
     public virtual Profile? Profile { get; set; }
     //public virtual ICollection<Post> Posts { get; set; }
