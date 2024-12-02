@@ -1,13 +1,19 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.User;
+using FinanceGub.Application.Features.ProfileFeatures.Commands.CreateProfileCommand;
 using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
+using FinanceGub.Application.Features.ProfileFeatures.Queries.GetByUserIdProfileQuery;
+using FinanceGub.Application.Features.UserFeatures.Commands.CreateUserCommand;
 using FinanceGub.Application.Features.UserFeatures.Commands.UpdateUserCommand;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetAllUserQuery;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByGoogleIdUserQuery;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetUserQuery;
-using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using FinanceHub.Core.Exceptions;
 using FinanceHub.Infrastructure.Helpers;
+using Google.Apis.Auth;
 using MediatR;
 using Profile = FinanceHub.Core.Entities.Profile;
 
@@ -15,23 +21,19 @@ namespace FinanceHub.Infrastructure.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IProfileRepository _profileRepository;
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository, IProfileRepository profileRepository, IMediator mediator ,IMapper mapper)
+    public UserService(IMediator mediator ,IMapper mapper)
     {
-        _userRepository = userRepository;
-        _profileRepository = profileRepository;
         _mediator = mediator;
         _mapper = mapper;
     }
     
     public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
     {
-        var users = await _userRepository.GetAllAsync();
-
+        var users = _mediator.Send(new GetAllUserQuery());
+        
         var userDtos = _mapper.Map<IEnumerable<GetUserDto>>(users);
 
         return userDtos;
@@ -50,21 +52,20 @@ public class UserService : IUserService
     {
         try
         {
-            var existingUser = await _userRepository.GetByEmailAsync(createUserDto.Email);
+            var existingUser = await _mediator.Send(new GetByEmailUserQuery(createUserDto.Email));
             if (existingUser != null)
             {
                 throw new ValidationException($"User with email {createUserDto.Email} already exists.");
             }
             
             var user = _mapper.Map<User>(createUserDto);
-            await _userRepository.AddAsync(user);
+            await _mediator.Send(new CreateUserCommand(user));
 
             var profile = _mapper.Map<Profile>(createUserDto);
             profile.UserId = user.Id;
             profile.DateOfBirth = DateTime.SpecifyKind(createUserDto.DateOfBirth, DateTimeKind.Utc);
-            
-            await _profileRepository.AddAsync(profile);
 
+            await _mediator.Send(new CreateProfileCommand(profile));
             return createUserDto;
         }
         catch (RepositoryException ex)
@@ -79,7 +80,7 @@ public class UserService : IUserService
     
     public async Task<User> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
     {
-        var existingUser = await _userRepository.GetByIdAsync(id);
+        var existingUser = await _mediator.Send(new GetUserQuery(id));
         if (existingUser == null)
         {
             throw new ValidationException($"User with ID {id} does not exist.");
@@ -87,7 +88,7 @@ public class UserService : IUserService
 
         if (existingUser.Email != updateUserDto.Email)
         {
-            var emailCheckUser = await _userRepository.GetByEmailAsync(updateUserDto.Email);
+            var emailCheckUser = await _mediator.Send(new GetByEmailUserQuery(updateUserDto.Email));
             if (emailCheckUser != null)
             {
                 throw new ValidationException($"Email {updateUserDto.Email} is already taken.");
@@ -97,7 +98,7 @@ public class UserService : IUserService
         _mapper.Map(updateUserDto, existingUser);
         await _mediator.Send(new UpdateUserCommand(existingUser));
 
-        var existingProfile = await _profileRepository.GetByUserIdAsync(id);
+        var existingProfile = await _mediator.Send(new GetByUserIdProfileQuery(id));
         if (existingProfile == null)
         {
             throw new ValidationException($"Profile for user with ID {id} does not exist."); 
@@ -112,7 +113,7 @@ public class UserService : IUserService
     
     public async Task<User> GetUserByCredentialsAsync(string userEmail, string password)
     {
-        var user = await _userRepository.GetByEmailAsync(userEmail);
+        var user = await _mediator.Send(new GetByEmailUserQuery(userEmail));
         if (user == null)
         {
             return null; 
@@ -126,5 +127,31 @@ public class UserService : IUserService
 
         return user;
     }
+    
+    public async Task<User> GetUserByGoogleIdAsync(string googleId)
+    {
+        return await _mediator.Send(new GetByGoogleIdUserQuery(googleId));
+    }
+    
+    public async Task<User> CreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload)
+    {
+        var username = $"{payload.GivenName}{payload.FamilyName}"; 
+        username = username.ToLower().Replace(" ", ""); 
 
+        if (username.Length > 20)
+        {
+            username = username.Substring(0, 20); 
+        }
+        
+        var newUser = new User
+        {
+            GoogleId = payload.Subject,  
+            Username = username,   
+            Email = payload.Email,       
+            Role = "User"   // це вирішити через посилання між шарами             
+        };
+
+        await _mediator.Send(new CreateUserCommand(newUser));
+        return newUser;
+    }
 }
