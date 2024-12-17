@@ -1,6 +1,8 @@
+using FinanceGub.Application.DTOs.Comment;
+
 namespace FinanceGub.Application.DTOs.Post;
 
-public class GetPostDto
+public class GetSinglePostDto
 {
     public Guid Id { get; set; }
     public string UserName { get; set; }
@@ -9,6 +11,6 @@ public class GetPostDto
     public string Title { get; set; }
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }   
-    public int CommentsCount { get; set; } 
+    public IEnumerable<GetCommentDto> Comments { get; set; }
     public int LikesCount { get; set; }
 }
