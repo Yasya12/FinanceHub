@@ -6,7 +6,7 @@ namespace FinanceGub.Application.Interfaces.Serviсes;
 public interface IPostService
 {
     Task<PaginatedResult<GetPostDto>> GetPostsPaginatedAsync(int pageNumber, int pageSize);
-    Task<GetPostDto> GetPostAsync(Guid id);
+    Task<GetSinglePostDto> GetPostAsync(Guid id);
     Task<GetPostDto> CreatePostAsync(CreatePostDto createPostDto);
     Task<GetPostDto> UpdatePostAsync(Guid id, UpdatePostDto updatePostDto);
     Task<string> DeletePostAsync(Guid postId);

@@ -77,7 +77,6 @@ public class CommentService : ICommentService
         await _mediator.Send(new CreateCommentCommand(comment));
         
         var responseComment =  _mapper.Map<GetCommentDto>(comment);
-        responseComment.PostTitle = post.Title;
         responseComment.AuthorName = user.Username;
         
         return responseComment;
@@ -98,7 +97,6 @@ public class CommentService : ICommentService
         var responseComment =  _mapper.Map<GetCommentDto>(existingComment);
         var post = await _mediator.Send(new GetPostQuery(existingComment.PostId));
         var user = await _mediator.Send(new GetUserQuery(existingComment.AuthorId));
-        responseComment.PostTitle = post.Title;;
         responseComment.AuthorName = user.Username;
         
         return responseComment;

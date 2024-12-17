@@ -34,7 +34,7 @@ public class PostService : IPostService
     
     public async Task<PaginatedResult<GetPostDto>> GetPostsPaginatedAsync(int pageNumber, int pageSize)
     {
-        var posts = await _mediator.Send(new GetAllPostQuery("Author,PostCategory,PostCategory.Category"));
+        var posts = await _mediator.Send(new GetAllPostQuery("Author,Author.Profile,PostCategory,PostCategory.Category,Comments,Likes"));
  
         var postList = posts.ToList();
 
@@ -55,11 +55,11 @@ public class PostService : IPostService
         };
     }
     
-    public async Task<GetPostDto> GetPostAsync(Guid id)
+    public async Task<GetSinglePostDto> GetPostAsync(Guid id)
     {
-        var posts = await _mediator.Send(new GetPostQuery(id, "Author,PostCategory,PostCategory.Category"));
+        var posts = await _mediator.Send(new GetPostQuery(id, "Author,Author.Profile,PostCategory.Category,Comments,Likes"));
         
-        var postDtos = _mapper.Map<GetPostDto>(posts);
+        var postDtos = _mapper.Map<GetSinglePostDto>(posts);
         
         return postDtos; 
     }
