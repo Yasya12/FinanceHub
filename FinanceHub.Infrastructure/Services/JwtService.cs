@@ -20,7 +20,7 @@ public class JwtService : IJwtService
         _configuration = configuration;
         _logger = logger;
     }
-
+    
     public string GenerateToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();

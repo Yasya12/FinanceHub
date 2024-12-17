@@ -32,7 +32,7 @@ public class UserService : IUserService
     
     public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
     {
-        var users = _mediator.Send(new GetAllUserQuery());
+        var users = await _mediator.Send(new GetAllUserQuery());
         
         var userDtos = _mapper.Map<IEnumerable<GetUserDto>>(users);
 
