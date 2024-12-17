@@ -1,3 +1,4 @@
+using FinanceGub.Application.DTOs.Comment;
 using FinanceGub.Application.DTOs.Post;
 using FinanceHub.Core.Entities;
 using Profile = AutoMapper.Profile;
@@ -10,9 +11,24 @@ public class PostMappingProfile : Profile
     {
         CreateMap<Post, GetPostDto>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.Username))
+            .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.Profile.ProfilePictureUrl))
             .ForMember(dest => dest.CategoryNames, opt => opt.MapFrom(src => src.PostCategory.Select(pc => pc.Category.Name)))
+            .ForMember(dest => dest.CommentsCount, opt => opt.MapFrom(src => src.Comments.Count)) // Мапінг тільки текстів коментарів
+            .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count)) // Лише кількість лайків
             .ReverseMap();
-            
+
+        CreateMap<Post, GetSinglePostDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.Username))
+            .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.Profile.ProfilePictureUrl))
+            .ForMember(dest => dest.CategoryNames, opt => opt.MapFrom(src => src.PostCategory.Select(pc => pc.Category.Name)))
+            .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
+            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
+
+
         CreateMap<CreatePostDto, Post>()
             .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow)) 
