@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace FinanceHub.Core.Entities;
 
 public class Comment : Base
@@ -7,7 +9,9 @@ public class Comment : Base
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsModified { get; set; }
+    [JsonIgnore]
     public virtual Post Post { get; set; }
+    [JsonIgnore]
     public virtual User Author { get; set; }
 
 }
