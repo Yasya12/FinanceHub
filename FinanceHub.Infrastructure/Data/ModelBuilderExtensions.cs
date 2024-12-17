@@ -77,7 +77,7 @@ public static class ModelBuilderExtensions
                 Title = "Introduction to Finance",
                 Content = "This is an introductory post about finance.",
                 CreatedAt = DateTime.UtcNow.AddDays(-10),
-                UpdatedAt = DateTime.UtcNow.AddDays(-5)
+                UpdatedAt = DateTime.UtcNow.AddDays(-5),
             },
             new Post
             {
@@ -162,6 +162,27 @@ public static class ModelBuilderExtensions
                 Content = "I found this article very helpful!",
                 CreatedAt = DateTime.UtcNow.AddDays(-3),
                 IsModified = false
+            }
+        );
+        
+        modelBuilder.Entity<Like>().HasData(
+            new Like
+            {
+                Id = Guid.NewGuid(),
+                UserId = user1Id, 
+                PostId = post1Id
+            },
+            new Like
+            {
+                Id = Guid.NewGuid(),
+                UserId = user2Id,
+                PostId = post1Id
+            },
+            new Like
+            {
+                Id = Guid.NewGuid(),
+                UserId = user1Id, 
+                PostId = post2Id
             }
         );
     }

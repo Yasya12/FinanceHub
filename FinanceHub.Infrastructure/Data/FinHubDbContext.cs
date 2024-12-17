@@ -11,6 +11,11 @@ public class FinHubDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<PostCategory> PostCategories { get; set; }
     public DbSet<Comment> Comments { get; set; }
+    public DbSet<Like> Likes { get; set; }
+    public DbSet<Chat> Chats { get; set; }
+    public DbSet<ChatParticipant> ChatParticipants { get; set; }
+    public DbSet<Message> Messages { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
     public FinHubDbContext(DbContextOptions<FinHubDbContext> options):base(options) {}
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
