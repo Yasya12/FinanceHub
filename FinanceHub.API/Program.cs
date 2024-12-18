@@ -100,6 +100,8 @@ builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.UseCors("CorsPolicy");
