@@ -56,4 +56,10 @@ public class LikeService : ILikeService
             Console.WriteLine($"Error sending like update: {ex.Message}");
         }
     }
+    
+    public async Task<bool> IsPostLikedAsync(Guid postId, Guid userId)
+    {
+        var existingLike = await _mediator.Send(new GetSingleLikeQuery(postId, userId));
+        return existingLike != null;  
+    }
 }

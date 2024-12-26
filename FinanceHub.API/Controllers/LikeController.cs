@@ -33,4 +33,21 @@ public class LikeController : ControllerBase
         var likeAdded = await _likeService.ToggleLikeAsync(postId, parsedUserId);
         return Ok(new { success = likeAdded });
     }
+    
+    [HttpGet("is-liked/{postId}")]
+    [Authorize]
+    public async Task<IActionResult> IsPostLiked(Guid postId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!Guid.TryParse(userId, out var parsedUserId))
+        {
+            return Unauthorized("User is not authenticated");
+        }
+
+        var isLiked = await _likeService.IsPostLikedAsync(postId, parsedUserId);
+        
+        return Ok(new { isLiked });
+    }
+
 }
