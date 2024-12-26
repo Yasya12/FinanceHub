@@ -1,5 +1,6 @@
 using FinanceGub.Application.Interfaces;
 using FinanceGub.Application.Interfaces.Serviсes;
+using FinanceHub.Core.Entities;
 using Google.Apis.Auth;
 
 namespace FinanceHub.Infrastructure.Services;
@@ -15,12 +16,13 @@ public class AuthService: IAuthService
         _jwtService = jwtService;
     }
 
-    public async Task<string> LoginAsync(string email, string password)
+    public async Task<(User user, string token)> LoginAsync(string email, string password)
     {
         var user = await _userService.GetUserByCredentialsAsync(email, password);
         if (user == null) throw new UnauthorizedAccessException("Invalid credentials");
 
-        return _jwtService.GenerateToken(user);
+        var token = _jwtService.GenerateToken(user);
+        return (user, token);
     }
 
     public async Task<string> GoogleLoginAsync(string googleToken)

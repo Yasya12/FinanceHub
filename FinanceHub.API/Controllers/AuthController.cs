@@ -1,7 +1,5 @@
 using FinanceGub.Application.DTOs.Authentication;
 using FinanceGub.Application.Interfaces;
-using FinanceGub.Application.Interfaces.Serviсes;
-using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceHub.Controllers;
@@ -24,8 +22,8 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var token = await _authService.LoginAsync(model.Email, model.Password);
-            return Ok(new {token });
+            var (user, token) = await _authService.LoginAsync(model.Email, model.Password);
+            return Ok(new { user, token });
         }
         catch (UnauthorizedAccessException ex)
         {
