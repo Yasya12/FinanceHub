@@ -16,6 +16,14 @@ public class CommentMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<UpdateCommentDto, Comment>()
-            .ForMember(dest => dest.IsModified, opt => opt.MapFrom(src => true)); 
+            .ForMember(dest => dest.IsModified, opt => opt.MapFrom(src => true));
+        
+        CreateMap<CreateCommentDto, Comment>()
+            .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
+            .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.ParentCommentId, opt => opt.MapFrom(src => src.ParentCommentId))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.IsModified, opt => opt.MapFrom(src => false));
     }
 }
