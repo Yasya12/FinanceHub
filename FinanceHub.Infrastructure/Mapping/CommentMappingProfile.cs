@@ -9,6 +9,7 @@ public class CommentMappingProfile : Profile
     public CommentMappingProfile()
     {
         CreateMap<Comment, GetCommentDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.Username))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.Profile.ProfilePictureUrl))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
