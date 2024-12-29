@@ -7,12 +7,10 @@ using FinanceGub.Application.Features.UserFeatures.Commands.CreateUserCommand;
 using FinanceGub.Application.Features.UserFeatures.Commands.UpdateUserCommand;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetAllUserQuery;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
-using FinanceGub.Application.Features.UserFeatures.Queries.GetByGoogleIdUserQuery;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetUserQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using FinanceHub.Core.Exceptions;
-using FinanceHub.Infrastructure.Helpers;
 using Google.Apis.Auth;
 using MediatR;
 using Profile = FinanceHub.Core.Entities.Profile;
@@ -109,28 +107,6 @@ public class UserService : IUserService
         await _mediator.Send(new UpdateProfileCommand(existingProfile));
 
         return existingUser;
-    }
-    
-    public async Task<User> GetUserByCredentialsAsync(string userEmail, string password)
-    {
-        var user = await _mediator.Send(new GetByEmailUserQuery(userEmail));
-        if (user == null)
-        {
-            return null; 
-        }
-
-        var result =  PasswordHasher.VerifyPassword(password, user.PasswordHash);
-        if (!result)
-        {
-            return null; 
-        }
-
-        return user;
-    }
-    
-    public async Task<User> GetUserByGoogleIdAsync(string googleId)
-    {
-        return await _mediator.Send(new GetByGoogleIdUserQuery(googleId));
     }
     
     public async Task<User> CreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload)

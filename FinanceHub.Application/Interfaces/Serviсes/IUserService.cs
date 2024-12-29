@@ -10,7 +10,5 @@ public interface IUserService
     Task<GetUserDto> GetUserAsync(Guid id);
     Task<CreateUserDto> CreateUserAsync(CreateUserDto createUserDto);
     Task<User> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto);
-    Task<User> GetUserByCredentialsAsync(string userName, string password);
-    Task<User> GetUserByGoogleIdAsync(string googleId);
     Task<User> CreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload);
 }
