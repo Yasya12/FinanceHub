@@ -8,14 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Features\UserFeatures\Commands\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\FinanceHub.Domain\FinanceHub.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
       <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
       <PackageReference Include="MediatR" Version="12.4.1" />
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
