@@ -33,11 +33,11 @@ public class CommentService : ICommentService
             throw new Exception("Post with the specified Id not found.");
         }
         
-        var allComments = await _mediator.Send(new GetAllCommentQuery("Post,Author"));
+        var allComments = await _mediator.Send(new GetAllCommentQuery("Post,Author,Author.Profile"));
 
         var commentList = allComments.ToList();
         
-        var comments = allComments
+        var comments = commentList  
             .Where(c => c.PostId == postId)
             .OrderByDescending(c => c.CreatedAt)
             .Skip(skip)
@@ -51,7 +51,7 @@ public class CommentService : ICommentService
 
     public async Task<GetCommentDto> GetCommentAsync(Guid id)
     {
-        var comments = await _mediator.Send(new GetCommentQuery(id, "Post,Author"));
+        var comments = await _mediator.Send(new GetCommentQuery(id, "Post,Author,Author.Profile"));
         
         var commentDtos = _mapper.Map<GetCommentDto>(comments);
         

@@ -47,6 +47,6 @@ public class CommentController : Controller
     public async Task<IActionResult> DeleteComment(Guid id)
     {
         var message = await _commentService.DeleteCommentAsync(id);
-        return Content(message); 
+        return NoContent();
     }
 }
