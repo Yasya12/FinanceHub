@@ -25,7 +25,7 @@ public class PostController : BaseController
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<GetPostDto>> GetPost(Guid id)
+    public async Task<ActionResult<GetSinglePostDto>> GetPost(Guid id)
     { 
         var postDtos = await _postService.GetPostAsync(id);
         return Ok(postDtos); 
