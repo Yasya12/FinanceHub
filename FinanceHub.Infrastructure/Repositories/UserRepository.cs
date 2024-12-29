@@ -10,17 +10,28 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 {
     public UserRepository(FinHubDbContext context) : base(context){ }
     
-    public async Task<User> GetByEmailAsync(string email)
+    public async Task<User> GetByEmailAsync(string email, string? includeProperties = null)
     {
         try
         {
-            return await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
+            var query = _dbSet.AsQueryable();
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var prop in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(prop);
+                }
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Email == email);
         }
         catch (RepositoryException ex)
         {
             throw new RepositoryException("An error occurred while trying to retrieve the user by email.", ex);
         }
     }
+
     
     public async Task<User> GetByGoogleIdAsync(string googleId)
     {
