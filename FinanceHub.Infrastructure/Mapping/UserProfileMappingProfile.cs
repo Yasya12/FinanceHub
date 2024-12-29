@@ -1,6 +1,6 @@
 using FinanceGub.Application.DTOs.User;
+using FinanceGub.Application.Helpers;
 using FinanceHub.Core.Entities;
-using FinanceHub.Infrastructure.Helpers;
 using Profile = AutoMapper.Profile;
 
 namespace FinanceHub.Infrastructure.Mapping;
