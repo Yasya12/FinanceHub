@@ -1,36 +1,44 @@
-using FinanceGub.Application.Interfaces;
+using AutoMapper;
+using FinanceGub.Application.DTOs.User;
+using FinanceGub.Application.Features.TokenFeatures.Commands.GenerateTokenCommand;
+using FinanceGub.Application.Features.UserFeatures.Commands.CreateUserFromGoogleCommand;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByGoogleIdUserQuery;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetUserByCredentialsQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
-using FinanceHub.Core.Entities;
 using Google.Apis.Auth;
+using MediatR;
 
 namespace FinanceHub.Infrastructure.Services;
 
 public class AuthService: IAuthService
 {
-    private readonly IUserService _userService;
-    private readonly IJwtService _jwtService;
+    private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public AuthService(IUserService userService, IJwtService jwtService)
+    public AuthService(IMediator mediator ,IMapper mapper)
     {
-        _userService = userService;
-        _jwtService = jwtService;
+        _mediator = mediator;
+        _mapper = mapper;
     }
 
-    public async Task<(User user, string token)> LoginAsync(string email, string password)
+    public async Task<(GetUserDto user, string token)> LoginAsync(string email, string password)
     {
-        var user = await _userService.GetUserByCredentialsAsync(email, password);
+        var user = await _mediator.Send(new GetUserByCredentialsQuery(email, password));
         if (user == null) throw new UnauthorizedAccessException("Invalid credentials");
 
-        var token = _jwtService.GenerateToken(user);
-        return (user, token);
+        var token = await _mediator.Send(new GenerateTokenCommand(user));
+        
+        var userDto = _mapper.Map<GetUserDto>(user);
+
+        return (userDto, token);
     }
 
     public async Task<string> GoogleLoginAsync(string googleToken)
     {
         var payload = await GoogleJsonWebSignature.ValidateAsync(googleToken);
-        var user = await _userService.GetUserByGoogleIdAsync(payload.Subject)
-                   ?? await _userService.CreateUserFromGoogleAsync(payload);
+        var user = await _mediator.Send(new GetByGoogleIdUserQuery(payload.Subject))
+                   ?? await _mediator.Send(new CreateUserFromGoogleCommand(payload));
 
-        return _jwtService.GenerateToken(user);
+        return await _mediator.Send(new GenerateTokenCommand(user));
     }
 }

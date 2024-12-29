@@ -1,5 +1,5 @@
 using FinanceGub.Application.DTOs.Authentication;
-using FinanceGub.Application.Interfaces;
+using FinanceGub.Application.Interfaces.Serviсes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceHub.Controllers;
