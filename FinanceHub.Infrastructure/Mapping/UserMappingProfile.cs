@@ -8,6 +8,8 @@ public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {
-        CreateMap<User, GetUserDto>();
+        CreateMap<User, GetUserDto>()
+            .ForMember(dest => dest.ProfilePictureUrl, 
+                opt => opt.MapFrom(src => src.Profile.ProfilePictureUrl));
     }
 }
