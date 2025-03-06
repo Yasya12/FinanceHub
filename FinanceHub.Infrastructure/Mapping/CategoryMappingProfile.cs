@@ -8,9 +8,7 @@ public class CategoryMappingProfile: Profile
 {
     public CategoryMappingProfile()
     {
-        CreateMap<Category, GetCategoryDto>()
-            .ForMember(dest => dest.PostNames, opt => opt.MapFrom(src => src.PostCategory.Select(pc => pc.Post.Title)));
-        
+        CreateMap<Category, GetCategoryDto>();
         CreateMap<CreateCategoryDto, Category>();
         CreateMap<UpdateCategoryDto, Category>();
     }
