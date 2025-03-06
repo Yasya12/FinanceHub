@@ -7,9 +7,6 @@ public class Post : Base
     [Required]
     public Guid AuthorId { get; set; }
 
-    [StringLength(100, ErrorMessage = "Title cannot exceed 100 characters.")]
-    public string Title { get; set; }
-
     [Required]
     public string Content { get; set; }
 
@@ -24,4 +21,5 @@ public class Post : Base
     public virtual ICollection<PostCategory> PostCategory { get; set; }
     public virtual ICollection<Comment> Comments { get; set; }
     public virtual ICollection<Like> Likes { get; set; }
+    public virtual ICollection<PostImage> PostImages { get; set; }
 }
