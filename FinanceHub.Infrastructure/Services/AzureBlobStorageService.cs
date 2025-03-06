@@ -26,7 +26,7 @@ public class AzureBlobStorageService: IAzureBlobStorageService
         await blobContainerClient.CreateIfNotExistsAsync();
 
         // Генеруємо унікальне ім'я для файлу
-        var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+        var fileName = "profile/" + Guid.NewGuid() + Path.GetExtension(file.FileName);
         var blobClient = blobContainerClient.GetBlobClient(fileName);
 
         // Завантажуємо файл в Blob Storage
@@ -38,6 +38,25 @@ public class AzureBlobStorageService: IAzureBlobStorageService
         // Повертаємо URL завантаженого зображення
         return blobClient.Uri.ToString();
     }
+    
+    public async Task<string> UploadPostImageAsync(IFormFile file)
+    {
+        var blobServiceClient = new BlobServiceClient(_connectionString);
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+    
+        await blobContainerClient.CreateIfNotExistsAsync(); // Create container if not exists
+
+        var fileName = "posts/" + Guid.NewGuid() + Path.GetExtension(file.FileName); // Store in "posts/" folder
+        var blobClient = blobContainerClient.GetBlobClient(fileName);
+
+        using (var stream = file.OpenReadStream())
+        {
+            await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType });
+        }
+
+        return blobClient.Uri.ToString(); // Return image URL
+    }
+
     public async Task DeleteBlobAsync(string imageUrl)
     {
         var blobServiceClient = new BlobServiceClient(_connectionString);
@@ -53,7 +72,6 @@ public class AzureBlobStorageService: IAzureBlobStorageService
         // Видалення блоба
         await blobClient.DeleteIfExistsAsync();
     }
-
     private string GetBlobNameFromUrl(string imageUrl)
     {
         // Витягніть ім'я блоба з URL
