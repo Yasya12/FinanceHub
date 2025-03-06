@@ -55,26 +55,33 @@ public class UserService : IUserService
             {
                 throw new ValidationException($"User with email {createUserDto.Email} already exists.");
             }
-            
+
             var user = _mapper.Map<User>(createUserDto);
             await _mediator.Send(new CreateUserCommand(user));
 
             var profile = _mapper.Map<Profile>(createUserDto);
             profile.UserId = user.Id;
-            profile.DateOfBirth = DateTime.SpecifyKind(createUserDto.DateOfBirth, DateTimeKind.Utc);
+            profile.DateOfBirth = createUserDto.DateOfBirth.HasValue
+                ? DateTime.SpecifyKind(createUserDto.DateOfBirth.Value, DateTimeKind.Utc)
+                : DateTime.MinValue;
 
             await _mediator.Send(new CreateProfileCommand(profile));
             return createUserDto;
         }
         catch (RepositoryException ex)
         {
-            throw new RepositoryException("There was a problem with the database operation.", ex);
+            throw new RepositoryException("Database operation failed.", ex);
+        }
+        catch (ValidationException)
+        {
+            throw; // Передаємо далі без змін
         }
         catch (Exception ex)
         {
-            throw;
+            throw new Exception("Unexpected error during user creation.", ex);
         }
     }
+
     
     public async Task<User> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
     {
