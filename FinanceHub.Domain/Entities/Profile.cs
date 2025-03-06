@@ -10,9 +10,8 @@ public class Profile : Base
     [Phone(ErrorMessage = "Invalid phone number format.")]
     public string? PhoneNumber { get; set; }
 
-    [Required(ErrorMessage = "Country is required.")]
     [StringLength(50, ErrorMessage = "Country name cannot be longer than 50 characters.")]
-    public string Country { get; set; }
+    public string? Country { get; set; }
 
     [Url(ErrorMessage = "Invalid URL format for profile picture.")]
     public string? ProfilePictureUrl { get; set; }
@@ -23,9 +22,8 @@ public class Profile : Base
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    [Required(ErrorMessage = "Date of Birth is required.")]
     [DataType(DataType.Date, ErrorMessage = "Invalid date format.")]
-    public DateTime DateOfBirth { get; set; }
+    public DateTime? DateOfBirth { get; set; }
 
     public virtual User User { get; set; }
     //public virtual ICollection<Interest> Interests { get; set; }
