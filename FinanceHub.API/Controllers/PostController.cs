@@ -23,6 +23,14 @@ public class PostController : BaseController
         var paginatedPosts = await _postService.GetPostsPaginatedAsync(pageNumber, pageSize);
         return Ok(paginatedPosts); 
     }
+    
+    [HttpGet("with-likes")]
+    public async Task<ActionResult<PaginatedResult<GetPostDto>>> GetPostsWithLikes(Guid userId,
+        int pageNumber = 1, int pageSize = 10)
+    {
+        var paginatedPosts = await _postService.GetPostsWithLikesAsync(pageNumber, pageSize, userId);
+        return Ok(paginatedPosts); 
+    }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GetSinglePostDto>> GetPost(Guid id)
@@ -32,7 +40,7 @@ public class PostController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePost(CreatePostDto postDto)
+    public async Task<IActionResult> CreatePost([FromForm] CreatePostDto postDto)
     {
         var post = await _postService.CreatePostAsync(postDto);
         return Created(string.Empty, post);
