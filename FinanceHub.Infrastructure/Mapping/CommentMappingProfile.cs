@@ -23,7 +23,7 @@ public class CommentMappingProfile : Profile
             .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
             .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
-            .ForMember(dest => dest.ParentCommentId, opt => opt.MapFrom(src => src.ParentCommentId))
+            .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
             .ForMember(dest => dest.IsModified, opt => opt.MapFrom(src => false));
     }

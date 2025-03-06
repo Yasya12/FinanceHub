@@ -48,6 +48,24 @@ public class CommentService : ICommentService
 
         return commentDtos;
     }
+    
+    public async Task<IEnumerable<GetCommentDto>> GetAllCommentsAsync(Guid postId)
+    {
+        var post = await _mediator.Send(new GetPostQuery(postId));
+        if (post == null)
+        {
+            throw new Exception("Post with the specified Id not found.");
+        }
+
+        var allComments = await _mediator.Send(new GetAllCommentQuery("Post,Author,Author.Profile"));
+
+        var filteredComments = allComments.Where(comment => comment.PostId == postId);
+        
+        var commentDtos = _mapper.Map<IEnumerable<GetCommentDto>>(filteredComments);
+
+        return commentDtos;
+    }
+
 
     public async Task<GetCommentDto> GetCommentAsync(Guid id)
     {

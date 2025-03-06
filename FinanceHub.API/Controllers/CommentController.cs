@@ -15,11 +15,18 @@ public class CommentController : Controller
         _commentService = commentService;
     }
     
+    // [HttpGet]
+    // public async Task<ActionResult<GetCommentDto>> GetPaginatedComments(Guid postId, int skip = 0, int take = 10)
+    // {
+    //     var paginatedComments = await _commentService.GetCommentsPaginatedAsync(postId, skip, take);
+    //     return Ok(paginatedComments); 
+    // }
+    
     [HttpGet]
-    public async Task<ActionResult<GetCommentDto>> GetAllComment(Guid postId, int skip = 0, int take = 10)
+    public async Task<ActionResult<GetCommentDto>> GetAllComments(Guid postId)
     {
-        var paginatedComments = await _commentService.GetCommentsPaginatedAsync(postId, skip, take);
-        return Ok(paginatedComments); 
+        var comments = await _commentService.GetAllCommentsAsync(postId);
+        return Ok(comments); 
     }
 
     [HttpGet("{id:guid}")]

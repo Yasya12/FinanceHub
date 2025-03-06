@@ -10,7 +10,7 @@ public class Comment : Base
     public DateTime CreatedAt { get; set; }
     public bool IsModified { get; set; }
     
-    public Guid? ParentCommentId { get; set; }
+    public Guid? ParentId { get; set; }
     
     [JsonIgnore]
     public virtual Comment ParentComment { get; set; }

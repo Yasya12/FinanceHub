@@ -7,4 +7,6 @@ public class GetCommentDto
     public DateTime CreatedAt { get; set; }
     public string AuthorName { get; set; }
     public string ProfilePictureUrl { get; set; }
+    
+    public Guid? ParentId { get; set; }
 }
