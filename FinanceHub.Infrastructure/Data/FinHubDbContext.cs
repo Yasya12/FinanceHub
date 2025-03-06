@@ -16,6 +16,7 @@ public class FinHubDbContext : DbContext
     public DbSet<ChatParticipant> ChatParticipants { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<PostImage> PostImages { get; set; }
     public FinHubDbContext(DbContextOptions<FinHubDbContext> options):base(options) {}
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +49,19 @@ public class FinHubDbContext : DbContext
             .WithMany(p => p.Comments) 
             .HasForeignKey(c => c.PostId);
 
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.ParentComment)
+            .WithMany(c => c.Replies)
+            .HasForeignKey(c => c.ParentId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<PostImage>()
+            .HasOne(p => p.Post)
+            .WithMany(b => b.PostImages)
+            .HasForeignKey(p => p.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         modelBuilder.Seed();
     }
 }

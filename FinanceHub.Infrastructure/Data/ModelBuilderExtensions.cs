@@ -74,7 +74,6 @@ public static class ModelBuilderExtensions
             {
                 Id = post1Id,
                 AuthorId = user1Id,
-                Title = "Introduction to Finance",
                 Content = "This is an introductory post about finance.",
                 CreatedAt = DateTime.UtcNow.AddDays(-10),
                 UpdatedAt = DateTime.UtcNow.AddDays(-5),
@@ -83,7 +82,6 @@ public static class ModelBuilderExtensions
             {
                 Id = post2Id,
                 AuthorId = user2Id,
-                Title = "Advanced Financial Strategies",
                 Content = "Exploring advanced strategies in finance.",
                 CreatedAt = DateTime.UtcNow.AddDays(-20),
                 UpdatedAt = DateTime.UtcNow.AddDays(-2)
@@ -143,7 +141,8 @@ public static class ModelBuilderExtensions
                 AuthorId = user1Id, 
                 Content = "Great introduction! Looking forward to learning more.",
                 CreatedAt = DateTime.UtcNow.AddDays(-5),
-                IsModified = false
+                IsModified = false,
+                ParentId = null
             },
             new Comment
             {
@@ -152,7 +151,8 @@ public static class ModelBuilderExtensions
                 AuthorId = user2Id, 
                 Content = "Interesting perspective on finance.",
                 CreatedAt = DateTime.UtcNow.AddDays(-4),
-                IsModified = false
+                IsModified = false,
+                ParentId = null
             },
             new Comment
             {
@@ -161,7 +161,8 @@ public static class ModelBuilderExtensions
                 AuthorId = user1Id,
                 Content = "I found this article very helpful!",
                 CreatedAt = DateTime.UtcNow.AddDays(-3),
-                IsModified = false
+                IsModified = false,
+                ParentId = null
             }
         );
         
