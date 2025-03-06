@@ -57,10 +57,10 @@ public class GenericRepository<T>: IGenericRepository<T> where T: Base
     
             var results = await query.AsNoTracking().ToListAsync();
 
-            if (!results.Any())
-            {
-                throw new NotFoundException($"No entities of type {typeof(T).Name} were found.");
-            }
+            // if (!results.Any())
+            // {
+            //     throw new NotFoundException($"No entities of type {typeof(T).Name} were found.");
+            // }
 
             return results;
         }
