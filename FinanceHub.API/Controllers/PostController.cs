@@ -1,6 +1,7 @@
 using FinanceGub.Application.DTOs.Post;
+using FinanceGub.Application.Extensions;
+using FinanceGub.Application.Helpers;
 using FinanceGub.Application.Interfaces.Serviсes;
-using FinanceHub.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,17 +19,22 @@ public class PostController : BaseController
     }
     
     [HttpGet]
-    public async Task<ActionResult<PaginatedResult<GetPostDto>>> GetAllPost(int pageNumber = 1, int pageSize = 10)
+    public async Task<ActionResult<PagedList<GetPostDto>>> GetAllPost([FromQuery] PostParams postParams)
     {
-        var paginatedPosts = await _postService.GetPostsPaginatedAsync(pageNumber, pageSize);
+        var paginatedPosts = await _postService.GetPostsPaginatedAsync(postParams);
+        
+        Response.AddPaginationHeader(paginatedPosts);
+        
         return Ok(paginatedPosts); 
     }
     
     [HttpGet("with-likes")]
-    public async Task<ActionResult<PaginatedResult<GetPostDto>>> GetPostsWithLikes(Guid userId,
-        int pageNumber = 1, int pageSize = 10)
+    public async Task<ActionResult<PagedList<GetPostDto>>> GetPostsWithLikes([FromQuery] PostParams postParams, Guid userId)
     {
-        var paginatedPosts = await _postService.GetPostsWithLikesAsync(pageNumber, pageSize, userId);
+        var paginatedPosts = await _postService.GetPostsWithLikesAsync(postParams, userId);
+        
+        Response.AddPaginationHeader(paginatedPosts);
+        
         return Ok(paginatedPosts); 
     }
 

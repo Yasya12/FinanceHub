@@ -27,7 +27,7 @@ public class PostMappingProfile : Profile
             .ForMember(dest => dest.CategoryNames, opt => opt.MapFrom(src => src.PostCategory.Select(pc => pc.Category.Name)))
             .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.PostImages.Select(pi => pi.ImageUrl)))
-            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
+            .ForMember(dest => dest.CommentCount, opt => opt.MapFrom(src => src.Comments.Count));
 
         CreateMap<CreatePostDto, Post>()
             .ForMember(dest => dest.AuthorId, opt => opt.Ignore())

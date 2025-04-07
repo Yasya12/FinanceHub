@@ -10,7 +10,7 @@ public class GetSinglePostDto
     public IEnumerable<string> CategoryNames { get; set; }
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }   
-    public IEnumerable<GetCommentDto> Comments { get; set; }
     public int LikesCount { get; set; }
+    public int CommentCount { get; set; }
     public List<string> Images { get; set; } 
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using FinanceGub.Application.DTOs.Post;
 using FinanceGub.Application.Features.LikeFeatures.Queries.GetSingleLikeQuery;
 using FinanceGub.Application.Features.PostCategoryFeatures.Commands.AddRangePostCategoryCommand;
@@ -9,6 +10,7 @@ using FinanceGub.Application.Features.PostFeatures.Commands.UpdatePostCommand;
 using FinanceGub.Application.Features.PostFeatures.Queries.GetAllPostQuery;
 using FinanceGub.Application.Features.PostFeatures.Queries.GetPostQuery;
 using FinanceGub.Application.Features.PostImageFeatures.Commands.CreatePostImageCommand;
+using FinanceGub.Application.Helpers;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
@@ -37,41 +39,28 @@ public class PostService : IPostService
         _azureBlobStorageService = azureBlobStorageService;
     }
 
-    public async Task<PaginatedResult<GetPostDto>> GetPostsPaginatedAsync(int pageNumber, int pageSize)
+    public async Task<PagedList<GetPostDto>> GetPostsPaginatedAsync(PostParams postParams)
     {
-        var posts = await _mediator.Send(
+        var postsQuey = await _mediator.Send(
             new GetAllPostQuery("Author,Author.Profile,PostCategory,PostCategory.Category,Comments,Likes,PostImages"));
 
-        var postList = posts.ToList();
-
-        var pagedPosts = postList
-            .OrderByDescending(post => post.CreatedAt)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        var postDtos = _mapper.Map<IEnumerable<GetPostDto>>(pagedPosts);
-
-        return new PaginatedResult<GetPostDto>
-        {
-            Items = postDtos,
-            TotalCount = postList.Count,
-            PageNumber = pageNumber,
-            PageSize = pageSize
-        };
+        var dtoQuery = postsQuey
+            .OrderByDescending(x => x.CreatedAt)
+            .ProjectTo<GetPostDto>(_mapper.ConfigurationProvider); 
+        
+        return await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
     }
-
-    public async Task<PaginatedResult<GetPostDto>> GetPostsWithLikesAsync(int pageNumber, int pageSize, Guid userId)
+    
+    public async Task<PagedList<GetPostDto>> GetPostsWithLikesAsync(PostParams postParams, Guid userId)
     {
-        var paginatedPosts = await GetPostsPaginatedAsync(pageNumber, pageSize);
-
-        // Крок 2: Проходимо по кожному посту і перевіряємо, чи є лайк від користувача
-        foreach (var post in paginatedPosts.Items)
+        var paginatedPosts = await GetPostsPaginatedAsync(postParams);
+        
+        foreach (var post in paginatedPosts)
         {
             var like = await _mediator.Send(new GetSingleLikeQuery(post.Id, userId));
-            post.IsLiked = like != null; // Якщо лайк знайдено, встановлюємо IsLiked = true
+            post.IsLiked = like != null; 
         }
-
+        
         return paginatedPosts;
     }
 
@@ -131,7 +120,7 @@ public class PostService : IPostService
                     PostId = post.Id,
                     ImageUrl = imageUrl,
                 };
-                
+
                 await _mediator.Send(new CreatePostImageCommand(postImage));
             }
         }
