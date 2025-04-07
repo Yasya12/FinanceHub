@@ -9,4 +9,6 @@ public class GetCommentDto
     public string ProfilePictureUrl { get; set; }
     
     public Guid? ParentId { get; set; }
+    public List<GetCommentDto> Replies { get; set; } = new();
+    
 }

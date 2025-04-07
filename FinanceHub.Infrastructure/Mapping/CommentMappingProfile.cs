@@ -14,6 +14,7 @@ public class CommentMappingProfile : Profile
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.Profile.ProfilePictureUrl))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+             .ForMember(dest => dest.Replies, opt => opt.MapFrom(src => src.Replies.OrderBy(r => r.CreatedAt)))
             .ReverseMap();
 
         CreateMap<UpdateCommentDto, Comment>()

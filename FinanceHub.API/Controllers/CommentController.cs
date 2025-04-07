@@ -15,17 +15,11 @@ public class CommentController : Controller
         _commentService = commentService;
     }
     
-    // [HttpGet]
-    // public async Task<ActionResult<GetCommentDto>> GetPaginatedComments(Guid postId, int skip = 0, int take = 10)
-    // {
-    //     var paginatedComments = await _commentService.GetCommentsPaginatedAsync(postId, skip, take);
-    //     return Ok(paginatedComments); 
-    // }
-    
     [HttpGet]
-    public async Task<ActionResult<GetCommentDto>> GetAllComments(Guid postId)
+    public async Task<ActionResult<GetCommentDto>> GetAllComments(Guid postId, int pageSize = 10, string filter = "newest",
+        int pageNumber = 1)
     {
-        var comments = await _commentService.GetAllCommentsAsync(postId);
+        var comments = await _commentService.GetCommentsPaginatedAsync(postId, pageNumber, pageSize, filter);
         return Ok(comments); 
     }
 
