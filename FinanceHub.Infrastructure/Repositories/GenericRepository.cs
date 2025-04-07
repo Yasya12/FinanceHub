@@ -70,6 +70,21 @@ public class GenericRepository<T>: IGenericRepository<T> where T: Base
         }
     }
 
+    public virtual IQueryable<T> GetAllAsQueryable(string? includeProperties = null)
+    {
+        var query = _context.Set<T>().AsQueryable();
+        
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            foreach (var prop in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(prop);
+            }
+        }
+
+        return query.AsNoTracking();
+    }
+
     public virtual async Task AddAsync(T entity)
     {
         try

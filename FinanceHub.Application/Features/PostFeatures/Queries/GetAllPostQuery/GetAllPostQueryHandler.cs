@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FinanceGub.Application.Features.PostFeatures.Queries.GetAllPostQuery;
 
-public class GetAllPostQueryHandler : IRequestHandler<GetAllPostQuery, IEnumerable<Post>>
+public class GetAllPostQueryHandler : IRequestHandler<GetAllPostQuery, IQueryable<Post>>
 {
     private readonly IPostRepository _postRepository;
 
@@ -13,8 +13,9 @@ public class GetAllPostQueryHandler : IRequestHandler<GetAllPostQuery, IEnumerab
         _postRepository = postRepository;
     }
 
-    public async Task<IEnumerable<Post>> Handle(GetAllPostQuery request, CancellationToken cancellationToken)
+    public Task<IQueryable<Post>> Handle(GetAllPostQuery request, CancellationToken cancellationToken)
     {
-        return await _postRepository.GetAllAsync(request.IncludeProperties);
+        var query =  _postRepository.GetAllAsQueryable(request.IncludeProperties);
+        return Task.FromResult(query);
     }
 }
