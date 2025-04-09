@@ -33,6 +33,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<ICommentRepository, CommentRepository>();
         serviceCollection.AddScoped<ILikeRepository, LikeRepository>();
         serviceCollection.AddScoped<IPostImageRepository, PostImageRepository>();
+        serviceCollection.AddScoped<IMessageRepository, MessageRepository>();
         
         serviceCollection.AddScoped<IUserService, UserService>(); 
         serviceCollection.AddScoped<IProfileService, ProfileService>(); 
@@ -42,6 +43,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<ICommentService, CommentService>();
         serviceCollection.AddScoped<ILikeService, LikeService>();
         serviceCollection.AddScoped<IAuthService, AuthService>();
+        serviceCollection.AddScoped<IMessageService, MessageService>();
         serviceCollection.AddScoped<ILikeHub, LikeHub>();
         
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());

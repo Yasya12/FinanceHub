@@ -44,4 +44,27 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             throw new RepositoryException("An error occurred while trying to retrieve the user by Google ID.", ex);
         }
     }
+    
+    public async Task<User> GetByUsernameAsync(string username, string? includeProperties = null)
+    {
+        try
+        {
+            var query = _dbSet.AsQueryable();
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var prop in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(prop);
+                }
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Username == username);
+        }
+        catch (Exception ex)
+        {
+            throw new RepositoryException("An error occurred while trying to retrieve the user by username.", ex);
+        }
+    }
+
 }
