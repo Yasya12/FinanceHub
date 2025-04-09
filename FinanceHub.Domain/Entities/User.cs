@@ -10,9 +10,8 @@ public class User : Base
     [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
     public string Username { get; set; }
     
-    [Required]
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
-    public string Email { get; set; }
+    public required string Email { get; set; }
     
     //[Required]
     //becayse with google there are no passsword, but i have dto for creating + front and it will chech for password without google
@@ -23,5 +22,8 @@ public class User : Base
     [JsonIgnore]
     public virtual Profile? Profile { get; set; }
     //public virtual ICollection<Post> Posts { get; set; }
+
+    public List<Message> MessagesSent { get; set; } = [];
+    public List<Message> MessagesReceived { get; set; } = [];
 
 }

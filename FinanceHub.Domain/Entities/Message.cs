@@ -4,18 +4,17 @@ namespace FinanceHub.Core.Entities;
 
 public class Message : Base
 {
-    [Required]
-    public Guid ChatId { get; set; }
-        
-    [Required]
-    public Guid SenderId { get; set; }
-        
-    [Required]
-    public string Content { get; set; }
-        
-    [Required]
-    public DateTime SentAt { get; set; }
+    public required string SenderUserName { get; set; }
+    public required string RecipientUserName { get; set; }
+    public required string Content { get; set; }
+    public DateTime? DateRead { get; set; }
+    public DateTime MessageSent { get; set; } = DateTime.Now;
+    public bool SenderDeleted { get; set; }
+    public bool RecipientDeleted { get; set; }
 
-    public virtual Chat Chat { get; set; }
-    public virtual User Sender { get; set; }
+    //navigation properties 
+    public Guid SenderId { get; set; }
+    public User Sender { get; set; } = null!;
+    public Guid RecipientId { get; set; }
+    public User Recipient { get; set; } = null!;
 }

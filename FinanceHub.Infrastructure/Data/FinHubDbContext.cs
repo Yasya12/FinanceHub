@@ -61,6 +61,16 @@ public class FinHubDbContext : DbContext
             .WithMany(b => b.PostImages)
             .HasForeignKey(p => p.PostId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(x => x.Recipient)
+            .WithMany(x => x.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Message>()
+            .HasOne(x => x.Sender)
+            .WithMany(x => x.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Seed();
     }
