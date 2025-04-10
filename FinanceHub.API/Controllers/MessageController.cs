@@ -1,6 +1,7 @@
 using FinanceGub.Application.DTOs.Message;
 using FinanceGub.Application.Extensions;
 using FinanceGub.Application.Features.MessageFeatures.Queries.GetMessagesForUser;
+using FinanceGub.Application.Features.MessageFeatures.Queries.GetMessageThread;
 using FinanceGub.Application.Helpers;
 using FinanceGub.Application.Interfaces.Serviсes;
 using MediatR;
@@ -26,5 +27,12 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
         Response.AddPaginationHeader(messages);
 
         return messages;
+    }
+
+    [HttpGet("thread/{username}")]
+
+    public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string currentUsername, string username)
+    {
+        return Ok(await mediator.Send(new GetMessageThread(currentUsername, username)));
     }
 }

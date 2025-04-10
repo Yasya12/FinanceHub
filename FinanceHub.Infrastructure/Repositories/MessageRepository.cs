@@ -5,6 +5,7 @@ using FinanceGub.Application.Helpers;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceHub.Core.Entities;
 using FinanceHub.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceHub.Infrastructure.Repositories;
 
@@ -26,8 +27,26 @@ public class MessageRepository(FinHubDbContext context, IMapper mapper) : Generi
         return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
     }
 
-    public Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
+    public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
     {
-        return null;
+        var messanges = await _dbSet
+            .Include(x => x.Sender).ThenInclude(x => x.Profile)
+            .Include(x => x.Recipient).ThenInclude(x => x.Profile)
+            .Where(x =>
+                x.RecipientUserName == currentUsername && x.SenderUserName == recipientUsername ||
+                x.SenderUserName == currentUsername && x.RecipientUserName == recipientUsername)
+            .OrderBy(x => x.MessageSent)
+            .ToListAsync();
+
+        var unreadMessages =
+            messanges.Where(x => x.DateRead == null && x.RecipientUserName == currentUsername).ToList();
+
+        if (unreadMessages.Count() != 0)
+        {
+            unreadMessages.ForEach(x => x.DateRead = DateTime.UtcNow);
+            await context.SaveChangesAsync();
+        }
+
+        return mapper.Map<IEnumerable<MessageDto>>(messanges);
     }
 }

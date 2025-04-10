@@ -147,4 +147,9 @@ public class GenericRepository<T>: IGenericRepository<T> where T: Base
             throw new RepositoryException($"Failed to delete entity of type {typeof(T).Name} with ID {id}", ex);
         }
     }
+
+    public async Task<bool> SaveAllAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
 }
