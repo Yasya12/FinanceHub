@@ -102,6 +102,20 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddSignalR();
 
+// Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:4200") // or .AllowAnyOrigin() for dev
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithExposedHeaders("Pagination");
+    });
+});
+
+
 var app = builder.Build();
 
 app.UseCors("CorsPolicy");
@@ -118,8 +132,10 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

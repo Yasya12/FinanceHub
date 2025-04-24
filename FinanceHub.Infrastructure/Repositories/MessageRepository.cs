@@ -30,8 +30,8 @@ public class MessageRepository(FinHubDbContext context, IMapper mapper) : Generi
     public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
     {
         var messanges = await _dbSet
-            .Include(x => x.Sender).ThenInclude(x => x.Profile)
-            .Include(x => x.Recipient).ThenInclude(x => x.Profile)
+            .Include(x => x.Sender)
+            .Include(x => x.Recipient)
             .Where(x =>
                 x.RecipientUserName == currentUsername && x.SenderUserName == recipientUsername ||
                 x.SenderUserName == currentUsername && x.RecipientUserName == recipientUsername)

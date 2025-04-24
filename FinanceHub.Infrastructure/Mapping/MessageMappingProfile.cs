@@ -10,8 +10,8 @@ public class MessageMappingProfile : Profile
     {
         CreateMap<Message, MessageDto>()
             .ForMember(d => d.SenderUPhotoUrl, 
-                o => o.MapFrom(s => s.Sender.Profile!.ProfilePictureUrl))
+                o => o.MapFrom(s => s.Sender.ProfilePictureUrl))
             .ForMember(d => d.RecipientUPhotoUrl, 
-            o => o.MapFrom(s => s.Recipient.Profile!.ProfilePictureUrl));
+            o => o.MapFrom(s => s.Recipient.ProfilePictureUrl));
     }
 }

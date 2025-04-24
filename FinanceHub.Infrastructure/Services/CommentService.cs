@@ -14,21 +14,12 @@ using MediatR;
 
 namespace FinanceHub.Infrastructure.Services;
 
-public class CommentService : ICommentService
+public class CommentService(IMapper mapper, IMediator mediator) : ICommentService
 {
-    private readonly IMapper _mapper;
-    private readonly IMediator _mediator;
-
-    public CommentService(IMapper mapper, IMediator mediator)
-    {
-        _mapper = mapper;
-        _mediator = mediator;
-    }
-
     public async Task<IEnumerable<GetCommentDto>> GetCommentsPaginatedAsync(Guid postId, int pageNumber, int pageSize,
         string filter)
     {
-        var post = await _mediator.Send(new GetPostQuery(postId));
+        var post = await mediator.Send(new GetPostQuery(postId));
         if (post == null)
         {
             throw new Exception("Post with the specified Id not found.");
@@ -36,8 +27,8 @@ public class CommentService : ICommentService
 
         // Fetch all comments for the post, including replies
         var allComments =
-            await _mediator.Send(
-                new GetAllCommentQuery("Post,Author,Author.Profile,Replies,Replies.Author,Replies.Author.Profile"));
+            await mediator.Send(
+                new GetAllCommentQuery("Post,Author,Replies,Replies.Author"));
         var commentList = allComments.Where(c => c.PostId == postId).ToList();
 
         // Step 1: Get only parent comments for pagination
@@ -59,19 +50,26 @@ public class CommentService : ICommentService
         // Step 2: Recursively build the reply tree
         foreach (var parent in parentComments)
         {
-            parent.Replies = GetRepliesRecursive(parent.Id, commentList);
+            parent.Replies = GetRepliesRecursive(parent.Id, commentList, filter);
         }
 
-        return _mapper.Map<IEnumerable<GetCommentDto>>(parentComments);
+        return mapper.Map<IEnumerable<GetCommentDto>>(parentComments);
     }
 
     // Recursive function to fetch all nested replies
-    private List<Comment> GetRepliesRecursive(Guid parentId, List<Comment> allComments)
+    private List<Comment> GetRepliesRecursive(Guid parentId, List<Comment> allComments, string filter)
     {
-        var replies = allComments.Where(c => c.ParentId == parentId).ToList();
+        var replies = allComments
+            .Where(c => c.ParentId == parentId)
+            .ToList();
+
+        replies = filter == "oldest"
+            ? replies.OrderBy(c => c.CreatedAt).ToList()
+            : replies.OrderByDescending(c => c.CreatedAt).ToList();
+        
         foreach (var reply in replies)
         {
-            reply.Replies = GetRepliesRecursive(reply.Id, allComments);
+            reply.Replies = GetRepliesRecursive(reply.Id, allComments, filter);
         }
 
         return replies;
@@ -80,32 +78,32 @@ public class CommentService : ICommentService
 
     public async Task<GetCommentDto> GetCommentAsync(Guid id)
     {
-        var comments = await _mediator.Send(new GetCommentQuery(id, "Post,Author,Author.Profile"));
+        var comments = await mediator.Send(new GetCommentQuery(id, "Post,Author"));
 
-        var commentDtos = _mapper.Map<GetCommentDto>(comments);
+        var commentDtos = mapper.Map<GetCommentDto>(comments);
 
         return commentDtos;
     }
 
     public async Task<GetCommentDto> CreateCommentAsync(CreateCommentDto createCommentDto)
     {
-        var post = await _mediator.Send(new GetPostQuery(createCommentDto.PostId));
+        var post = await mediator.Send(new GetPostQuery(createCommentDto.PostId));
         if (post == null)
         {
             throw new Exception("Post with the specified Id not found.");
         }
 
-        var user = await _mediator.Send(new GetUserQuery(createCommentDto.AuthorId));
+        var user = await mediator.Send(new GetUserQuery(createCommentDto.AuthorId));
         if (user == null)
         {
             throw new Exception("User with the specified Id not found.");
         }
 
-        var comment = _mapper.Map<Comment>(createCommentDto);
+        var comment = mapper.Map<Comment>(createCommentDto);
 
-        await _mediator.Send(new CreateCommentCommand(comment));
+        await mediator.Send(new CreateCommentCommand(comment));
 
-        var responseComment = _mapper.Map<GetCommentDto>(comment);
+        var responseComment = mapper.Map<GetCommentDto>(comment);
         responseComment.AuthorName = user.Username;
 
         return responseComment;
@@ -113,19 +111,19 @@ public class CommentService : ICommentService
 
     public async Task<GetCommentDto> UpdateCommentAsync(Guid id, UpdateCommentDto updateCommentDto)
     {
-        var existingComment = await _mediator.Send(new GetCommentQuery(id));
+        var existingComment = await mediator.Send(new GetCommentQuery(id));
         if (existingComment == null)
         {
             throw new ValidationException($"Comment with ID {id} does not exist.");
         }
 
-        _mapper.Map(updateCommentDto, existingComment);
+        mapper.Map(updateCommentDto, existingComment);
 
-        await _mediator.Send(new UpdateCommentCommand(existingComment));
+        await mediator.Send(new UpdateCommentCommand(existingComment));
 
-        var responseComment = _mapper.Map<GetCommentDto>(existingComment);
-        var post = await _mediator.Send(new GetPostQuery(existingComment.PostId));
-        var user = await _mediator.Send(new GetUserQuery(existingComment.AuthorId));
+        var responseComment = mapper.Map<GetCommentDto>(existingComment);
+        var post = await mediator.Send(new GetPostQuery(existingComment.PostId));
+        var user = await mediator.Send(new GetUserQuery(existingComment.AuthorId));
         responseComment.AuthorName = user.Username;
 
         return responseComment;
@@ -133,13 +131,13 @@ public class CommentService : ICommentService
 
     public async Task<string> DeleteCommentAsync(Guid commentId)
     {
-        var comment = await _mediator.Send(new GetCommentQuery(commentId));
+        var comment = await mediator.Send(new GetCommentQuery(commentId));
         ;
         if (comment == null)
         {
             throw new Exception("Comment not found.");
         }
 
-        return await _mediator.Send(new DeleteCommentCommand(commentId));
+        return await mediator.Send(new DeleteCommentCommand(commentId));
     }
 }

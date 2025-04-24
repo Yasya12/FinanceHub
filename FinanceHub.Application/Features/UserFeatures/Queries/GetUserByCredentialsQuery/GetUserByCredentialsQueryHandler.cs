@@ -5,18 +5,12 @@ using MediatR;
 
 namespace FinanceGub.Application.Features.UserFeatures.Queries.GetUserByCredentialsQuery;
 
-public class GetUserByCredentialsQueryHandler : IRequestHandler<GetUserByCredentialsQuery, User>
+public class GetUserByCredentialsQueryHandler(IUserRepository userRepository)
+    : IRequestHandler<GetUserByCredentialsQuery, User>
 {
-    private readonly IUserRepository _userRepository;
-
-    public GetUserByCredentialsQueryHandler(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     public async Task<User> Handle(GetUserByCredentialsQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(request.Email, "Profile");
+        var user = await userRepository.GetByEmailAsync(request.Email);
         if (user == null || !PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
             return null;
 

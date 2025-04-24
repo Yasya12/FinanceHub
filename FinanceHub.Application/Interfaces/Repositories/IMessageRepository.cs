@@ -7,5 +7,5 @@ namespace FinanceGub.Application.Interfaces.Repositories;
 public interface IMessageRepository : IGenericRepository<Message>
 {
     Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams);
-    Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername);
+    Task<IEnumerable<MessageDto>> GetMessageThread(string currentEmail, string recipientUsername);
 }

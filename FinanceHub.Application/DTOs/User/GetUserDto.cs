@@ -7,4 +7,11 @@ public class GetUserDto
     public string Username { get; set; }
     public string Role { get; set; }
     public string? ProfilePictureUrl { get; set; }
+    
+    public string? Country { get; set; }
+
+    public string? Bio { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+    public DateTime LastActive { get; set; }
 }

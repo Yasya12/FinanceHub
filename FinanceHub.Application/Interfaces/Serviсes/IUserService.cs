@@ -8,7 +8,8 @@ public interface IUserService
 {
     Task<IEnumerable<GetUserDto>> GetAllUsersAsync();
     Task<GetUserDto> GetUserAsync(Guid id);
+    Task<GetUserDto> GetUserByEmailAsync(string email);
     Task<CreateUserDto> CreateUserAsync(CreateUserDto createUserDto);
-    Task<User> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto);
+    Task<bool> UpdateUserAsync(string email, UpdateUserDto updateUserDto);
     Task<User> CreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload);
 }

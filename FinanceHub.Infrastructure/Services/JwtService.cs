@@ -1,76 +1,49 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using FinanceGub.Application.Identity;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FinanceHub.Infrastructure.Services;
 
-public class JwtService : IJwtService
+public class JwtService(IConfiguration config) : IJwtService
 {
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<JwtService> _logger;
-
-    public JwtService(IConfiguration configuration, ILogger<JwtService> logger)
-    {
-        _configuration = configuration;
-        _logger = logger;
-    }
-    
     public string GenerateToken(User user)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var jwtKey = _configuration["JwtKey"];
-        var jwtIssuer = _configuration["JwtIssuer"];
-        var jwtAudience = _configuration["JwtAudience"];
+        var jwtKey = config["JwtKey"] ?? throw new InvalidOperationException("JwtKey is not configured properly.");
+      //  if (jwtKey.Length < 64) throw new Exception("JYour jwtKey needs to be longer");
+        
+        //optional
+        var jwtIssuer = config["JwtIssuer"] ?? throw new InvalidOperationException("JwtIssuer is not configured properly.");;
+        var jwtAudience = config["JwtAudience"] ?? throw new InvalidOperationException("JwtAudience is not configured properly.");;
 
-        _logger.LogDebug($"JwtKey length: {jwtKey?.Length ?? 0}");
-        _logger.LogDebug($"JwtIssuer: {jwtIssuer}");
-        _logger.LogDebug($"JwtAudience: {jwtAudience}");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
-        if (string.IsNullOrEmpty(jwtKey))
+        var claims = new List<Claim>
         {
-            _logger.LogError("JwtKey is null or empty");
-            throw new InvalidOperationException("JwtKey is not configured properly.");
-        }
-
-        if (string.IsNullOrEmpty(jwtIssuer))
-        {
-            _logger.LogError("JwtIssuer is null or empty");
-            throw new InvalidOperationException("JwtIssuer is not configured properly.");
-        }
-
-        if (string.IsNullOrEmpty(jwtAudience))
-        {
-            _logger.LogError("JwtAudience is null or empty");
-            throw new InvalidOperationException("JwtAudience is not configured properly.");
-        }
-
-        var key = Encoding.ASCII.GetBytes(jwtKey);
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Aud, jwtAudience),
-            new Claim(IdentityData.AdminUserClaimName, user.Role.ToLower() == "admin" ? "true" : "false")
+            new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (ClaimTypes.Email, user.Email),
+            //new (ClaimTypes.Name, user.Username),
+            new (ClaimTypes.Role, user.Role)
         };
+
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddHours(7),
+            SigningCredentials = creds,
+            //optional
             Issuer = jwtIssuer,
-            Audience = jwtAudience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            Audience = jwtAudience
         };
 
+        var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
+        
         return tokenHandler.WriteToken(token);
     }
 }

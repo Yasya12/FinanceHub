@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinanceGub.Application.DTOs.Authentication;
 
-public class SignupDto
+public class  SignupDto
 {
     [Required]
     [EmailAddress(ErrorMessage = "Invalid Email Address")]

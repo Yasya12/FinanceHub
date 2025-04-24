@@ -10,9 +10,9 @@ namespace FinanceHub.Infrastructure.Services;
 
 public class MessageService(IMediator mediator, IMapper mapper) : IMessageService
 {
-    public async Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto)
+    public async Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto, string senderUsername)
     {
-        var sender = await mediator.Send(new GetByUsernameUserQuery(createMessageDto.SenderUsername));
+        var sender = await mediator.Send(new GetByUsernameUserQuery(senderUsername));
         var recipient = await mediator.Send(new GetByUsernameUserQuery(createMessageDto.RecipientUsername));
         
         if(sender == null || recipient == null) throw new Exception("Cannot sent message at this time");

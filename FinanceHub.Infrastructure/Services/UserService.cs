@@ -1,47 +1,46 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.User;
-using FinanceGub.Application.Features.ProfileFeatures.Commands.CreateProfileCommand;
-using FinanceGub.Application.Features.ProfileFeatures.Commands.UpdateProfileCommand;
-using FinanceGub.Application.Features.ProfileFeatures.Queries.GetByUserIdProfileQuery;
 using FinanceGub.Application.Features.UserFeatures.Commands.CreateUserCommand;
-using FinanceGub.Application.Features.UserFeatures.Commands.UpdateUserCommand;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetAllUserQuery;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByUsernameUserQuery;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetUserQuery;
+using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using FinanceHub.Core.Exceptions;
 using Google.Apis.Auth;
 using MediatR;
-using Profile = FinanceHub.Core.Entities.Profile;
 
 namespace FinanceHub.Infrastructure.Services;
 
-public class UserService : IUserService
+public class UserService(IMediator mediator, IMapper mapper, IUserRepository userRepository) : IUserService
 {
-    private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
-
-    public UserService(IMediator mediator ,IMapper mapper)
-    {
-        _mediator = mediator;
-        _mapper = mapper;
-    }
-    
     public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
     {
-        var users = await _mediator.Send(new GetAllUserQuery());
+        var users = await mediator.Send(new GetAllUserQuery());
         
-        var userDtos = _mapper.Map<IEnumerable<GetUserDto>>(users);
+        var userDtos = mapper.Map<IEnumerable<GetUserDto>>(users);
 
         return userDtos;
     }
 
     public async Task<GetUserDto> GetUserAsync(Guid id)
     {
-        var user = await _mediator.Send(new GetUserQuery(id));
+        var user = await mediator.Send(new GetUserQuery(id));
         
-        var userDto = _mapper.Map<GetUserDto>(user);
+        var userDto = mapper.Map<GetUserDto>(user);
+
+        return userDto;
+    }
+
+    public async Task<GetUserDto> GetUserByEmailAsync(string email)
+    {
+        var user = await mediator.Send(new GetByEmailUserQuery(email));
+        
+        if(user == null) throw new Exception($"User with email {email} don`t exists.");
+        
+        var userDto = mapper.Map<GetUserDto>(user);
 
         return userDto;
     }
@@ -50,22 +49,22 @@ public class UserService : IUserService
     {
         try
         {
-            var existingUser = await _mediator.Send(new GetByEmailUserQuery(createUserDto.Email));
+            var existingUser = await mediator.Send(new GetByEmailUserQuery(createUserDto.Email));
+
             if (existingUser != null)
             {
-                throw new ValidationException($"User with email {createUserDto.Email} already exists.");
+                if (existingUser.Email == createUserDto.Email)
+                    throw new ValidationException($"User with email {createUserDto.Email} already exists.");
+
+                if (existingUser.Username?.ToLower() == createUserDto.Username.ToLower())
+                    throw new ValidationException($"User with username {createUserDto.Username} already exists.");
             }
 
-            var user = _mapper.Map<User>(createUserDto);
-            await _mediator.Send(new CreateUserCommand(user));
+            createUserDto.Username = createUserDto.Username.ToLower();
 
-            var profile = _mapper.Map<Profile>(createUserDto);
-            profile.UserId = user.Id;
-            profile.DateOfBirth = createUserDto.DateOfBirth.HasValue
-                ? DateTime.SpecifyKind(createUserDto.DateOfBirth.Value, DateTimeKind.Utc)
-                : DateTime.MinValue;
+            var user = mapper.Map<User>(createUserDto);
+            await mediator.Send(new CreateUserCommand(user));
 
-            await _mediator.Send(new CreateProfileCommand(profile));
             return createUserDto;
         }
         catch (RepositoryException ex)
@@ -74,46 +73,46 @@ public class UserService : IUserService
         }
         catch (ValidationException)
         {
-            throw; // Передаємо далі без змін
+            throw;
         }
         catch (Exception ex)
         {
             throw new Exception("Unexpected error during user creation.", ex);
         }
     }
-
     
-    public async Task<User> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
+    public async Task<bool> UpdateUserAsync(string email, UpdateUserDto updateUserDto)
     {
-        var existingUser = await _mediator.Send(new GetUserQuery(id));
-        if (existingUser == null)
+        var user = await mediator.Send(new GetByEmailUserQuery(email));
+        if (user == null)
         {
-            throw new ValidationException($"User with ID {id} does not exist.");
+            throw new ValidationException($"User with email {email} does not exist.");
         }
-
-        if (existingUser.Email != updateUserDto.Email)
+        
+        if (user.Username != updateUserDto.Username)
         {
-            var emailCheckUser = await _mediator.Send(new GetByEmailUserQuery(updateUserDto.Email));
-            if (emailCheckUser != null)
+            var existingWithUsername = await mediator.Send(new GetByUsernameUserQuery(updateUserDto.Username));
+            if (existingWithUsername != null)
             {
-                throw new ValidationException($"Email {updateUserDto.Email} is already taken.");
+                throw new ValidationException($"Username {updateUserDto.Username} is already taken.");
             }
         }
 
-        _mapper.Map(updateUserDto, existingUser);
-        await _mediator.Send(new UpdateUserCommand(existingUser));
+        //SEE IF I NEED IT
+        // if (existingUser.Email != updateUserDto.Email)
+        // {
+        //     var emailCheckUser = await _mediator.Send(new GetByEmailUserQuery(updateUserDto.Email));
+        //     if (emailCheckUser != null)
+        //     {
+        //         throw new ValidationException($"Email {updateUserDto.Email} is already taken.");
+        //     }
+        // }
 
-        var existingProfile = await _mediator.Send(new GetByUserIdProfileQuery(id));
-        if (existingProfile == null)
-        {
-            throw new ValidationException($"Profile for user with ID {id} does not exist."); 
-        }
-        
-        _mapper.Map(updateUserDto, existingProfile); 
-        existingProfile.DateOfBirth = DateTime.SpecifyKind(updateUserDto.DateOfBirth, DateTimeKind.Utc);
-        await _mediator.Send(new UpdateProfileCommand(existingProfile));
-
-        return existingUser;
+        mapper.Map(updateUserDto, user);
+        //if the user send the same data it will be false and return a badrequest
+        //await mediator.Send(new UpdateUserCommand(user));
+        if (await userRepository.SaveAllAsync()) return true;
+        return false;
     }
     
     public async Task<User> CreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload)
@@ -134,7 +133,7 @@ public class UserService : IUserService
             Role = "User"   // це вирішити через посилання між шарами             
         };
 
-        await _mediator.Send(new CreateUserCommand(newUser));
+        await mediator.Send(new CreateUserCommand(newUser));
         return newUser;
     }
 }

@@ -6,10 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceHub.Infrastructure.Repositories;
 
-public class UserRepository : GenericRepository<User>, IUserRepository
+public class UserRepository(FinHubDbContext context) : GenericRepository<User>(context), IUserRepository
 {
-    public UserRepository(FinHubDbContext context) : base(context){ }
-    
     public async Task<User> GetByEmailAsync(string email, string? includeProperties = null)
     {
         try
@@ -31,7 +29,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             throw new RepositoryException("An error occurred while trying to retrieve the user by email.", ex);
         }
     }
-
     
     public async Task<User> GetByGoogleIdAsync(string googleId)
     {

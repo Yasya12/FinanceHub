@@ -26,7 +26,6 @@ public static class DependencyInjection
         });
         
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
-        serviceCollection.AddScoped<IProfileRepository, ProfileRepository>();
         serviceCollection.AddScoped<IPostRepository, PostRepository>();
         serviceCollection.AddScoped<ICategoryRepository, CategoryRepository>();
         serviceCollection.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
@@ -36,7 +35,6 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IMessageRepository, MessageRepository>();
         
         serviceCollection.AddScoped<IUserService, UserService>(); 
-        serviceCollection.AddScoped<IProfileService, ProfileService>(); 
         serviceCollection.AddScoped<IJwtService, JwtService>();
         serviceCollection.AddScoped<IPostService, PostService>();
         serviceCollection.AddScoped<ICategoryService, CategoryService>();

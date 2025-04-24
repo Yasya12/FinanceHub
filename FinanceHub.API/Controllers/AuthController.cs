@@ -7,38 +7,30 @@ namespace FinanceHub.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(IAuthService authService, ILogger<AuthController> logger) : ControllerBase
 {
-    private readonly IAuthService _authService;
-    private readonly ILogger<AuthController> _logger;
-
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
-    {
-        _authService = authService;
-        _logger = logger;
-    }
-    
+    //TODO: see if i need to use all of this layers - controller - authservice - userservice 
     [HttpPost("signup")]
     public async Task<IActionResult> Signup([FromBody] SignupDto model)
     {
         try
         {
-            var (user, token) = await _authService.SignupAsync(model);
+            var (user, token) = await authService.SignupAsync(model);
             return Ok(new { user, token });
         }
         catch (ValidationException ex)
         {
-            _logger.LogWarning(ex, "Signup validation failed.");
+            logger.LogWarning(ex, "Signup validation failed.");
             return BadRequest(new { error = ex.Message });
         }
         catch (UnauthorizedAccessException ex)
         {
-            _logger.LogWarning(ex, "Unauthorized access during signup.");
+            logger.LogWarning(ex, "Unauthorized access during signup.");
             return Unauthorized(new { error = ex.Message });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error during signup.");
+            logger.LogError(ex, "Unexpected error during signup.");
             return StatusCode(500, new { error = "An unexpected error occurred." });
         }
     }
@@ -49,12 +41,12 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var (user, token) = await _authService.LoginAsync(model.Email, model.Password);
+            var (user, token) = await authService.LoginAsync(model.Email, model.Password);
             return Ok(new { user, token });
         }
         catch (UnauthorizedAccessException ex)
         {
-            _logger.LogWarning(ex.Message);
+            logger.LogWarning(ex.Message);
             return Unauthorized(new { error = ex.Message });
         }
     }
@@ -64,12 +56,12 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var (user, token) = await _authService.GoogleLoginAsync(tokenRequest.Token);
+            var (user, token) = await authService.GoogleLoginAsync(tokenRequest.Token);
             return Ok(new { user, token });
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Google login failed");
+            logger.LogWarning(ex, "Google login failed");
             return Unauthorized(new { error = "Invalid Google Token" });
         }
     }

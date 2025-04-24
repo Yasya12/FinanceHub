@@ -19,34 +19,23 @@ using MediatR;
 
 namespace FinanceHub.Infrastructure.Services;
 
-public class PostService : IPostService
+public class PostService(
+    IMapper mapper,
+    IPostRepository postRepository,
+    IUserRepository userRepository,
+    ICategoryRepository categoryRepository,
+    IMediator mediator,
+    IAzureBlobStorageService azureBlobStorageService)
+    : IPostService
 {
-    private readonly IMapper _mapper;
-    private readonly IPostRepository _postRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly ICategoryRepository _categoryRepository;
-    private readonly IMediator _mediator;
-    private readonly IAzureBlobStorageService _azureBlobStorageService;
-
-    public PostService(IMapper mapper, IPostRepository postRepository, IUserRepository userRepository,
-        ICategoryRepository categoryRepository, IMediator mediator, IAzureBlobStorageService azureBlobStorageService)
-    {
-        _mapper = mapper;
-        _postRepository = postRepository;
-        _userRepository = userRepository;
-        _categoryRepository = categoryRepository;
-        _mediator = mediator;
-        _azureBlobStorageService = azureBlobStorageService;
-    }
-
     public async Task<PagedList<GetPostDto>> GetPostsPaginatedAsync(PostParams postParams)
     {
-        var postsQuey = await _mediator.Send(
-            new GetAllPostQuery("Author,Author.Profile,PostCategory,PostCategory.Category,Comments,Likes,PostImages"));
+        var postsQuey = await mediator.Send(
+            new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages"));
 
         var dtoQuery = postsQuey
             .OrderByDescending(x => x.CreatedAt)
-            .ProjectTo<GetPostDto>(_mapper.ConfigurationProvider); 
+            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider); 
         
         return await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
     }
@@ -57,7 +46,7 @@ public class PostService : IPostService
         
         foreach (var post in paginatedPosts)
         {
-            var like = await _mediator.Send(new GetSingleLikeQuery(post.Id, userId));
+            var like = await mediator.Send(new GetSingleLikeQuery(post.Id, userId));
             post.IsLiked = like != null; 
         }
         
@@ -67,23 +56,23 @@ public class PostService : IPostService
 
     public async Task<GetSinglePostDto> GetPostAsync(Guid id)
     {
-        var posts = await _mediator.Send(new GetPostQuery(id,
-            "Author,Author.Profile,PostCategory.Category,Comments,Likes,PostImages"));
+        var posts = await mediator.Send(new GetPostQuery(id,
+            "Author,PostCategory.Category,Comments,Likes,PostImages"));
 
-        var postDtos = _mapper.Map<GetSinglePostDto>(posts);
+        var postDtos = mapper.Map<GetSinglePostDto>(posts);
 
         return postDtos;
     }
 
     public async Task<GetPostDto> CreatePostAsync(CreatePostDto createPostDto)
     {
-        var user = await _userRepository.GetByEmailAsync(createPostDto.UserEmail);
+        var user = await userRepository.GetByEmailAsync(createPostDto.UserEmail);
         if (user == null)
         {
             throw new Exception("User with the specified email not found.");
         }
 
-        var existingCategories = await _categoryRepository.GetCategoriesByNamesAsync(createPostDto.CategoryNames);
+        var existingCategories = await categoryRepository.GetCategoriesByNamesAsync(createPostDto.CategoryNames);
 
         var categoryNames = createPostDto.CategoryNames ?? Enumerable.Empty<string>();
         var invalidCategoryNames = categoryNames
@@ -96,7 +85,7 @@ public class PostService : IPostService
             throw new Exception($"The following categories do not exist: {string.Join(", ", invalidCategoryNames)}");
         }
 
-        var post = _mapper.Map<Post>(createPostDto);
+        var post = mapper.Map<Post>(createPostDto);
         post.AuthorId = user.Id;
 
         post.PostCategory = existingCategories.Select(c => new PostCategory
@@ -106,14 +95,14 @@ public class PostService : IPostService
             Category = c
         }).ToList();
 
-        await _mediator.Send(new CreatePostCommand(post));
+        await mediator.Send(new CreatePostCommand(post));
 
         //uploading and creating image urls 
         if (createPostDto.Images != null && createPostDto.Images.Any())
         {
             foreach (var file in createPostDto.Images)
             {
-                var imageUrl = await _azureBlobStorageService.UploadPostImageAsync(file);
+                var imageUrl = await azureBlobStorageService.UploadPostImageAsync(file);
 
                 var postImage = new PostImage()
                 {
@@ -121,30 +110,30 @@ public class PostService : IPostService
                     ImageUrl = imageUrl,
                 };
 
-                await _mediator.Send(new CreatePostImageCommand(postImage));
+                await mediator.Send(new CreatePostImageCommand(postImage));
             }
         }
 
-        var responsePost = _mapper.Map<GetPostDto>(post);
+        var responsePost = mapper.Map<GetPostDto>(post);
         return responsePost;
     }
 
     public async Task<GetPostDto> UpdatePostAsync(Guid id, UpdatePostDto updatePostDto)
     {
-        var existingPost = await _postRepository.GetByIdAsync(id, "Author,PostCategory");
+        var existingPost = await postRepository.GetByIdAsync(id, "Author,PostCategory");
         if (existingPost == null)
         {
             throw new ValidationException($"Post with ID {id} does not exist.");
         }
 
-        _mapper.Map(updatePostDto, existingPost);
+        mapper.Map(updatePostDto, existingPost);
 
         if (existingPost.PostCategory != null && existingPost.PostCategory.Any())
         {
-            await _mediator.Send(new RemoveRangePostCategoryCommand(existingPost.PostCategory));
+            await mediator.Send(new RemoveRangePostCategoryCommand(existingPost.PostCategory));
         }
 
-        var existingCategories = await _categoryRepository.GetCategoriesByNamesAsync(updatePostDto.CategoryNames);
+        var existingCategories = await categoryRepository.GetCategoriesByNamesAsync(updatePostDto.CategoryNames);
 
         var categoryNames = updatePostDto.CategoryNames ?? Enumerable.Empty<string>();
         var invalidCategoryNames = categoryNames
@@ -156,23 +145,23 @@ public class PostService : IPostService
             throw new Exception($"The following categories do not exist: {string.Join(", ", invalidCategoryNames)}");
         }
 
-        await _mediator.Send(new AddRangePostCategoryCommand(existingPost, existingCategories));
+        await mediator.Send(new AddRangePostCategoryCommand(existingPost, existingCategories));
 
-        await _mediator.Send(new UpdatePostCommand(existingPost));
+        await mediator.Send(new UpdatePostCommand(existingPost));
 
-        var responsePost = _mapper.Map<GetPostDto>(existingPost);
+        var responsePost = mapper.Map<GetPostDto>(existingPost);
         return responsePost;
     }
 
 
     public async Task<string> DeletePostAsync(Guid postId)
     {
-        var post = await _postRepository.GetByIdAsync(postId);
+        var post = await postRepository.GetByIdAsync(postId);
         if (post == null)
         {
             throw new Exception("Post not found.");
         }
 
-        return await _mediator.Send(new DeletePostCommand(postId));
+        return await mediator.Send(new DeletePostCommand(postId));
     }
 }

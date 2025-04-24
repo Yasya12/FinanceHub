@@ -12,25 +12,15 @@ using MediatR;
 
 namespace FinanceHub.Infrastructure.Services;
 
-public class AuthService: IAuthService
+public class AuthService(IMediator mediator, IMapper mapper, IUserService userService)
+    : IAuthService
 {
-    private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
-    private readonly IUserService _userService;
-
-    public AuthService(IMediator mediator ,IMapper mapper, IUserService userService)
-    {
-        _mediator = mediator;
-        _mapper = mapper;
-        _userService = userService;
-    }
-    
     public async Task<(GetUserDto user, string token)> SignupAsync(SignupDto signupDto)
     {
         try
         {
-            var createUserDto = _mapper.Map<CreateUserDto>(signupDto);
-            var returnUserDto = await _userService.CreateUserAsync(createUserDto);
+            var createUserDto = mapper.Map<CreateUserDto>(signupDto);
+            var returnUserDto = await userService.CreateUserAsync(createUserDto);
             return await LoginAsync(returnUserDto.Email, signupDto.Password);
         }
         catch (ValidationException ex)
@@ -46,12 +36,10 @@ public class AuthService: IAuthService
 
     public async Task<(GetUserDto user, string token)> LoginAsync(string email, string password)
     {
-        var user = await _mediator.Send(new GetUserByCredentialsQuery(email, password));
-        if (user == null) throw new UnauthorizedAccessException("Invalid credentials");
-
-        var token = await _mediator.Send(new GenerateTokenCommand(user));
+        var user = await mediator.Send(new GetUserByCredentialsQuery(email, password));
+        var token = await mediator.Send(new GenerateTokenCommand(user));
         
-        var userDto = _mapper.Map<GetUserDto>(user);
+        var userDto = mapper.Map<GetUserDto>(user);
 
         return (userDto, token);
     }
@@ -59,11 +47,11 @@ public class AuthService: IAuthService
     public async Task<(GetUserDto user, string token)> GoogleLoginAsync(string googleToken)
     {
         var payload = await GoogleJsonWebSignature.ValidateAsync(googleToken);
-        var user = await _mediator.Send(new GetByGoogleIdUserQuery(payload.Subject))
-                   ?? await _mediator.Send(new CreateUserFromGoogleCommand(payload));
+        var user = await mediator.Send(new GetByGoogleIdUserQuery(payload.Subject))
+                   ?? await mediator.Send(new CreateUserFromGoogleCommand(payload));
         
-        var token = await _mediator.Send(new GenerateTokenCommand(user));
-        var userDto = _mapper.Map<GetUserDto>(user);
+        var token = await mediator.Send(new GenerateTokenCommand(user));
+        var userDto = mapper.Map<GetUserDto>(user);
 
         return (userDto, token);
     }

@@ -6,7 +6,6 @@ namespace FinanceHub.Infrastructure.Data;
 public class FinHubDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<Profile> Profiles { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<PostCategory> PostCategories { get; set; }

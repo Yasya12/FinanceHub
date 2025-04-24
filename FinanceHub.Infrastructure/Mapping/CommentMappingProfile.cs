@@ -11,10 +11,10 @@ public class CommentMappingProfile : Profile
         CreateMap<Comment, GetCommentDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.Username))
-            .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.Profile.ProfilePictureUrl))
+            .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.ProfilePictureUrl))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-             .ForMember(dest => dest.Replies, opt => opt.MapFrom(src => src.Replies.OrderBy(r => r.CreatedAt)))
+             .ForMember(dest => dest.Replies, opt => opt.MapFrom(src => src.Replies))
             .ReverseMap();
 
         CreateMap<UpdateCommentDto, Comment>()

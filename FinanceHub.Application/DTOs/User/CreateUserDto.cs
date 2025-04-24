@@ -8,12 +8,12 @@ public class CreateUserDto
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
     public string Email { get; set; }
 
-    [Required]
-    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
-    [MaxLength(100, ErrorMessage = "Password must be at most 100 characters long.")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$",
-        ErrorMessage =
-            "Password must have at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+    // [Required]
+    // [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
+    // [MaxLength(100, ErrorMessage = "Password must be at most 100 characters long.")]
+    // [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$",
+    //     ErrorMessage =
+    //         "Password must have at least one uppercase letter, one lowercase letter, one number, and one special character.")]
     public string Password { get; set; }
 
     [Required]
@@ -27,4 +27,6 @@ public class CreateUserDto
 
     [DataType(DataType.Date, ErrorMessage = "Invalid date format.")]
     public DateTime? DateOfBirth { get; set; }
+    
+    public string? Bio { get; set; }
 }

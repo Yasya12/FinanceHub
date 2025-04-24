@@ -1,6 +1,5 @@
 using System.Text.Json;
 using FinanceGub.Application.Helpers;
-using Microsoft.AspNetCore.Http;
 
 namespace FinanceGub.Application.Extensions;
 

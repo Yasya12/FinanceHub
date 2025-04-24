@@ -4,5 +4,5 @@ namespace FinanceGub.Application.Interfaces.Serviсes;
 
 public interface IMessageService
 {
-    Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto);
+    Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto, string senderUsername);
 }

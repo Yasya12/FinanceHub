@@ -32,7 +32,18 @@ public static class ModelBuilderExtensions
                 Username = "johndoe",
                 Email = "johndoe@example.com",
                 PasswordHash = PasswordHasher.HashPassword("hashedpassword"),
-                Role = "User"
+                Role = "User",
+                Country = "Ukraine"
+            }, 
+            new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "Lisa",
+                Email = "lisa@1",
+                PasswordHash = PasswordHasher.HashPassword("1"),
+                Role = "User",
+                Country = "Ukraine",
+                Bio = "Passionate about smart money management and personal growth. Tracking goals, budgeting wisely, and always learning something new about finance."
             },
             new User
             {
@@ -40,33 +51,34 @@ public static class ModelBuilderExtensions
                 Username = "admin",
                 Email = "admin@example.com",
                 PasswordHash = PasswordHasher.HashPassword("adminhashedpassword"),
-                Role = "Admin"
+                Role = "Admin",
+                Country = "England"
             }
         );
 
         // Seed data for Profiles
-        modelBuilder.Entity<Profile>().HasData(
-            new Profile
-            {
-                Id = Guid.NewGuid(),
-                UserId = user1Id, 
-                PhoneNumber = "+1234567890",
-                Country = "USA",
-                CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
-                UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
-                DateOfBirth =  DateTime.SpecifyKind(new DateTime(1990, 1, 1), DateTimeKind.Utc)
-            },
-            new Profile
-            {
-                Id = Guid.NewGuid(),
-                UserId = user2Id, 
-                PhoneNumber = "+9876543210",
-                Country = "Canada",
-                CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
-                UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
-                DateOfBirth =  DateTime.SpecifyKind(new DateTime(2000, 10, 10), DateTimeKind.Utc)
-            }
-        );
+        // modelBuilder.Entity<Profile>().HasData(
+        //     new Profile
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         UserId = user1Id, 
+        //         PhoneNumber = "+1234567890",
+        //         Country = "USA",
+        //         CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+        //         UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+        //         DateOfBirth =  DateTime.SpecifyKind(new DateTime(1990, 1, 1), DateTimeKind.Utc)
+        //     },
+        //     new Profile
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         UserId = user2Id, 
+        //         PhoneNumber = "+9876543210",
+        //         Country = "Canada",
+        //         CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+        //         UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+        //         DateOfBirth =  DateTime.SpecifyKind(new DateTime(2000, 10, 10), DateTimeKind.Utc)
+        //     }
+        // );
 
         //Seed data for Post
         modelBuilder.Entity<Post>().HasData(
