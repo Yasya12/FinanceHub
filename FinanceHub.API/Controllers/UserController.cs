@@ -1,7 +1,12 @@
 using System.Security.Claims;
 using FinanceGub.Application.DTOs.User;
+using FinanceGub.Application.Features.PhotoFeatures.Commands.CreateUserPhotoCommand;
+using FinanceGub.Application.Features.PhotoFeatures.Commands.DeletePhotoCommand;
 using FinanceGub.Application.Features.UserFeatures.Commands.DeleteUserCommand;
+using FinanceGub.Application.Features.UserFeatures.Commands.UpdateUserCommand;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
+using FinanceHub.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +21,7 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
     public async Task<ActionResult<IEnumerable<GetUserDto>>> GetAllUser()
     {
         var userDto = await userService.GetAllUsersAsync();
-        return Ok(userDto); 
+        return Ok(userDto);
     }
 
     //Dont use this methid, dont need it
@@ -24,18 +29,14 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
     public async Task<ActionResult<GetUserDto>> GetUser(Guid id)
     {
         var userDto = await userService.GetUserAsync(id);
-        return Ok(userDto); 
+        return Ok(userDto);
     }
-    
+
     [HttpGet("by-email")]
     public async Task<ActionResult<GetUserDto>> GetUserByEmail()
     {
-        var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-
-        if (currentEmail == null) return BadRequest("No email found in token");
-        
-        var userDto = await userService.GetUserByEmailAsync(currentEmail);
-        return Ok(userDto); 
+        var userDto = await userService.GetUserByEmailAsync(User.GetEmail());
+        return Ok(userDto);
     }
 
     [HttpPost]
@@ -44,16 +45,12 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
         var createdUser = await userService.CreateUserAsync(createUserDto);
         return Created(string.Empty, createdUser);
     }
-    
+
     [HttpPut]
     public async Task<IActionResult> UpdateUser(UpdateUserDto updateUserDto)
     {
-        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (await userService.UpdateUserAsync(User.GetEmail(), updateUserDto)) return NoContent();
 
-        if (email == null) return BadRequest("No email found in token");
-
-        if (await userService.UpdateUserAsync(email, updateUserDto)) return NoContent();
-        
         return BadRequest("Failed to update user");
     }
 
@@ -61,6 +58,57 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
     public async Task<IActionResult> DeleteUser(Guid id)
     {
         var message = await Send(new DeleteUserCommand(id));
-        return Content(message); 
+        return Content(message);
+    }
+
+    [HttpPost("add-photo")]
+    public async Task<ActionResult<string>> AddPhoto(IFormFile file)
+    {
+        var user = await mediator.Send(new GetByEmailUserQuery(User.GetEmail()));
+
+        if (user == null) return BadRequest("User not found");
+
+        var photoUrl = await mediator.Send(new CreateUserPhotoCommand(file));
+
+        if (photoUrl == null) return BadRequest("Error adding a photo");
+
+        var oldPhotoUrl = user.ProfilePictureUrl;
+        
+        user.ProfilePictureUrl = photoUrl;
+
+        await mediator.Send(new UpdateUserCommand(user));
+        
+        if (!string.IsNullOrEmpty(oldPhotoUrl))
+        {
+            // Best practice: wrap delete in try-catch in case something goes wrong
+            try
+            {
+                await mediator.Send(new DeletePhotoCommand(oldPhotoUrl));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unexpected error during user creation.", ex);
+                // Log error if necessary, but don't crash
+                // _logger.LogError(ex, "Failed to delete old photo");
+            }
+        }
+
+        return Ok(new { photoUrl });
+    }
+    
+    [HttpDelete("delete-photo")]
+    public async Task<IActionResult> DeletePhoto()
+    {
+        var user = await mediator.Send(new GetByEmailUserQuery(User.GetEmail()));
+
+        if (user == null) return BadRequest("User not found");
+
+        if (String.IsNullOrEmpty(user.ProfilePictureUrl)) return BadRequest("No profile picture was found");
+
+        await Send(new DeletePhotoCommand(user.ProfilePictureUrl));
+
+        user.ProfilePictureUrl = null;
+        await mediator.Send(new UpdateUserCommand(user));
+        return Ok();
     }
 }

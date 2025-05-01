@@ -102,7 +102,7 @@ public class PostService(
         {
             foreach (var file in createPostDto.Images)
             {
-                var imageUrl = await azureBlobStorageService.UploadPostImageAsync(file);
+                var imageUrl = await azureBlobStorageService.AddPostPhotoAsync(file);
 
                 var postImage = new PostImage()
                 {
