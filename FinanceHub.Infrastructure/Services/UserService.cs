@@ -44,6 +44,17 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
 
         return userDto;
     }
+    
+    public async Task<GetUserDto> GetUserByUsernameAsync(string username)
+    {
+        var user = await mediator.Send(new GetByUsernameUserQuery(username));
+        
+        if(user == null) throw new Exception($"User with username {username} don`t exists.");
+        
+        var userDto = mapper.Map<GetUserDto>(user);
+
+        return userDto;
+    }
 
     public async Task<CreateUserDto> CreateUserAsync(CreateUserDto createUserDto)
     {

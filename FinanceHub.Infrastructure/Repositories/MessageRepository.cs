@@ -17,9 +17,9 @@ public class MessageRepository(FinHubDbContext context, IMapper mapper) : Generi
 
         query = messageParams.Container switch
         {
-            "Inbox" => query.Where(x => x.RecipientUserName == messageParams.Username),
-            "Outbox" => query.Where(x => x.SenderUserName == messageParams.Username),
-            _ => query.Where(x => x.RecipientUserName == messageParams.Username && x.DateRead == null)
+            "Inbox" => query.Where(x => x.RecipientUserName == messageParams.Username && x.RecipientDeleted == false),
+            "Outbox" => query.Where(x => x.SenderUserName == messageParams.Username && x.SenderDeleted == false),
+            _ => query.Where(x => x.RecipientUserName == messageParams.Username && x.DateRead == null && x.RecipientDeleted == false)
         };
 
         var messages = query.ProjectTo<MessageDto>(mapper.ConfigurationProvider);
@@ -27,26 +27,30 @@ public class MessageRepository(FinHubDbContext context, IMapper mapper) : Generi
         return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
     }
 
-    public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
+    public async Task<PagedList<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername, MessageThreadParams messageThreadParams)
     {
-        var messanges = await _dbSet
+        var query = _dbSet
             .Include(x => x.Sender)
             .Include(x => x.Recipient)
             .Where(x =>
-                x.RecipientUserName == currentUsername && x.SenderUserName == recipientUsername ||
-                x.SenderUserName == currentUsername && x.RecipientUserName == recipientUsername)
-            .OrderBy(x => x.MessageSent)
+                (x.RecipientUserName == currentUsername && !x.RecipientDeleted && x.SenderUserName == recipientUsername) ||
+                (x.SenderUserName == currentUsername && !x.SenderDeleted && x.RecipientUserName == recipientUsername))
+            .OrderByDescending(x => x.MessageSent)
+            .AsQueryable();
+
+        // Mark unread messages as read
+        var unreadMessages = await query
+            .Where(x => x.DateRead == null && x.RecipientUserName == currentUsername)
             .ToListAsync();
 
-        var unreadMessages =
-            messanges.Where(x => x.DateRead == null && x.RecipientUserName == currentUsername).ToList();
-
-        if (unreadMessages.Count() != 0)
+        if (unreadMessages.Any())
         {
             unreadMessages.ForEach(x => x.DateRead = DateTime.UtcNow);
             await context.SaveChangesAsync();
         }
 
-        return mapper.Map<IEnumerable<MessageDto>>(messanges);
+        var projected = query.ProjectTo<MessageDto>(mapper.ConfigurationProvider);
+        
+        return await PagedList<MessageDto>.CreateAsync(projected, messageThreadParams.PageNumber, messageThreadParams.PageSize);
     }
 }

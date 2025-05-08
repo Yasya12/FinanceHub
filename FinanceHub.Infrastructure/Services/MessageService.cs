@@ -1,6 +1,7 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.Message;
 using FinanceGub.Application.Features.MessageFeatures.Commands.CreateMessageCommand;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetByUsernameUserQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
@@ -10,9 +11,9 @@ namespace FinanceHub.Infrastructure.Services;
 
 public class MessageService(IMediator mediator, IMapper mapper) : IMessageService
 {
-    public async Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto, string senderUsername)
+    public async Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto, string senderEmail)
     {
-        var sender = await mediator.Send(new GetByUsernameUserQuery(senderUsername));
+        var sender = await mediator.Send(new GetByEmailUserQuery(senderEmail));
         var recipient = await mediator.Send(new GetByUsernameUserQuery(createMessageDto.RecipientUsername));
         
         if(sender == null || recipient == null) throw new Exception("Cannot sent message at this time");

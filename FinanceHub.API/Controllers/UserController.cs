@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using FinanceGub.Application.DTOs.User;
 using FinanceGub.Application.Features.PhotoFeatures.Commands.CreateUserPhotoCommand;
 using FinanceGub.Application.Features.PhotoFeatures.Commands.DeletePhotoCommand;
@@ -13,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceHub.Controllers;
 
-[Authorize]
 public class UserController(IMediator mediator, ILogger<BaseController> logger, IUserService userService)
     : BaseController(mediator, logger)
 {
@@ -31,7 +29,15 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
         var userDto = await userService.GetUserAsync(id);
         return Ok(userDto);
     }
+    
+    [HttpGet("by-username/{username}")]
+    public async Task<ActionResult<GetUserDto>> GetUserByUsername(string username)
+    {
+        var userDto = await userService.GetUserByUsernameAsync(username);
+        return Ok(userDto);
+    }
 
+    [Authorize]
     [HttpGet("by-email")]
     public async Task<ActionResult<GetUserDto>> GetUserByEmail()
     {
@@ -46,6 +52,7 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
         return Created(string.Empty, createdUser);
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<IActionResult> UpdateUser(UpdateUserDto updateUserDto)
     {
@@ -61,6 +68,7 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
         return Content(message);
     }
 
+    [Authorize]
     [HttpPost("add-photo")]
     public async Task<ActionResult<string>> AddPhoto(IFormFile file)
     {
@@ -96,6 +104,7 @@ public class UserController(IMediator mediator, ILogger<BaseController> logger, 
         return Ok(new { photoUrl });
     }
     
+    [Authorize]
     [HttpDelete("delete-photo")]
     public async Task<IActionResult> DeletePhoto()
     {
