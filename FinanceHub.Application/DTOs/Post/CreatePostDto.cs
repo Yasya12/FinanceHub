@@ -13,5 +13,6 @@ public class CreatePostDto
     [Required(ErrorMessage = "Content is required.")]
     public string Content { get; set; }
     public IEnumerable<IFormFile>? Images { get; set; }
+    public Guid? HubId { get; set; }
 
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceHub.Infrastructure.Data;
 
-public class FinHubDbContext : DbContext
+public class FinHubDbContext(DbContextOptions<FinHubDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Post> Posts { get; set; }
@@ -16,15 +16,16 @@ public class FinHubDbContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<PostImage> PostImages { get; set; }
-    public FinHubDbContext(DbContextOptions<FinHubDbContext> options):base(options) {}
+    public DbSet<Hub> Hubs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.Entity<User>()
             .Property(u => u.Role)
-            .HasDefaultValue(FinanceGub.Application.Identity.IdentityData.UserUserClaimName); 
-        
+            .HasDefaultValue(FinanceGub.Application.Identity.IdentityData.UserUserClaimName);
+
         modelBuilder.Entity<PostCategory>()
             .HasKey(pc => new { pc.PostId, pc.CategoryId });
 
@@ -37,15 +38,15 @@ public class FinHubDbContext : DbContext
             .HasOne(pc => pc.Category)
             .WithMany(c => c.PostCategory)
             .HasForeignKey(pc => pc.CategoryId);
-        
+
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.Author)
-            .WithMany() 
+            .WithMany()
             .HasForeignKey(c => c.AuthorId);
 
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.Post)
-            .WithMany(p => p.Comments) 
+            .WithMany(p => p.Comments)
             .HasForeignKey(c => c.PostId);
 
         modelBuilder.Entity<Comment>()
@@ -54,7 +55,7 @@ public class FinHubDbContext : DbContext
             .HasForeignKey(c => c.ParentId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<PostImage>()
             .HasOne(p => p.Post)
             .WithMany(b => b.PostImages)
@@ -64,13 +65,19 @@ public class FinHubDbContext : DbContext
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Recipient)
             .WithMany(x => x.MessagesReceived)
-            .OnDelete(DeleteBehavior.Restrict);
-        
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Sender)
             .WithMany(x => x.MessagesSent)
-            .OnDelete(DeleteBehavior.Restrict);
-        
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Hub>()
+            .HasMany(h => h.Posts)
+            .WithOne(p => p.Hub)
+            .HasForeignKey(p => p.HubId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         modelBuilder.Seed();
     }
 }

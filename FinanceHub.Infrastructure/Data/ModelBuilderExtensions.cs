@@ -198,5 +198,64 @@ public static class ModelBuilderExtensions
                 PostId = post2Id
             }
         );
+        
+        modelBuilder.Entity<Hub>().HasData(
+            new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "Budgeting",
+        Description = "Tips on managing money, saving, and budgeting.",
+        PostPermission = "public"
+    },
+    new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "Crypto",
+        Description = "News and trends in crypto and blockchain.",
+        PostPermission = "public"
+    },
+    new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "Stocks",
+        Description = "Market updates, analysis, and stock picks.",
+        PostPermission = "public"
+    },
+    new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "FI/RE",
+        Description = "Financial independence and early retirement.",
+        PostPermission = "members"
+    },
+    new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "Side Hustles",
+        Description = "Ideas and stories on earning extra income.",
+        PostPermission = "members"
+    },
+    new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "Real Estate",
+        Description = "Investing in properties and REITs.",
+        PostPermission = "moderated"
+    },
+    new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "Mindset",
+        Description = "Money habits and financial motivation.",
+        PostPermission = "public"
+    },
+    new Hub
+    {
+        Id = Guid.NewGuid(),
+        Name = "Finance News",
+        Description = "Latest updates from the world of finance.",
+        PostPermission = "moderated"
+    }
+        );
     }
 }

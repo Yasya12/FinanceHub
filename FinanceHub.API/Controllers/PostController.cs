@@ -24,6 +24,32 @@ public class PostController(IMediator mediator, ILogger<BaseController> logger, 
         return Ok(paginatedPosts); 
     }
     
+    [HttpGet("hub-posts")]
+    public async Task<ActionResult<PagedList<GetPostDto>>> GetAllHubPost([FromQuery] PostParams postParams, [FromQuery] Guid hubId)
+    {
+        var paginatedPosts = await postService.GetHubPostsPaginatedAsync(postParams, hubId);
+        
+        Response.AddPaginationHeader(paginatedPosts);
+        
+        return Ok(paginatedPosts); 
+    }
+    
+    [Authorize]
+    [HttpGet("hub-posts-with-likes")]
+    public async Task<ActionResult<PagedList<GetPostDto>>> GetHubPostsWithLikes([FromQuery] PostParams postParams, [FromQuery] Guid hubId)
+    {
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (currentUserId == null) return BadRequest("No User Id found in token");
+        
+        Guid userId = Guid.Parse(currentUserId);
+        
+        var paginatedPosts = await postService.GetHubPostsWithLikesAsync(postParams, userId, hubId);
+        
+        Response.AddPaginationHeader(paginatedPosts);
+        
+        return Ok(paginatedPosts); 
+    }
+    
     [Authorize]
     [HttpGet("with-likes")]
     public async Task<ActionResult<PagedList<GetPostDto>>> GetPostsWithLikes([FromQuery] PostParams postParams)

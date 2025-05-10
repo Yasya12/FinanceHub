@@ -33,6 +33,8 @@ public static class DependencyInjection
         serviceCollection.AddScoped<ILikeRepository, LikeRepository>();
         serviceCollection.AddScoped<IPostImageRepository, PostImageRepository>();
         serviceCollection.AddScoped<IMessageRepository, MessageRepository>();
+        serviceCollection.AddScoped<IHubRepository, HubRepository>();
+        
         
         serviceCollection.AddScoped<IUserService, UserService>(); 
         serviceCollection.AddScoped<IJwtService, JwtService>();

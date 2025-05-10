@@ -40,9 +40,35 @@ public class PostService(
         return await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
     }
     
+    public async Task<PagedList<GetPostDto>> GetHubPostsPaginatedAsync(PostParams postParams, Guid hubId)
+    {
+        var postsQuey = await mediator.Send(
+            new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages"));
+
+        var dtoQuery = postsQuey
+            .Where(x => x.HubId == hubId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider); 
+        
+        return await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
+    }
+    
     public async Task<PagedList<GetPostDto>> GetPostsWithLikesAsync(PostParams postParams, Guid userId)
     {
         var paginatedPosts = await GetPostsPaginatedAsync(postParams);
+        
+        foreach (var post in paginatedPosts)
+        {
+            var like = await mediator.Send(new GetSingleLikeQuery(post.Id, userId));
+            post.IsLiked = like != null; 
+        }
+        
+        return paginatedPosts;
+    }
+    
+    public async Task<PagedList<GetPostDto>> GetHubPostsWithLikesAsync(PostParams postParams, Guid userId, Guid hubId)
+    {
+        var paginatedPosts = await GetHubPostsPaginatedAsync(postParams, hubId);
         
         foreach (var post in paginatedPosts)
         {
