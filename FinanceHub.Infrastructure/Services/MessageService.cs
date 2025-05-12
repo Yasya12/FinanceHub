@@ -16,14 +16,14 @@ public class MessageService(IMediator mediator, IMapper mapper) : IMessageServic
         var sender = await mediator.Send(new GetByEmailUserQuery(senderEmail));
         var recipient = await mediator.Send(new GetByUsernameUserQuery(createMessageDto.RecipientUsername));
         
-        if(sender == null || recipient == null) throw new Exception("Cannot sent message at this time");
+        if(sender == null || recipient == null || sender.UserName == null || recipient.UserName == null) throw new Exception("Cannot sent message at this time");
 
         var message = new Message
         {
             Sender = sender,
             Recipient = recipient,
-            SenderUserName = sender.Username,
-            RecipientUserName = recipient.Username,
+            SenderUserName = sender.UserName,
+            RecipientUserName = recipient.UserName,
             Content = createMessageDto.Content,
             MessageSent = DateTime.UtcNow
         };

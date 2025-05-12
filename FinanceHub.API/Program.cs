@@ -4,18 +4,27 @@ using Azure.Security.KeyVault.Secrets;
 using FinanceGub.Application;
 using FinanceGub.Application.Identity;
 using FinanceGub.Application.Interfaces.Serviсes;
+using FinanceHub.Core.Entities;
 using FinanceHub.Infrastructure;
 using FinanceHub.Infrastructure.Data;
 using FinanceHub.Infrastructure.Services;
 using FinanceHub.Middleware;
 using FinanceHub.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connectionString, jwtIssuerSecret, jwtAudienceSecret, jwtKeySecret, blobStorageConnectionString, containerName, googleClientId, googleClientSecret;
+string connectionString,
+    jwtIssuerSecret,
+    jwtAudienceSecret,
+    jwtKeySecret,
+    blobStorageConnectionString,
+    containerName,
+    googleClientId,
+    googleClientSecret;
 
 try
 {
@@ -32,9 +41,9 @@ try
     blobStorageConnectionString = (await client.GetSecretAsync("AzureBlobStorageConnectionString")).Value.Value;
     containerName = (await client.GetSecretAsync("ProfilePicturesContainer")).Value.Value;
 
-    builder.Services.AddTransient<IAzureBlobStorageService>(provider => 
+    builder.Services.AddTransient<IAzureBlobStorageService>(provider =>
         new AzureBlobStorageService(blobStorageConnectionString, containerName));
-    
+
     builder.Configuration["JwtKey"] = jwtKeySecret;
     builder.Configuration["JwtIssuer"] = jwtIssuerSecret;
     builder.Configuration["JwtAudience"] = jwtAudienceSecret;
@@ -46,7 +55,7 @@ try
 catch (Exception ex)
 {
     Console.WriteLine($"Error retrieving secrets from Key Vault: {ex.Message}");
-    throw; 
+    throw;
 }
 
 if (builder.Environment.IsDevelopment())
@@ -56,6 +65,17 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services.AddDbContext<FinHubDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Register Identity with custom User and Role types
+builder.Services.AddIdentity<User, AppRole>(options => 
+    {
+        // Configure Identity options if needed
+    })
+    .AddRoles<AppRole>() // Specify the role type (AppRole)
+    .AddEntityFrameworkStores<FinHubDbContext>()
+    .AddRoleManager<RoleManager<AppRole>>() // Register the custom RoleManager
+    .AddUserManager<UserManager<User>>() // Optional, to explicitly register the custom UserManager
+    .AddDefaultTokenProviders(); 
 
 builder.Services.AddAuthentication(x =>
     {
@@ -86,7 +106,8 @@ builder.Services.AddAuthentication()
         options.CallbackPath = "/user";
     });
 
-builder.Services.AddAuthorization(options => {
+builder.Services.AddAuthorization(options =>
+{
     options.AddPolicy(IdentityData.AdminUserPolicyName, p =>
         p.RequireClaim(IdentityData.AdminUserClaimName, "true"));
 });
@@ -123,10 +144,7 @@ app.UseCors("CorsPolicy");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-    });
+    app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"); });
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

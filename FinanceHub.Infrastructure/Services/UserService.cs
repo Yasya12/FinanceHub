@@ -67,7 +67,7 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
                 if (existingUser.Email == createUserDto.Email)
                     throw new ValidationException($"User with email {createUserDto.Email} already exists.");
 
-                if (existingUser.Username?.ToLower() == createUserDto.Username.ToLower())
+                if (existingUser.UserName?.ToLower() == createUserDto.Username.ToLower())
                     throw new ValidationException($"User with username {createUserDto.Username} already exists.");
             }
 
@@ -100,7 +100,7 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
             throw new ValidationException($"User with email {email} does not exist.");
         }
         
-        if (user.Username != updateUserDto.Username)
+        if (user.UserName != updateUserDto.Username)
         {
             var existingWithUsername = await mediator.Send(new GetByUsernameUserQuery(updateUserDto.Username));
             if (existingWithUsername != null)
@@ -139,9 +139,8 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
         var newUser = new User
         {
             GoogleId = payload.Subject,  
-            Username = username,   
-            Email = payload.Email,       
-            Role = "User"   // це вирішити через посилання між шарами             
+            UserName = username,   
+            Email = payload.Email          
         };
 
         await mediator.Send(new CreateUserCommand(newUser));

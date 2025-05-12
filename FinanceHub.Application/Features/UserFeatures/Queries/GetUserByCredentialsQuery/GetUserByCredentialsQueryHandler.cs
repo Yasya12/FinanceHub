@@ -12,8 +12,7 @@ public class GetUserByCredentialsQueryHandler(IUserRepository userRepository)
     {
         var user = await userRepository.GetByEmailAsync(request.Email);
         if (user == null || !PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
-            return null;
-
+            throw new UnauthorizedAccessException("Invalid email or password.");
         return user;
     }
 }

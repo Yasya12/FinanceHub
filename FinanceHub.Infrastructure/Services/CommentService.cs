@@ -104,7 +104,7 @@ public class CommentService(IMapper mapper, IMediator mediator) : ICommentServic
         await mediator.Send(new CreateCommentCommand(comment));
 
         var responseComment = mapper.Map<GetCommentDto>(comment);
-        responseComment.AuthorName = user.Username;
+        responseComment.AuthorName = user.UserName;
 
         return responseComment;
     }
@@ -124,7 +124,7 @@ public class CommentService(IMapper mapper, IMediator mediator) : ICommentServic
         var responseComment = mapper.Map<GetCommentDto>(existingComment);
         var post = await mediator.Send(new GetPostQuery(existingComment.PostId));
         var user = await mediator.Send(new GetUserQuery(existingComment.AuthorId));
-        responseComment.AuthorName = user.Username;
+        responseComment.AuthorName = user.UserName;
 
         return responseComment;
     }

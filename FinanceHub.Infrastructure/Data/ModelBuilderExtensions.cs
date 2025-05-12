@@ -9,8 +9,9 @@ public static class ModelBuilderExtensions
     public static void Seed(this ModelBuilder modelBuilder)
     {
         // Define fixed Guids for users
-        var user1Id = Guid.NewGuid(); 
+        var user1Id = Guid.NewGuid();
         var user2Id = Guid.NewGuid();
+        var user3Id = Guid.NewGuid();
         // Define fixed Guids for posts
         var post1Id = Guid.NewGuid();
         var post2Id = Guid.NewGuid();
@@ -23,35 +24,80 @@ public static class ModelBuilderExtensions
         var comment2Id = Guid.NewGuid();
         var comment3Id = Guid.NewGuid();
 
+        var roleAdminId = Guid.NewGuid();
+        var roleUserId = Guid.NewGuid();
+        var roleModeratorId = Guid.NewGuid();
+
+        modelBuilder.Entity<AppRole>().HasData(
+            new AppRole
+            {
+                Id = roleAdminId,
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            },
+            new AppRole
+            {
+                Id = roleUserId,
+                Name = "Member",
+                NormalizedName = "MEMBER"
+            },
+            new AppRole
+            {
+                Id = roleModeratorId,
+                Name = "Moderator",
+                NormalizedName = "MODERATOR"
+            }
+        );
         
+        modelBuilder.Entity<AppUserRole>().HasData(
+            new AppUserRole
+            {
+                UserId = user1Id, // johndoe
+                RoleId = roleUserId
+            },
+            new AppUserRole
+            {
+                UserId = user2Id, // admin
+                RoleId = roleAdminId
+            },
+            new AppUserRole
+            {
+                UserId = user3Id, // admin
+                RoleId = roleUserId
+            }
+        );
+
+
+
         // Seed data for Users
         modelBuilder.Entity<User>().HasData(
             new User
             {
                 Id = user1Id,
-                Username = "johndoe",
+                UserName = "johndoe",
                 Email = "johndoe@example.com",
                 PasswordHash = PasswordHasher.HashPassword("hashedpassword"),
-                Role = "User",
+                //Role = "User",
                 Country = "Ukraine"
-            }, 
+            },
             new User
             {
-                Id = Guid.NewGuid(),
-                Username = "Lisa",
+                Id = user3Id,
+                UserName = "Lisa",
                 Email = "lisa@1",
                 PasswordHash = PasswordHasher.HashPassword("1"),
-                Role = "User",
+                // Role = "User",
                 Country = "Ukraine",
-                Bio = "Passionate about smart money management and personal growth. Tracking goals, budgeting wisely, and always learning something new about finance."
+                Bio =
+                    "Passionate about smart money management and personal growth. Tracking goals, budgeting wisely, and always learning something new about finance."
             },
             new User
             {
                 Id = user2Id,
-                Username = "admin",
+                UserName = "admin",
                 Email = "admin@example.com",
                 PasswordHash = PasswordHasher.HashPassword("adminhashedpassword"),
-                Role = "Admin",
+                // Role = "Admin",
                 Country = "England"
             }
         );
@@ -98,7 +144,7 @@ public static class ModelBuilderExtensions
                 CreatedAt = DateTime.UtcNow.AddDays(-20),
                 UpdatedAt = DateTime.UtcNow.AddDays(-2)
             });
-        
+
         //Seed data for Category
         modelBuilder.Entity<Category>().HasData(
             new Category
@@ -120,7 +166,7 @@ public static class ModelBuilderExtensions
                 Description = "Educational articles and resources"
             }
         );
-        
+
         //Seed data for PostCategory
         modelBuilder.Entity<PostCategory>().HasData(
             new PostCategory
@@ -143,14 +189,14 @@ public static class ModelBuilderExtensions
                 PostId = post2Id,
                 CategoryId = category3Id
             });
-        
+
         // Seed data for Comments
         modelBuilder.Entity<Comment>().HasData(
             new Comment
             {
                 Id = comment1Id,
-                PostId = post1Id, 
-                AuthorId = user1Id, 
+                PostId = post1Id,
+                AuthorId = user1Id,
                 Content = "Great introduction! Looking forward to learning more.",
                 CreatedAt = DateTime.UtcNow.AddDays(-5),
                 IsModified = false,
@@ -159,8 +205,8 @@ public static class ModelBuilderExtensions
             new Comment
             {
                 Id = comment2Id,
-                PostId = post1Id, 
-                AuthorId = user2Id, 
+                PostId = post1Id,
+                AuthorId = user2Id,
                 Content = "Interesting perspective on finance.",
                 CreatedAt = DateTime.UtcNow.AddDays(-4),
                 IsModified = false,
@@ -169,7 +215,7 @@ public static class ModelBuilderExtensions
             new Comment
             {
                 Id = comment3Id,
-                PostId = post2Id, 
+                PostId = post2Id,
                 AuthorId = user1Id,
                 Content = "I found this article very helpful!",
                 CreatedAt = DateTime.UtcNow.AddDays(-3),
@@ -177,12 +223,12 @@ public static class ModelBuilderExtensions
                 ParentId = null
             }
         );
-        
+
         modelBuilder.Entity<Like>().HasData(
             new Like
             {
                 Id = Guid.NewGuid(),
-                UserId = user1Id, 
+                UserId = user1Id,
                 PostId = post1Id
             },
             new Like
@@ -194,68 +240,68 @@ public static class ModelBuilderExtensions
             new Like
             {
                 Id = Guid.NewGuid(),
-                UserId = user1Id, 
+                UserId = user1Id,
                 PostId = post2Id
             }
         );
-        
+
         modelBuilder.Entity<Hub>().HasData(
             new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "Budgeting",
-        Description = "Tips on managing money, saving, and budgeting.",
-        PostPermission = "public"
-    },
-    new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "Crypto",
-        Description = "News and trends in crypto and blockchain.",
-        PostPermission = "public"
-    },
-    new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "Stocks",
-        Description = "Market updates, analysis, and stock picks.",
-        PostPermission = "public"
-    },
-    new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "FI/RE",
-        Description = "Financial independence and early retirement.",
-        PostPermission = "members"
-    },
-    new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "Side Hustles",
-        Description = "Ideas and stories on earning extra income.",
-        PostPermission = "members"
-    },
-    new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "Real Estate",
-        Description = "Investing in properties and REITs.",
-        PostPermission = "moderated"
-    },
-    new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "Mindset",
-        Description = "Money habits and financial motivation.",
-        PostPermission = "public"
-    },
-    new Hub
-    {
-        Id = Guid.NewGuid(),
-        Name = "Finance News",
-        Description = "Latest updates from the world of finance.",
-        PostPermission = "moderated"
-    }
+            {
+                Id = Guid.NewGuid(),
+                Name = "Budgeting",
+                Description = "Tips on managing money, saving, and budgeting.",
+                PostPermission = "public"
+            },
+            new Hub
+            {
+                Id = Guid.NewGuid(),
+                Name = "Crypto",
+                Description = "News and trends in crypto and blockchain.",
+                PostPermission = "public"
+            },
+            new Hub
+            {
+                Id = Guid.NewGuid(),
+                Name = "Stocks",
+                Description = "Market updates, analysis, and stock picks.",
+                PostPermission = "public"
+            },
+            new Hub
+            {
+                Id = Guid.NewGuid(),
+                Name = "FI/RE",
+                Description = "Financial independence and early retirement.",
+                PostPermission = "members"
+            },
+            new Hub
+            {
+                Id = Guid.NewGuid(),
+                Name = "Side Hustles",
+                Description = "Ideas and stories on earning extra income.",
+                PostPermission = "members"
+            },
+            new Hub
+            {
+                Id = Guid.NewGuid(),
+                Name = "Real Estate",
+                Description = "Investing in properties and REITs.",
+                PostPermission = "moderated"
+            },
+            new Hub
+            {
+                Id = Guid.NewGuid(),
+                Name = "Mindset",
+                Description = "Money habits and financial motivation.",
+                PostPermission = "public"
+            },
+            new Hub
+            {
+                Id = Guid.NewGuid(),
+                Name = "Finance News",
+                Description = "Latest updates from the world of finance.",
+                PostPermission = "moderated"
+            }
         );
     }
 }

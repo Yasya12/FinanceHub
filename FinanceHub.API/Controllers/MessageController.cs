@@ -20,6 +20,8 @@ namespace FinanceHub.Controllers;
 public class MessageController(IMediator mediator, ILogger<BaseController> logger, IMessageService messageService)
     : BaseController(mediator, logger)
 {
+    private readonly IMediator _mediator1 = mediator;
+
     [HttpPost]
     public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
     {
@@ -34,7 +36,7 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
     {
-        var messages = await mediator.Send(new GetMessagesForUser(messageParams));
+        var messages = await _mediator1.Send(new GetMessagesForUser(messageParams));
 
         Response.AddPaginationHeader(messages);
 
@@ -48,36 +50,40 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
 
         if (currentEmail == null) return BadRequest("No email found in token");
 
-        var user = await mediator.Send(new GetByEmailUserQuery(currentEmail));
-        var currentUsername = user.Username;
+        var user = await _mediator1.Send(new GetByEmailUserQuery(currentEmail));
+        var currentUsername = user.UserName;
 
-        var messagesThread = await mediator.Send(new GetMessageThread(currentUsername, username, messageThreadParams));
+        if (currentUsername != null)
+        {
+            var messagesThread = await _mediator1.Send(new GetMessageThread(currentUsername, username, messageThreadParams));
         
-        Response.AddPaginationHeader(messagesThread);
+            Response.AddPaginationHeader(messagesThread);
 
-        return messagesThread;
+            return messagesThread;
+        }
+        return BadRequest("No Username found");
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMessage(Guid id)
     {
         var email = User.GetEmail();
-        var user = await mediator.Send(new GetByEmailUserQuery(email));
+        var user = await _mediator1.Send(new GetByEmailUserQuery(email));
 
-        var message = await mediator.Send(new GetMessageById(id));
+        var message = await _mediator1.Send(new GetMessageById(id));
 
         if (message == null) return BadRequest("Cannot delete this message");
 
-        if (message.SenderUserName != user.Username && message.RecipientUserName != user.Username) return Forbid();
+        if (message.SenderUserName != user.UserName && message.RecipientUserName != user.UserName) return Forbid();
 
-        if (message.SenderUserName == user.Username) message.SenderDeleted = true;
-        if (message.RecipientUserName == user.Username) message.RecipientDeleted = true;
+        if (message.SenderUserName == user.UserName) message.SenderDeleted = true;
+        if (message.RecipientUserName == user.UserName) message.RecipientDeleted = true;
         
-        await mediator.Send(new UpdateMessageCommand(message));
+        await _mediator1.Send(new UpdateMessageCommand(message));
 
         if (message is { SenderDeleted: true, RecipientDeleted: true })
         {
-            await mediator.Send(new DeleteMessageCommand(id));
+            await _mediator1.Send(new DeleteMessageCommand(id));
         }
         
         return Ok();

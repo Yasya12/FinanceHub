@@ -3,18 +3,11 @@ using MediatR;
 
 namespace FinanceGub.Application.Features.TokenFeatures.Commands.GenerateTokenCommand;
 
-public class GenerateTokenCommandHandler : IRequestHandler<GenerateTokenCommand, string>
+public class GenerateTokenCommandHandler(IJwtService jwtService) : IRequestHandler<GenerateTokenCommand, string>
 {
-    private readonly IJwtService _jwtService;
-
-    public GenerateTokenCommandHandler(IJwtService jwtService)
+    public async Task<string> Handle(GenerateTokenCommand request, CancellationToken cancellationToken)
     {
-        _jwtService = jwtService;
-    }
-
-    public Task<string> Handle(GenerateTokenCommand request, CancellationToken cancellationToken)
-    {
-        var token = _jwtService.GenerateToken(request.User);
-        return Task.FromResult(token);
+        var token = await jwtService.GenerateToken(request.User);
+        return await Task.FromResult(token);
     }
 }

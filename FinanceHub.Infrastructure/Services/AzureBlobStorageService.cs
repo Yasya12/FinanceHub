@@ -64,6 +64,42 @@ public class AzureBlobStorageService(string connectionString, string containerNa
 
         return blobClient.Uri.ToString(); // Return image URL 
     }
+    
+    public async Task<string> AddMainHubPhotoAsync(IFormFile file)
+    {
+        var blobServiceClient = new BlobServiceClient(connectionString);
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+    
+        await blobContainerClient.CreateIfNotExistsAsync(); // Create container if not exists
+
+        var fileName = "hubs/mainPhotos/" + Guid.NewGuid() + Path.GetExtension(file.FileName); // Store in "posts/" folder
+        var blobClient = blobContainerClient.GetBlobClient(fileName);
+
+        using (var stream = file.OpenReadStream())
+        {
+            await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType });
+        }
+
+        return blobClient.Uri.ToString(); // Return image URL 
+    }
+    
+    public async Task<string> AddBackHubPhotoAsync(IFormFile file)
+    {
+        var blobServiceClient = new BlobServiceClient(connectionString);
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+    
+        await blobContainerClient.CreateIfNotExistsAsync(); // Create container if not exists
+
+        var fileName = "hubs/backPhotos/" + Guid.NewGuid() + Path.GetExtension(file.FileName); // Store in "posts/" folder
+        var blobClient = blobContainerClient.GetBlobClient(fileName);
+
+        using (var stream = file.OpenReadStream())
+        {
+            await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType });
+        }
+
+        return blobClient.Uri.ToString(); // Return image URL 
+    }
 
     public async Task DeletePhotoAsync(string imageUrl)
     {

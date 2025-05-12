@@ -2,6 +2,7 @@ using System.Reflection;
 using FinanceGub.Application.Interfaces;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
+using FinanceHub.Core.Entities;
 using FinanceHub.Infrastructure.Repositories;
 using FinanceHub.Infrastructure.Services;
 using FinanceHub.Infrastructure.SignalR;
@@ -34,6 +35,8 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IPostImageRepository, PostImageRepository>();
         serviceCollection.AddScoped<IMessageRepository, MessageRepository>();
         serviceCollection.AddScoped<IHubRepository, HubRepository>();
+        serviceCollection.AddScoped<IHubMemberRepository, HubMemberRepository>();
+        serviceCollection.AddScoped<IHubJoinRequestRepository, HubJoinRequestRepository>();
         
         
         serviceCollection.AddScoped<IUserService, UserService>(); 

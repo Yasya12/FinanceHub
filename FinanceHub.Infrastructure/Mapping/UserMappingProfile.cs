@@ -20,13 +20,13 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.DateOfBirth, opt => opt.Ignore());
 
         CreateMap<UpdateUserDto, User>()
-            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Username))
             .ForMember(dest => dest.PasswordHash, opt =>
             {
                 opt.PreCondition(src => !string.IsNullOrEmpty(src.Password));
                 opt.MapFrom(src => PasswordHasher.HashPassword(src.Password));
             })
-            .ForMember(dest => dest.Role, opt => opt.MapFrom(_ => IdentityData.UserUserClaimName))
+            //.ForMember(dest => dest.Role, opt => opt.MapFrom(_ => IdentityData.UserUserClaimName))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

@@ -10,7 +10,7 @@ public class PostMappingProfile : Profile
     public PostMappingProfile()
     {
         CreateMap<Post, GetPostDto>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.Username))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.UserName))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.ProfilePictureUrl))
             .ForMember(dest => dest.CategoryNames, opt => opt.MapFrom(src => src.PostCategory.Select(pc => pc.Category.Name)))
             .ForMember(dest => dest.CommentsCount, opt => opt.MapFrom(src => src.Comments.Count)) // Мапінг тільки текстів коментарів
@@ -22,7 +22,7 @@ public class PostMappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.Username))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.UserName))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.ProfilePictureUrl))
             .ForMember(dest => dest.CategoryNames, opt => opt.MapFrom(src => src.PostCategory.Select(pc => pc.Category.Name)))
             .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))

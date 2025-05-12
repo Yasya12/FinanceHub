@@ -1,19 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace FinanceHub.Core.Entities;
 
-public class User : Base
+public class User : IdentityUser<Guid>
 {
-    [Required]
-    [StringLength(20, MinimumLength = 3)]
-    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
-    public required string Username { get; set; }
-
-    [EmailAddress(ErrorMessage = "Invalid Email Address")]
-    public required string Email { get; set; }
-
-    public string? PasswordHash { get; set; }
-    public string Role { get; set; } = "user";
+    // public string Role { get; set; } = "user";
     
     public string? GoogleId { get; set; }
     
@@ -31,4 +23,8 @@ public class User : Base
 
     public List<Message> MessagesSent { get; set; } = [];
     public List<Message> MessagesReceived { get; set; } = [];
+
+    public ICollection<AppUserRole> UserRoles { get; set; } = [];
+    
+    public ICollection<HubMember> HubMemberships { get; set; } = [];
 }

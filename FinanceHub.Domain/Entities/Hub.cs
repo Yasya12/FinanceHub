@@ -11,4 +11,5 @@ public class Hub : Base
     public string PostPermission { get; set; } = "public";
 
     public ICollection<Post> Posts { get; set; }
+    public ICollection<HubMember> Members { get; set; } = [];
 }

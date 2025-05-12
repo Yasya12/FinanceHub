@@ -10,7 +10,7 @@ public class CommentMappingProfile : Profile
     {
         CreateMap<Comment, GetCommentDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
-            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.Username))
+            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.ProfilePictureUrl))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))

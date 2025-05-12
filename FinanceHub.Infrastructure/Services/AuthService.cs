@@ -36,12 +36,19 @@ public class AuthService(IMediator mediator, IMapper mapper, IUserService userSe
 
     public async Task<(GetUserDto user, string token)> LoginAsync(string email, string password)
     {
-        var user = await mediator.Send(new GetUserByCredentialsQuery(email, password));
-        var token = await mediator.Send(new GenerateTokenCommand(user));
-        
-        var userDto = mapper.Map<GetUserDto>(user);
+        try
+        {
+            var user = await mediator.Send(new GetUserByCredentialsQuery(email, password));
+            var token = await mediator.Send(new GenerateTokenCommand(user));
 
-        return (userDto, token);
+            var userDto = mapper.Map<GetUserDto>(user);
+
+            return (userDto, token);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            throw new UnauthorizedAccessException("Invalid email or password.", ex);
+        }
     }
 
     public async Task<(GetUserDto user, string token)> GoogleLoginAsync(string googleToken)

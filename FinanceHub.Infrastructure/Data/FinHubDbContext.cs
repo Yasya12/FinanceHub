@@ -1,9 +1,13 @@
 using FinanceHub.Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceHub.Infrastructure.Data;
 
-public class FinHubDbContext(DbContextOptions<FinHubDbContext> options) : DbContext(options)
+public class FinHubDbContext(DbContextOptions<FinHubDbContext> options)
+    : IdentityDbContext<User, AppRole, Guid, IdentityUserClaim<Guid>, AppUserRole, IdentityUserLogin<Guid>,
+        IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>(options)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Post> Posts { get; set; }
@@ -17,14 +21,33 @@ public class FinHubDbContext(DbContextOptions<FinHubDbContext> options) : DbCont
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<PostImage> PostImages { get; set; }
     public DbSet<Hub> Hubs { get; set; }
+    public DbSet<HubMember> HubMembers { get; set; }
+    public DbSet<HubJoinRequest> HubJoinRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<User>().ToTable("Users");
+        
+        modelBuilder.Entity<HubMember>()
+            .HasIndex(m => new { m.HubId, m.UserId }) // Ensure one user per hub
+            .IsUnique();
 
         modelBuilder.Entity<User>()
-            .Property(u => u.Role)
-            .HasDefaultValue(FinanceGub.Application.Identity.IdentityData.UserUserClaimName);
+            .HasMany(ur => ur.UserRoles)
+            .WithOne(u => u.User)
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired();
+        
+        modelBuilder.Entity<AppRole>()
+            .HasMany(ur => ur.UserRoles)
+            .WithOne(u => u.Role)
+            .HasForeignKey(ur => ur.RoleId)
+            .IsRequired();
+
+        // modelBuilder.Entity<User>()
+        //     .Property(u => u.Role)
+        //     .HasDefaultValue(FinanceGub.Application.Identity.IdentityData.UserUserClaimName);
 
         modelBuilder.Entity<PostCategory>()
             .HasKey(pc => new { pc.PostId, pc.CategoryId });
