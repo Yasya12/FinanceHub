@@ -1,5 +1,6 @@
 using AutoMapper;
 using FinanceGub.Application.DTOs.Hub;
+using FinanceGub.Application.DTOs.Notification;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
@@ -21,7 +22,8 @@ public class
         IHubMemberRepository hubMemberRepository,
         IAzureBlobStorageService azureBlobStorageService,
         IHubJoinRequestRepository
-            hubJoinRequestRepository) // use the repo here isnt right 
+            hubJoinRequestRepository,
+        INotificationService notificationService) // use the repo here isnt right 
     : Controller
 {
     private readonly IMediator _mediator = mediator;
@@ -44,16 +46,23 @@ public class
 
         return Ok(hubDto);
     }
-    
+
     [HttpGet("get-all-hubs-members")]
     public async Task<ActionResult<IEnumerable<HubMember>>> GetAllHubMembers(Guid hubId)
     {
         var members = await hubRepository.GetHubMembersAsync(hubId);
         //var hubDtos = mapper.Map<IEnumerable<GetHubDto>>(hubs);
-        
+
         return Ok(members);
     }
-    
+
+    [HttpGet("get-all-hubs-requests")]
+    public async Task<ActionResult<IEnumerable<HubJoinRequest>>> GetAllHubRequest()
+    {
+        var requests = await hubJoinRequestRepository.GetAllAsync();
+        return Ok(requests);
+    }
+
     [HttpGet("check-if-user-can-write-posts/{hubId}")]
     public async Task<ActionResult<bool>> CheckIfUserCanWritePost(Guid hubId)
     {
@@ -63,7 +72,7 @@ public class
             var user = await _mediator.Send(new GetByEmailUserQuery(email));
             if (user == null)
                 return Unauthorized();
-        
+
             bool canWrite = await hubRepository.CheckIfUserCanWritePostAsync(hubId, user.Id);
             return Ok(canWrite);
         }
@@ -72,7 +81,6 @@ public class
             return StatusCode(500, $"Error checking write permissions: {ex.Message}");
         }
     }
-
 
 
     [HttpPost("create")]
@@ -86,6 +94,13 @@ public class
         var currentUser = await _mediator.Send(new GetByEmailUserQuery(email));
         if (currentUser == null)
             return Unauthorized();
+
+        // Check if a hub with the same name already exists
+        var existingHub = await hubRepository.GetHubByNameAsync(dto.Name);
+        if (existingHub != null)
+        {
+            return BadRequest(new { message = "A hub with this name already exists." });
+        }
 
         // Map DTO to Hub entity
         var newHub = mapper.Map<Hub>(dto);
@@ -132,7 +147,7 @@ public class
         {
             return BadRequest(new { message = "You are the admin!" });
         }
-        
+
         var existingRequests = await hubJoinRequestRepository.GetAllAsync();
 
         var existingRequest = existingRequests
@@ -140,7 +155,8 @@ public class
 
         if (existingRequest != null)
         {
-            return BadRequest(new { message = $"You have already requested to join this hub. Your status is {existingRequest.Status}" });
+            return BadRequest(new
+                { message = $"You have already requested to join this hub. Your status is {existingRequest.Status}" });
         }
 
         var request = new HubJoinRequest
@@ -153,10 +169,31 @@ public class
 
         await hubJoinRequestRepository.AddAsync(request);
 
+        // Створення нотифікації для адміністратора хабу
+        var hubMember =
+            await hubMemberRepository.GetByHubIdToCheckIfAdminAsync(createHubJoinRequestDto.HubId, tracking: false);
+        var hub = await hubRepository.GetByIdAsync(createHubJoinRequestDto.HubId);
+        var createdRequest =
+            await hubJoinRequestRepository.GetRequestByHubAbdUserIdAsync(createHubJoinRequestDto.HubId, currentUser.Id);
+        var content = $"{currentUser.UserName} requested to join your hub {hub.Name}.";
+
+        var notificationDto = new CreateNotificationDto
+        {
+            UserId = hubMember.UserId,
+            TriggeredBy = currentUser.Id,
+            Type = "request",
+            Content = content,
+            HubId = createHubJoinRequestDto.HubId,
+            RequestId = createdRequest.Id
+        };
+
+        await notificationService.CreateNotification(notificationDto);
+
         return Ok(new { message = "Join request sent successfully." });
     }
 
     [HttpPut("approve-request/{requestId}")]
+    [Authorize]
     public async Task<IActionResult> ApproveJoinRequest(Guid requestId)
     {
         var request = await hubJoinRequestRepository.GetByIdAsync(requestId);
@@ -191,6 +228,7 @@ public class
     }
 
     [HttpPut("deny-request/{requestId}")]
+    [Authorize]
     public async Task<IActionResult> DenyJoinRequest(Guid requestId)
     {
         var request = await hubJoinRequestRepository.GetByIdAsync(requestId);
@@ -214,8 +252,9 @@ public class
     private async Task<bool> IsUserAdminOfHub(Guid userId, Guid hubId)
     {
         // Check if the user is an admin of the hub
-        var hub = await hubMemberRepository.GetByHubIdToCheckIfAdminAsync(hubId, tracking: false);
-        if (hub.UserId == userId) return true;
+        var hubMember = await hubMemberRepository.GetByHubIdToCheckIfAdminAsync(hubId, tracking: false);
+        if (hubMember == null) return false;
+        if (hubMember.UserId == userId) return true;
         return false;
     }
 
@@ -225,8 +264,7 @@ public class
         var currentUser = await _mediator.Send(new GetByEmailUserQuery(email));
         if (currentUser == null)
             throw new UnauthorizedAccessException("User not found or not authorized.");
-    
+
         return currentUser.Id;
     }
-
 }

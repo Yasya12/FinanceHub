@@ -1,5 +1,8 @@
 using System.Security.Claims;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
 using FinanceGub.Application.Interfaces.Serviсes;
+using FinanceHub.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,30 +10,18 @@ namespace FinanceHub.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LikeController : ControllerBase
+public class LikeController(ILikeService likeService, IMediator mediator) : ControllerBase
 {
-    private readonly ILikeService _likeService;
-
-    public LikeController(ILikeService likeService)
-    {
-        _likeService = likeService;
-    }
-
     [HttpPost("toggle-like/{postId}")]
     [Authorize]
     public async Task<IActionResult> ToggleLike(Guid postId)
     {
-        var token = Request.Headers["Authorization"].FirstOrDefault();
+        var email = User.GetEmail();
+        var currentUser = await mediator.Send(new GetByEmailUserQuery(email));
+        if (currentUser == null)
+            return Unauthorized();
 
-        // Отримуємо userId з JWT токена
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (!Guid.TryParse(userId, out var parsedUserId))
-        {
-            return Unauthorized("User is not authenticated");
-        }
-
-        var likeAdded = await _likeService.ToggleLikeAsync(postId, parsedUserId);
+        var likeAdded = await likeService.ToggleLikeAsync(postId, currentUser.Id, currentUser.UserName);
         return Ok(new { success = likeAdded });
     }
     
@@ -38,14 +29,12 @@ public class LikeController : ControllerBase
     [Authorize]
     public async Task<IActionResult> IsPostLiked(Guid postId)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var email = User.GetEmail();
+        var currentUser = await mediator.Send(new GetByEmailUserQuery(email));
+        if (currentUser == null)
+            return Unauthorized();
 
-        if (!Guid.TryParse(userId, out var parsedUserId))
-        {
-            return Unauthorized("User is not authenticated");
-        }
-
-        var isLiked = await _likeService.IsPostLikedAsync(postId, parsedUserId);
+        var isLiked = await likeService.IsPostLikedAsync(postId, currentUser.Id);
         
         return Ok(new { isLiked });
     }

@@ -1,3 +1,4 @@
+using FinanceGub.Application.DTOs.Notification;
 using FinanceGub.Application.Features.LikeFeatures.Commands.CreateLikeCommand;
 using FinanceGub.Application.Features.LikeFeatures.Commands.DeleteLikeCommand;
 using FinanceGub.Application.Features.LikeFeatures.Queries.GetLikesCountQuery;
@@ -7,28 +8,58 @@ using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using MediatR;
 
+namespace FinanceHub.Infrastructure.Services;
+
 public class LikeService : ILikeService
 {
     private readonly IMediator _mediator;
     private readonly ILikeHub _likeHub;
+    private readonly INotificationService _notificationService;
+    private readonly IPostService _postService;
+    private readonly IUserService _userService;
     private const int DeleteLike = -1;
     private const int AddLike = 1;
 
-    public LikeService(IMediator mediator, ILikeHub likeHub)
+    public LikeService(IMediator mediator, ILikeHub likeHub, INotificationService notificationService, IPostService postService, IUserService userService)
     {
         _mediator = mediator;
         _likeHub = likeHub;
+        _notificationService = notificationService;
+        _postService = postService;
+        _userService = userService;
     }
 
-    public async Task<bool> ToggleLikeAsync(Guid postId, Guid userId)
+    public async Task<bool> ToggleLikeAsync(Guid postId, Guid userId, string username)
     {
         var existingLike = await _mediator.Send(new GetSingleLikeQuery(postId, userId));
-
+        var post = await _postService.GetPostAsync(postId);
+        if (post == null)
+            throw new KeyNotFoundException("Post not found.");
+        
+        var userWhomLiked = await _userService.GetUserByUsernameAsync(post.UserName);
+        if (userWhomLiked == null)
+            throw new KeyNotFoundException("No such user, that you wanted to liked. Try again later.");
+        
+        //notification info
+        var content = $"{username} liked your post.";
+        var notificationDto = new CreateNotificationDto
+        {
+            UserId = userWhomLiked.Id,
+            TriggeredBy = userId,
+            Type = "like",
+            Content = content,
+            PostId = postId
+        };
+        
         if (existingLike != null)
         {
             await _mediator.Send(new DeleteLikeCommand(existingLike.Id));
 
             await UpdateLikeCountAndNotify(postId, DeleteLike);
+            
+            //delete notification
+            await _notificationService.RemoveNotificationAsync(notificationDto);
+            
             return false;
         }
         else
@@ -37,6 +68,10 @@ public class LikeService : ILikeService
             await _mediator.Send(new CreateLikeCommand(newLike));
 
             await UpdateLikeCountAndNotify(postId, AddLike);
+            
+            //create notification
+            if(username != post.UserName) await _notificationService.CreateNotification(notificationDto);
+            
             return true;
         }
     }

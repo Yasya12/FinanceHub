@@ -4,6 +4,7 @@ namespace FinanceGub.Application.Interfaces.Repositories;
 
 public interface IHubRepository : IGenericRepository<Hub>
 {
+    Task<Hub?> GetHubByNameAsync(string name);
     Task<Hub> AddHubAsync(Hub entity);
     Task<IEnumerable<dynamic>> GetHubMembersAsync(Guid hubId);
     Task<bool> CheckIfUserCanWritePostAsync(Guid hubId, Guid userId);

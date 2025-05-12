@@ -23,11 +23,23 @@ public class FinHubDbContext(DbContextOptions<FinHubDbContext> options)
     public DbSet<Hub> Hubs { get; set; }
     public DbSet<HubMember> HubMembers { get; set; }
     public DbSet<HubJoinRequest> HubJoinRequests { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>().ToTable("Users");
+
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.User) // Користувач, який отримує нотифікацію
+            .WithMany() // Це може бути зворотний зв'язок, якщо потрібно
+            .HasForeignKey(n => n.UserId);  // Вказуємо, що для цього зв'язку зовнішній ключ — це UserId
+
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.TriggeredByUser)  // Користувач, який тригернув нотифікацію
+            .WithMany()  // Це може бути зворотний зв'язок, якщо потрібно
+            .HasForeignKey(n => n.TriggeredBy)  // Вказуємо, що для цього зв'язку зовнішній ключ — це TriggeredBy
+            .OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<HubMember>()
             .HasIndex(m => new { m.HubId, m.UserId }) // Ensure one user per hub

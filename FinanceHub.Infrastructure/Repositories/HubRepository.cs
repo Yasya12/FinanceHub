@@ -10,6 +10,14 @@ namespace FinanceHub.Infrastructure.Repositories;
 
 public class HubRepository(FinHubDbContext context) : GenericRepository<Hub>(context), IHubRepository
 {
+    public async Task<Hub?> GetHubByNameAsync(string name)
+    {
+        return await _dbSet
+            .Where(h => h.Name.ToLower() == name.ToLower())  // порівняння без урахування регістру
+            .FirstOrDefaultAsync();  // або FirstOrDefaultAsync для отримання першого результату або null
+    }
+
+    
     public virtual async Task<Hub> AddHubAsync(Hub entity)
     {
         try
