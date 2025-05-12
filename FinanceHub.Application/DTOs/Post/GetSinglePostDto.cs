@@ -13,4 +13,5 @@ public class GetSinglePostDto
     public int LikesCount { get; set; }
     public int CommentCount { get; set; }
     public List<string> Images { get; set; } 
+    public string HubName { get; set; }
 }

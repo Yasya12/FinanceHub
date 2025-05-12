@@ -31,7 +31,7 @@ public class PostService(
     public async Task<PagedList<GetPostDto>> GetPostsPaginatedAsync(PostParams postParams)
     {
         var postsQuey = await mediator.Send(
-            new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages"));
+            new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages,Hub"));
 
         var dtoQuery = postsQuey
             .OrderByDescending(x => x.CreatedAt)
@@ -43,7 +43,7 @@ public class PostService(
     public async Task<PagedList<GetPostDto>> GetHubPostsPaginatedAsync(PostParams postParams, Guid hubId)
     {
         var postsQuey = await mediator.Send(
-            new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages"));
+            new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages,Hub"));
 
         var dtoQuery = postsQuey
             .Where(x => x.HubId == hubId)

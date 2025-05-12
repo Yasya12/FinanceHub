@@ -11,6 +11,7 @@ public class PostMappingProfile : Profile
     {
         CreateMap<Post, GetPostDto>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.UserName))
+            .ForMember(dest => dest.HubName, opt => opt.MapFrom(src => src.Hub.Name))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.Author.ProfilePictureUrl))
             .ForMember(dest => dest.CategoryNames, opt => opt.MapFrom(src => src.PostCategory.Select(pc => pc.Category.Name)))
             .ForMember(dest => dest.CommentsCount, opt => opt.MapFrom(src => src.Comments.Count)) // Мапінг тільки текстів коментарів
@@ -20,6 +21,7 @@ public class PostMappingProfile : Profile
 
         CreateMap<Post, GetSinglePostDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.HubName, opt => opt.MapFrom(src => src.Hub.Name))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Author.UserName))

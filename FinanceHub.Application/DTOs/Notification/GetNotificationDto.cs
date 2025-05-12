@@ -11,6 +11,7 @@ public class GetNotificationDto
     public Guid? PostId { get; set; }
     public Guid? HubId { get; set; }
     public Guid? RequestId { get; set; }
+    public string RequestStatus { get; set; }
     public bool IsRead { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

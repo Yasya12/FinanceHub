@@ -12,6 +12,7 @@ public class GetPostDto
     public int LikesCount { get; set; }
     
     public bool IsLiked { get; set; }
+    public string HubName { get; set; }
     
     public List<string> Images { get; set; } 
 }
