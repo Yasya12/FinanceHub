@@ -10,8 +10,7 @@ public class HubMappingProfile : Profile
     {
         CreateMap<Hub, GetHubDto>()
             .ForMember(dest => dest.Posts, opt => opt.MapFrom(src => src.Posts));
-        
+
         CreateMap<CreateHubDto, Hub>();
-        CreateMap<Hub, GetHubDto>();
     }
 }

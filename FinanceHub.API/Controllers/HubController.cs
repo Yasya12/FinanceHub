@@ -2,6 +2,7 @@ using AutoMapper;
 using FinanceGub.Application.DTOs.Hub;
 using FinanceGub.Application.DTOs.Notification;
 using FinanceGub.Application.Features.UserFeatures.Queries.GetByEmailUserQuery;
+using FinanceGub.Application.Features.UserFeatures.Queries.GetByUsernameUserQuery;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
@@ -56,11 +57,14 @@ public class
         return Ok(members);
     }
 
-    [HttpGet("get-all-hubs-requests")]
-    public async Task<ActionResult<IEnumerable<HubJoinRequest>>> GetAllHubRequest()
+    [HttpGet("get-all-hubs-requests/{hubId}")]
+    public async Task<ActionResult<IEnumerable<GetHubJoinRequestDto>>> GetAllHubRequest(Guid hubId)
     {
-        var requests = await hubJoinRequestRepository.GetAllAsync();
-        return Ok(requests);
+        var requests = await hubJoinRequestRepository.GetAllHubRequestAsync(hubId,"Hub,User");
+
+        var requestsDto = mapper.Map<IEnumerable<GetHubJoinRequestDto>>(requests);
+
+        return Ok(requestsDto);
     }
 
     [HttpGet("check-if-user-can-write-posts/{hubId}")]
@@ -82,7 +86,25 @@ public class
         }
     }
 
+    [HttpGet("is-admin/{hubId}")]
+    public async Task<ActionResult<bool>> IsAdmin(Guid hubId)
+    {
+        try
+        {
+            var email = User.GetEmail();
+            var user = await _mediator.Send(new GetByEmailUserQuery(email));
+            if (user == null)
+                return Unauthorized();
 
+            bool isAdmin = await hubRepository.IsAdmin(hubId, user.Id);
+            return Ok(isAdmin);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error checking write permissions: {ex.Message}");
+        }
+    }
+    
     [HttpPost("create")]
     [Authorize]
     public async Task<IActionResult> CreateHub([FromForm] CreateHubDto dto)
@@ -132,6 +154,49 @@ public class
 
         return Ok(new { message = "Hub created successfully", hubId = createdHub.Id });
     }
+
+    [HttpPut("update/{id:guid}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateHub(Guid id, [FromForm] UpdateHubDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var email = User.GetEmail();
+        var currentUser = await _mediator.Send(new GetByEmailUserQuery(email));
+        if (currentUser == null)
+            return Unauthorized();
+
+        var hub = await hubRepository.GetByIdAsync(id);
+        if (hub == null)
+            return NotFound(new { message = "Hub not found." });
+
+        // Check if the user is an admin of the hub
+        if (!await IsUserAdminOfHub(currentUser.Id, hub.Id))
+            return Forbid("You do not have permission to update this hub.");
+
+        // Update the hub details
+        hub.Name = dto.Name ?? hub.Name;
+        hub.Description = dto.Description ?? hub.Description;
+
+        // Handle file uploads for images
+        if (dto.MainPhoto != null)
+        {
+            if (hub.MainPhotoUrl != null) await azureBlobStorageService.DeletePhotoAsync(hub.MainPhotoUrl);
+            hub.MainPhotoUrl = await azureBlobStorageService.AddMainHubPhotoAsync(dto.MainPhoto);
+        }
+
+        if (dto.BackgroundPhoto != null)
+        {
+            if (hub.BackgroundPhotoUrl != null) await azureBlobStorageService.DeletePhotoAsync(hub.BackgroundPhotoUrl);
+            hub.BackgroundPhotoUrl = await azureBlobStorageService.AddBackHubPhotoAsync(dto.BackgroundPhoto);
+        }
+
+        await hubRepository.UpdateAsync(hub);
+
+        return Ok(new { message = "Hub updated successfully" });
+    }
+
 
     [HttpPost("request-join")]
     [Authorize]
@@ -223,6 +288,23 @@ public class
         };
 
         await hubMemberRepository.AddAsync(hubMember);
+        
+        // Створення нотифікації про прийняття
+        var email = User.GetEmail();
+        var currentUser = await _mediator.Send(new GetByEmailUserQuery(email));
+        var content = $"{currentUser.UserName} approved your requested to join the hub {hub.Name}.";
+
+        var notificationDto = new CreateNotificationDto
+        {
+            UserId = hubMember.UserId,
+            TriggeredBy = currentUser.Id,
+            Type = "request",
+            Content = content,
+            HubId = hub.Id,
+            RequestId = request.Id
+        };
+
+        await notificationService.CreateNotification(notificationDto);
 
         return Ok(new { message = "Request approved and user added to the hub." });
     }
@@ -245,6 +327,23 @@ public class
         // Update the status of the request to 'Denied'
         request.Status = "Denied";
         await hubJoinRequestRepository.UpdateAsync(request);
+        
+        // Створення нотифікації про прийняття
+        var email = User.GetEmail();
+        var currentUser = await _mediator.Send(new GetByEmailUserQuery(email));
+        var content = $"{currentUser.UserName} denied your requested to join the hub {hub.Name}.";
+
+        var notificationDto = new CreateNotificationDto
+        {
+            UserId = request.UserId,
+            TriggeredBy = currentUser.Id,
+            Type = "request",
+            Content = content,
+            HubId = hub.Id,
+            RequestId = request.Id
+        };
+
+        await notificationService.CreateNotification(notificationDto);
 
         return Ok(new { message = "Request denied." });
     }
@@ -267,4 +366,56 @@ public class
 
         return currentUser.Id;
     }
+    
+    [HttpDelete("delete-member/{hubId}/{username}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteHubMember(Guid hubId, string username)
+    {
+        try
+        {
+            var currentUserId = await GetCurrentUserId();
+
+            // Перевірка, чи користувач є адміністратором хабу
+            if (!await IsUserAdminOfHub(currentUserId, hubId))
+                return Forbid("You do not have permission to delete this member.");
+
+            var user = await mediator.Send(new GetByUsernameUserQuery(username));
+
+            var hubMember = await hubMemberRepository.GetByHubIdAndUserIdAsync(hubId, user.Id);
+            if (hubMember == null)
+                return NotFound(new { message = "Hub member not found." });
+
+            await hubMemberRepository.DeleteAsync(hubMember.Id);
+            
+            //change status of the request
+            var request = await hubJoinRequestRepository.GetRequestByHubAbdUserIdAsync(hubId, user.Id);
+            request.Status = "Deleted User";
+            await hubJoinRequestRepository.UpdateAsync(request);
+            
+            // Створення нотифікації про прийняття
+            var hub = await hubRepository.GetByIdAsync(hubId);
+            
+            var email = User.GetEmail();
+            var currentUser = await _mediator.Send(new GetByEmailUserQuery(email));
+            var content = $"{currentUser.UserName} deleted you from the hub {hub.Name}.";
+
+            var notificationDto = new CreateNotificationDto
+            {
+                UserId = hubMember.UserId,
+                TriggeredBy = currentUser.Id,
+                Type = "request",
+                Content = content,
+                HubId = hub.Id
+            };
+
+            await notificationService.CreateNotification(notificationDto);
+
+            return Ok(new { message = "Hub member deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error deleting hub member: {ex.Message}");
+        }
+    }
+
 }

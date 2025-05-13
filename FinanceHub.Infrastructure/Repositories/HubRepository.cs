@@ -100,5 +100,32 @@ public class HubRepository(FinHubDbContext context) : GenericRepository<Hub>(con
             throw new Exception("Error while checking user's write permission in the hub.", ex);
         }
     }
+    
+    public async Task<bool> IsAdmin(Guid hubId, Guid userId)
+    {
+        try
+        {
+            var hub = await _dbSet
+                .Include(h => h.Members)
+                .ThenInclude(m => m.User)
+                .FirstOrDefaultAsync(h => h.Id == hubId);
+
+            if (hub == null)
+                return false;
+
+            // Check if the user is a member of the hub
+            var member = hub.Members.FirstOrDefault(m => m.UserId == userId);
+            if (member == null)
+                return false;
+
+            // Roles that are allowed to write posts
+            var isAdmin = new[] { "Admin" };
+            return isAdmin.Contains(member.Role);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while checking user's write permission in the hub.", ex);
+        }
+    }
 
 }

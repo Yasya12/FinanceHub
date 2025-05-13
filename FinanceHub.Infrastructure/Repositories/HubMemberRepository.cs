@@ -8,6 +8,12 @@ namespace FinanceHub.Infrastructure.Repositories;
 
 public class HubMemberRepository(FinHubDbContext context) : GenericRepository<HubMember>(context), IHubMemberRepository
 {
+    public async Task<HubMember?> GetByHubIdAndUserIdAsync(Guid hubId, Guid userId)
+    {
+        return await _dbSet
+            .FirstOrDefaultAsync(hm => hm.HubId == hubId && hm.UserId == userId);
+    }
+    
     public async Task<HubMember> GetByHubIdToCheckIfAdminAsync(Guid hubId, string? includeProperties = null, bool tracking = true)
     {
         try
