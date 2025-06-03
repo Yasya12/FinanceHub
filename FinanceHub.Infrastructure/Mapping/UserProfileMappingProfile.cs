@@ -12,6 +12,7 @@ public class UserProfileMappingProfile: Profile
         CreateMap<CreateUserDto, User>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Username))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => PasswordHasher.HashPassword(src.Password)));
+            .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => PasswordHasher.HashPassword(src.Password)))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
     }
 }

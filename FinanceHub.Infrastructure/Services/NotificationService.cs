@@ -30,6 +30,13 @@ public class NotificationService(INotificationRepository notificationRepository,
         return notificationDto;
     }
     
+    public async Task<IEnumerable<GetNotificationDto>> GetFollowNotificationsForUser(Guid id)
+    {
+        var noti = await notificationRepository.GetFollowNotificationsForUser(id);
+        var notificationDto = mapper.Map<IEnumerable<GetNotificationDto>>(noti);
+        return notificationDto;
+    }
+    
     public async Task MarkNotificationAsRead(Guid id)
     {
         var notification = await notificationRepository.GetByIdAsync(id);

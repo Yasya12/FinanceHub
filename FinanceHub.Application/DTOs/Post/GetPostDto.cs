@@ -14,5 +14,5 @@ public class GetPostDto
     public bool IsLiked { get; set; }
     public string HubName { get; set; }
     
-    public List<string> Images { get; set; } 
+    public IEnumerable<string?> Images { get; set; } 
 }

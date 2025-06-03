@@ -11,6 +11,9 @@ public class GetUserDto
     public string? Country { get; set; }
 
     public string? Bio { get; set; }
+    public int FollowingCount { get; set; } = 0;
+    public int FolowersCount { get; set; } = 0;
+    public int PostsCount { get; set; } = 0;
 
     public DateTime CreatedAt { get; set; }
     public DateTime LastActive { get; set; }

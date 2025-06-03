@@ -38,6 +38,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IHubMemberRepository, HubMemberRepository>();
         serviceCollection.AddScoped<IHubJoinRequestRepository, HubJoinRequestRepository>();
         serviceCollection.AddScoped<INotificationRepository, NotificationRepository>();
+        serviceCollection.AddScoped<IFollowingRepository, FollowingRepository>();
         
         serviceCollection.AddScoped<IUserService, UserService>(); 
         serviceCollection.AddScoped<IJwtService, JwtService>();
@@ -49,6 +50,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IMessageService, MessageService>();
         serviceCollection.AddScoped<ILikeHub, LikeHub>();
         serviceCollection.AddScoped<INotificationService, NotificationService>();
+        serviceCollection.AddScoped<IFollowingService, FollowingService>();
          
         
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());

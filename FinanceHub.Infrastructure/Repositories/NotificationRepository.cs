@@ -37,6 +37,16 @@ public class NotificationRepository(FinHubDbContext context)
             .OrderByDescending(n => n.CreatedAt)
             .ToListAsync();
     }
+    
+    public async Task<IEnumerable<Notification>> GetFollowNotificationsForUser(Guid userId)
+    {
+        return await _dbSet
+            .Include(n => n.TriggeredByUser)
+            .Include(n => n.Request)
+            .Where(n => n.UserId == userId && n.Type == "follow")
+            .OrderByDescending(n => n.CreatedAt)
+            .ToListAsync();
+    }
 
     public async Task RemoveNotificationAsync(Guid userId, Guid triggeredBy, string type, Guid postId)
     {

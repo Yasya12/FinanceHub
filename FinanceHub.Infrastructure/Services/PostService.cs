@@ -25,7 +25,8 @@ public class PostService(
     IUserRepository userRepository,
     ICategoryRepository categoryRepository,
     IMediator mediator,
-    IAzureBlobStorageService azureBlobStorageService)
+    IAzureBlobStorageService azureBlobStorageService,
+    IFollowingRepository followingRepository)
     : IPostService
 {
     public async Task<PagedList<GetPostDto>> GetPostsPaginatedAsync(PostParams postParams)
@@ -35,11 +36,68 @@ public class PostService(
 
         var dtoQuery = postsQuey
             .OrderByDescending(x => x.CreatedAt)
-            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider); 
-        
+            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider);
+
         return await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
     }
     
+    public async Task<PagedList<GetPostDto>> GetPostsForSpecificUserPaginatedAsync(PostParams postParams, Guid specificUserId)
+    {
+        var postsQuey = await mediator.Send(
+            new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages,Hub"));
+
+        var dtoQuery = postsQuey
+            .Where(x => x.AuthorId == specificUserId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider);
+
+        return await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
+    }
+    
+    public async Task<PagedList<GetPostDto>> GetPostsForSpecificUserWithLikesAsync(PostParams postParams, Guid userId, Guid specificUserId)
+    {
+        var paginatedPosts = await GetPostsForSpecificUserPaginatedAsync(postParams, specificUserId);
+
+        foreach (var post in paginatedPosts)
+        {
+            var like = await mediator.Send(new GetSingleLikeQuery(post.Id, userId));
+            post.IsLiked = like != null;
+        }
+
+        return paginatedPosts;
+    }
+    
+    public async Task<PagedList<GetPostDto>> GetLikedPostsForSpecificUserWithLikesAsync(PostParams postParams, Guid userId, Guid specificUserId)
+    {
+        // Отримуємо всі пости з включеннями
+        var allPosts = await mediator.Send(new GetAllPostQuery("Author,PostCategory,PostCategory.Category,Comments,Likes,PostImages,Hub"));
+
+        // Фільтруємо тільки ті пости, які лайкнув specificUser
+        var likedBySpecificUser = allPosts
+            .Where(post => post.Likes.Any(like => like.UserId == specificUserId))
+            .OrderByDescending(p => p.CreatedAt);
+
+        // Проєктуємо в DTO
+        var dtoQuery = likedBySpecificUser
+            .AsQueryable()
+            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider);
+
+        // Пагінація
+        var paginated = await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
+
+        // Проставляємо IsLiked для залогіненого користувача
+        foreach (var postDto in paginated)
+        {
+            var currentUserLike = allPosts
+                .First(p => p.Id == postDto.Id)
+                .Likes.Any(l => l.UserId == userId);
+
+            postDto.IsLiked = currentUserLike;
+        }
+
+        return paginated;
+    }
+
     public async Task<PagedList<GetPostDto>> GetHubPostsPaginatedAsync(PostParams postParams, Guid hubId)
     {
         var postsQuey = await mediator.Send(
@@ -48,34 +106,90 @@ public class PostService(
         var dtoQuery = postsQuey
             .Where(x => x.HubId == hubId)
             .OrderByDescending(x => x.CreatedAt)
-            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider); 
-        
+            .ProjectTo<GetPostDto>(mapper.ConfigurationProvider);
+
         return await PagedList<GetPostDto>.CreateAsync(dtoQuery, postParams.PageNumber, postParams.PageSize);
     }
-    
+
+    public async Task<PagedList<GetPostDto>> GetAllFollowingPostsAsync(Guid userId, PostParams postParams)
+    {
+        // Отримання ID користувачів та хабів, на які підписаний
+        var followingIdsTuples = await followingRepository.GetFollowingIdsAsync(userId);
+
+        var followingUserIds = followingIdsTuples
+            .Where(tuple => tuple.UserId.HasValue)
+            .Select(tuple => tuple.UserId.Value)
+            .ToList();
+
+        var followingHubIds = followingIdsTuples
+            .Where(tuple => tuple.HubId.HasValue)
+            .Select(tuple => tuple.HubId.Value)
+            .ToList();
+
+        // Отримання постів користувачів та хабів без проєкції
+        var userPostsQuery = postRepository.GetPostsByUserIds(followingUserIds);
+        var hubPostsQuery = postRepository.GetPostsByHubIds(followingHubIds);
+
+        // Об'єднуємо два запити до застосування проєкції
+        var combinedPostsQuery = userPostsQuery
+            .Union(hubPostsQuery)
+            .OrderByDescending(post => post.CreatedAt);
+        
+        // Застосовуємо проєкцію до GetPostDto перед пагінацією
+        var projectedQuery = combinedPostsQuery.Select(post => new GetPostDto
+        {
+            Id = post.Id,
+            UserName = post.Author.UserName,
+            ProfilePictureUrl = post.Author.ProfilePictureUrl,
+            HubName = post.Hub.Name,
+            Content = post.Content,
+            CreatedAt = post.CreatedAt,
+            LikesCount = post.Likes.Count
+            // або будь-яке інше мапування, що тобі потрібно
+        });
+
+        // Пагінуємо результат
+        return await PagedList<GetPostDto>.CreateAsync(projectedQuery, postParams.PageNumber, postParams.PageSize);
+    }
+
+
+    public async Task<PagedList<GetPostDto>> GetAllFollowingPostsWithLikesAsync(Guid userId, PostParams postParams)
+    {
+        var paginatedPosts = await GetAllFollowingPostsAsync(userId, postParams);
+
+        foreach (var post in paginatedPosts)
+        {
+            var like = await mediator.Send(new GetSingleLikeQuery(post.Id, userId));
+            post.IsLiked = like != null;
+        }
+
+        return paginatedPosts;
+    }
+
+
     public async Task<PagedList<GetPostDto>> GetPostsWithLikesAsync(PostParams postParams, Guid userId)
     {
         var paginatedPosts = await GetPostsPaginatedAsync(postParams);
-        
+
         foreach (var post in paginatedPosts)
         {
             var like = await mediator.Send(new GetSingleLikeQuery(post.Id, userId));
-            post.IsLiked = like != null; 
+            post.IsLiked = like != null;
         }
-        
+
         return paginatedPosts;
     }
-    
+
     public async Task<PagedList<GetPostDto>> GetHubPostsWithLikesAsync(PostParams postParams, Guid userId, Guid hubId)
     {
         var paginatedPosts = await GetHubPostsPaginatedAsync(postParams, hubId);
-        
+
         foreach (var post in paginatedPosts)
         {
             var like = await mediator.Send(new GetSingleLikeQuery(post.Id, userId));
-            post.IsLiked = like != null; 
+            post.IsLiked = like != null;
         }
-        
+
         return paginatedPosts;
     }
 

@@ -14,12 +14,17 @@ using MediatR;
 
 namespace FinanceHub.Infrastructure.Services;
 
-public class UserService(IMediator mediator, IMapper mapper, IUserRepository userRepository) : IUserService
+public class UserService(
+    IMediator mediator,
+    IMapper mapper,
+    IUserRepository userRepository,
+    IFollowingRepository followingRepository,
+    IPostRepository postRepository) : IUserService
 {
     public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
     {
         var users = await mediator.Send(new GetAllUserQuery());
-        
+
         var userDtos = mapper.Map<IEnumerable<GetUserDto>>(users);
 
         return userDtos;
@@ -28,7 +33,7 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
     public async Task<GetUserDto> GetUserAsync(Guid id)
     {
         var user = await mediator.Send(new GetUserQuery(id));
-        
+
         var userDto = mapper.Map<GetUserDto>(user);
 
         return userDto;
@@ -37,21 +42,24 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
     public async Task<GetUserDto> GetUserByEmailAsync(string email)
     {
         var user = await mediator.Send(new GetByEmailUserQuery(email));
-        
-        if(user == null) throw new Exception($"User with email {email} don`t exists.");
-        
+
+        if (user == null) throw new Exception($"User with email {email} don`t exists.");
+
         var userDto = mapper.Map<GetUserDto>(user);
 
         return userDto;
     }
-    
+
     public async Task<GetUserDto> GetUserByUsernameAsync(string username)
     {
         var user = await mediator.Send(new GetByUsernameUserQuery(username));
-        
-        if(user == null) throw new Exception($"User with username {username} don`t exists.");
-        
+
+        if (user == null) throw new Exception($"User with username {username} don`t exists.");
+
         var userDto = mapper.Map<GetUserDto>(user);
+        userDto.FolowersCount = await followingRepository.GetFollowersCountAsync(user.Id);
+        userDto.FollowingCount = await followingRepository.GetFollowingCountAsync(user.Id);
+        userDto.PostsCount = await postRepository.GetUserPostCount(user.Id);
 
         return userDto;
     }
@@ -91,7 +99,7 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
             throw new Exception("Unexpected error during user creation.", ex);
         }
     }
-    
+
     public async Task<bool> UpdateUserAsync(string email, UpdateUserDto updateUserDto)
     {
         var user = await mediator.Send(new GetByEmailUserQuery(email));
@@ -99,7 +107,7 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
         {
             throw new ValidationException($"User with email {email} does not exist.");
         }
-        
+
         if (user.UserName != updateUserDto.Username)
         {
             var existingWithUsername = await mediator.Send(new GetByUsernameUserQuery(updateUserDto.Username));
@@ -125,22 +133,22 @@ public class UserService(IMediator mediator, IMapper mapper, IUserRepository use
         if (await userRepository.SaveAllAsync()) return true;
         return false;
     }
-    
+
     public async Task<User> CreateUserFromGoogleAsync(GoogleJsonWebSignature.Payload payload)
     {
-        var username = $"{payload.GivenName}{payload.FamilyName}"; 
-        username = username.ToLower().Replace(" ", ""); 
+        var username = $"{payload.GivenName}{payload.FamilyName}";
+        username = username.ToLower().Replace(" ", "");
 
         if (username.Length > 20)
         {
-            username = username.Substring(0, 20); 
+            username = username.Substring(0, 20);
         }
-        
+
         var newUser = new User
         {
-            GoogleId = payload.Subject,  
-            UserName = username,   
-            Email = payload.Email          
+            GoogleId = payload.Subject,
+            UserName = username,
+            Email = payload.Email
         };
 
         await mediator.Send(new CreateUserCommand(newUser));

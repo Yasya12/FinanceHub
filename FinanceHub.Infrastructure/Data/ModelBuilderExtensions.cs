@@ -93,6 +93,16 @@ public static class ModelBuilderExtensions
             },
             new User
             {
+                Id = Guid.NewGuid(),
+                UserName = "tod",
+                Email = "tod@1",
+                PasswordHash = PasswordHasher.HashPassword("1"),
+                Country = "Ukraine",
+                Bio =
+                    "Very cool investor."
+            },
+            new User
+            {
                 Id = user2Id,
                 UserName = "admin",
                 Email = "admin@example.com",

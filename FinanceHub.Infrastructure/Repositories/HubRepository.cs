@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using AutoMapper.Execution;
 using FinanceGub.Application.Interfaces.Repositories;
 using FinanceHub.Core.Entities;
 using FinanceHub.Core.Exceptions;
@@ -94,6 +95,27 @@ public class HubRepository(FinHubDbContext context) : GenericRepository<Hub>(con
             // Roles that are allowed to write posts
             var allowedRoles = new[] { "Admin", "Moderator", "Member" };
             return allowedRoles.Contains(member.Role);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while checking user's write permission in the hub.", ex);
+        }
+    }
+    
+    
+    public async Task<HubMember> GetByHubIdAdminAsync(Guid hubId)
+    {
+        try
+        {
+            var hub = await _dbSet
+                .Include(h => h.Members)
+                .FirstOrDefaultAsync(h => h.Id == hubId);
+
+            if (hub == null)
+                throw new Exception("No hub was found.");
+            
+            var admin = hub.Members.FirstOrDefault(m => m.Role == "Admin");
+            return admin;
         }
         catch (Exception ex)
         {

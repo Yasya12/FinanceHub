@@ -51,6 +51,19 @@ public class NotificationController(INotificationService notificationService, IM
         var notifications = await notificationService.GetRequestNotificationsForUser(currentUser.Id);
         return Ok(notifications);
     }
+    
+    [HttpGet("follow-noti")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<GetNotificationDto>>> GetFollowNotificationsForUser()
+    {
+        var email = User.GetEmail();
+        var currentUser = await mediator.Send(new GetByEmailUserQuery(email));
+        if (currentUser == null)
+            return Unauthorized();
+
+        var notifications = await notificationService.GetFollowNotificationsForUser(currentUser.Id);
+        return Ok(notifications);
+    }
 
     [HttpPut("{id}/mark-read")]
     [Authorize]

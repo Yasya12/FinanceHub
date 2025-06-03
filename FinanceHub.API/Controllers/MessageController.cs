@@ -33,6 +33,21 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
         return Created(string.Empty, message);
     }
 
+    [HttpGet("chat-users")]
+    public async Task<ActionResult<IEnumerable<ChatUserDto>>> GetChatUsers()
+    {
+        var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (currentEmail == null) return BadRequest("No email found in token");
+
+        var user = await _mediator1.Send(new GetByEmailUserQuery(currentEmail));
+        var currentUsername = user.UserName;
+
+        var chatUsers = await messageService.GetChatUsersAsync(currentUsername);
+        return Ok(chatUsers);
+    }
+
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
     {
@@ -44,7 +59,8 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
     }
 
     [HttpGet("thread/{username}")]
-    public async Task<ActionResult<PagedList<MessageDto>>> GetMessageThread(string username, [FromQuery] MessageThreadParams messageThreadParams)
+    public async Task<ActionResult<PagedList<MessageDto>>> GetMessageThread(string username,
+        [FromQuery] MessageThreadParams messageThreadParams)
     {
         var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
 
@@ -55,14 +71,32 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
 
         if (currentUsername != null)
         {
-            var messagesThread = await _mediator1.Send(new GetMessageThread(currentUsername, username, messageThreadParams));
-        
+            var messagesThread =
+                await _mediator1.Send(new GetMessageThread(currentUsername, username, messageThreadParams));
+
             Response.AddPaginationHeader(messagesThread);
 
             return messagesThread;
         }
+
         return BadRequest("No Username found");
     }
+    
+    [HttpPost("mark-as-read/{senderUsername}")]
+    public async Task<IActionResult> MarkMessagesAsRead(string senderUsername)
+    {
+        var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (currentEmail == null) return BadRequest("No email found in token");
+
+        var user = await _mediator1.Send(new GetByEmailUserQuery(currentEmail));
+        var currentUsername = user.UserName;
+
+        await messageService.MarkMessagesAsRead(currentUsername, senderUsername);
+
+        return Ok(); // 204
+    }
+
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMessage(Guid id)
@@ -78,14 +112,14 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
 
         if (message.SenderUserName == user.UserName) message.SenderDeleted = true;
         if (message.RecipientUserName == user.UserName) message.RecipientDeleted = true;
-        
+
         await _mediator1.Send(new UpdateMessageCommand(message));
 
         if (message is { SenderDeleted: true, RecipientDeleted: true })
         {
             await _mediator1.Send(new DeleteMessageCommand(id));
         }
-        
+
         return Ok();
     }
 }

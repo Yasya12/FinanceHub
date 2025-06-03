@@ -6,6 +6,10 @@ namespace FinanceGub.Application.Interfaces.Repositories;
 
 public interface IMessageRepository : IGenericRepository<Message>
 {
+    Task MarkMessagesAsRead(string currentUsername, string senderUsername);
+    Task<IEnumerable<ChatUserDto>> GetLatestMessagesPerChatUserAsync(string currentUsername);
     Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams);
-    Task<PagedList<MessageDto>> GetMessageThread(string currentEmail, string recipientUsername, MessageThreadParams messageThreadParams);
+
+    Task<PagedList<MessageDto>> GetMessageThread(string currentEmail, string recipientUsername,
+        MessageThreadParams messageThreadParams);
 }

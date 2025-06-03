@@ -24,11 +24,30 @@ public class FinHubDbContext(DbContextOptions<FinHubDbContext> options)
     public DbSet<HubMember> HubMembers { get; set; }
     public DbSet<HubJoinRequest> HubJoinRequests { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Following> Followings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>().ToTable("Users");
+        
+        modelBuilder.Entity<Following>()
+            .HasOne(f => f.FollowergUser)
+            .WithMany()
+            .HasForeignKey(f => f.FollowerId)
+            .OnDelete(DeleteBehavior.Restrict);  // Або .Cascade в залежності від логіки
+
+        modelBuilder.Entity<Following>()
+            .HasOne(f => f.FollowingUser)
+            .WithMany()
+            .HasForeignKey(f => f.FollowingUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Following>()
+            .HasOne(f => f.FollowingHub)
+            .WithMany()
+            .HasForeignKey(f => f.FollowingHubId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Notification>()
             .HasOne(n => n.User) // Користувач, який отримує нотифікацію
