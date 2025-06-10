@@ -47,6 +47,20 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
         return Ok(chatUsers);
     }
 
+    [HttpGet("all-messages-for-user")]
+    public async Task<ActionResult<int>> GetUnreadMessagesCountForUser()
+    {
+        var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (currentEmail == null) return BadRequest("No email found in token");
+
+        var user = await _mediator1.Send(new GetByEmailUserQuery(currentEmail));
+        var currentUsername = user.UserName;
+
+        var messagesCount = await messageService.GetUnreadMessagesCount(currentUsername);
+        return Ok(messagesCount);
+    }
+
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
@@ -81,7 +95,7 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
 
         return BadRequest("No Username found");
     }
-    
+
     [HttpPost("mark-as-read/{senderUsername}")]
     public async Task<IActionResult> MarkMessagesAsRead(string senderUsername)
     {

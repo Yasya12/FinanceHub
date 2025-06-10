@@ -10,6 +10,15 @@ namespace FinanceHub.Infrastructure.Repositories;
 
 public class PostRepository(FinHubDbContext context, IMapper mapper) : GenericRepository<Post>(context), IPostRepository
 {
+    public async Task<IEnumerable<Post>> SearchPostsAsync(string query, int takeCount)
+    {
+        return await _dbSet
+            .Where(p => p.Content.ToLower().Contains(query))
+            .OrderByDescending(p => p.CreatedAt)
+            .Take(takeCount)
+            .ToListAsync();
+    }
+    
     public async Task<int> GetUserPostCount(Guid userId)
     {
         return await _dbSet.CountAsync(f => f.AuthorId == userId);

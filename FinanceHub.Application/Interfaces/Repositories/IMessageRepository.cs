@@ -6,6 +6,7 @@ namespace FinanceGub.Application.Interfaces.Repositories;
 
 public interface IMessageRepository : IGenericRepository<Message>
 {
+    Task<int> GetUnreadMessagesCountAsync(string username);
     Task MarkMessagesAsRead(string currentUsername, string senderUsername);
     Task<IEnumerable<ChatUserDto>> GetLatestMessagesPerChatUserAsync(string currentUsername);
     Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams);

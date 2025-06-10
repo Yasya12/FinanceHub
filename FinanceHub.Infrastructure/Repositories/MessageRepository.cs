@@ -11,6 +11,13 @@ namespace FinanceHub.Infrastructure.Repositories;
 
 public class MessageRepository(FinHubDbContext context, IMapper mapper) : GenericRepository<Message>(context), IMessageRepository
 {
+    public async Task<int> GetUnreadMessagesCountAsync(string username)
+    {
+        return await _dbSet
+            .Where(m => m.RecipientUserName == username && m.DateRead == null && !m.RecipientDeleted)
+            .CountAsync();
+    }
+    
     public async Task<IEnumerable<ChatUserDto>> GetLatestMessagesPerChatUserAsync(string currentUsername)
     {
         var messages = _dbSet
@@ -63,6 +70,13 @@ public class MessageRepository(FinHubDbContext context, IMapper mapper) : Generi
 
     public async Task<PagedList<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername, MessageThreadParams messageThreadParams)
     {
+        var recipientExists = await context.Users.AnyAsync(u => u.UserName == recipientUsername);
+        if (!recipientExists)
+        {
+            // повертаємо порожній список або кидаємо 404
+            return PagedList<MessageDto>.CreateEmpty();
+        }
+        
         var query = _dbSet
             .Include(x => x.Sender)
             .Include(x => x.Recipient)

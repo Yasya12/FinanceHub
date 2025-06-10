@@ -18,6 +18,14 @@ public class UserRepository : IUserRepository
         _context = context;
         _dbSet = _context.Set<User>();
     }
+    
+    public async Task<IEnumerable<User>> SearchUsersAsync(string query, int takeCount)
+    {
+        return await _dbSet
+            .Where(u => u.UserName.ToLower().Contains(query))
+            .Take(takeCount)
+            .ToListAsync();
+    }
 
     public async Task<User> GetByEmailAsync(string email, string? includeProperties = null)
     {

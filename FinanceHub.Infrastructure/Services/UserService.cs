@@ -21,6 +21,7 @@ public class UserService(
     IFollowingRepository followingRepository,
     IPostRepository postRepository) : IUserService
 {
+
     public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
     {
         var users = await mediator.Send(new GetAllUserQuery());

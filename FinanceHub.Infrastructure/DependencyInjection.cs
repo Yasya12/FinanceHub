@@ -51,6 +51,8 @@ public static class DependencyInjection
         serviceCollection.AddScoped<ILikeHub, LikeHub>();
         serviceCollection.AddScoped<INotificationService, NotificationService>();
         serviceCollection.AddScoped<IFollowingService, FollowingService>();
+        serviceCollection.AddScoped<IEmailService, EmailService>();
+        serviceCollection.AddScoped<ISearchService, SearchService>();
          
         
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());

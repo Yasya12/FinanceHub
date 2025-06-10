@@ -26,6 +26,11 @@ public class MessageService(IMediator mediator, IMapper mapper, IMessageReposito
         // return chatUserDtos;
     }
     
+    public async Task<int> GetUnreadMessagesCount(string currentUsername)
+    {
+        return await messageRepository.GetUnreadMessagesCountAsync(currentUsername);
+    }
+    
     public async Task MarkMessagesAsRead(string currentUsername, string senderUsername)
     {
         await messageRepository.MarkMessagesAsRead( currentUsername, senderUsername);

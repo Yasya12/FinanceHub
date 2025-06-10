@@ -11,6 +11,14 @@ namespace FinanceHub.Infrastructure.Repositories;
 
 public class HubRepository(FinHubDbContext context) : GenericRepository<Hub>(context), IHubRepository
 {
+    public async Task<IEnumerable<Hub>> SearchHubsAsync(string query, int takeCount)
+    {
+        return await _dbSet
+            .Where(h => h.Name.ToLower().Contains(query))
+            .Take(takeCount)
+            .ToListAsync();
+    }
+    
     public async Task<Hub?> GetHubByNameAsync(string name)
     {
         return await _dbSet
