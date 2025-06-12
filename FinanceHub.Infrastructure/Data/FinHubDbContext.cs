@@ -2,6 +2,7 @@ using FinanceHub.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace FinanceHub.Infrastructure.Data;
 
@@ -25,6 +26,8 @@ public class FinHubDbContext(DbContextOptions<FinHubDbContext> options)
     public DbSet<HubJoinRequest> HubJoinRequests { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Following> Followings { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<Connection> Connections { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

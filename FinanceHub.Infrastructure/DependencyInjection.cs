@@ -48,7 +48,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<ILikeService, LikeService>();
         serviceCollection.AddScoped<IAuthService, AuthService>();
         serviceCollection.AddScoped<IMessageService, MessageService>();
-        serviceCollection.AddScoped<ILikeHub, LikeHub>();
+            // serviceCollection.AddScoped<ILikeHub, LikeHub>();
         serviceCollection.AddScoped<INotificationService, NotificationService>();
         serviceCollection.AddScoped<IFollowingService, FollowingService>();
         serviceCollection.AddScoped<IEmailService, EmailService>();

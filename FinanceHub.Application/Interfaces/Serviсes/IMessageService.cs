@@ -6,6 +6,6 @@ public interface IMessageService
 {
     Task<int> GetUnreadMessagesCount(string currentUsername);
     Task MarkMessagesAsRead(string currentUsername, string senderUsername);
-    Task<IEnumerable<ChatUserDto>> GetChatUsersAsync(string currentUsername);
+    Task<IEnumerable<ChatUserDto>> GetChatUsersAsync(string currentUsername, string currentEmail);
     Task<MessageDto> CreateMessage(CreateMessageDto createMessageDto, string senderUsername);
 }

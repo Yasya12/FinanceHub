@@ -20,6 +20,20 @@ public class MessageMappingProfile : Profile
                 var currentUsername = context.Items["currentUsername"] as string;
                 return src.SenderUserName == currentUsername ? src.Recipient.UserName : src.Sender.UserName;
             }))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom((src, dest, destMember, context) =>
+            {
+                var currentEmail = context.Items["currentEmail"] as string;
+
+                var senderEmail = src.Sender?.Email;
+                var recipientEmail = src.Recipient?.Email;
+
+                if (senderEmail == null || recipientEmail == null)
+                {
+                    return null; // або throw, або логування, залежно від вимог
+                }
+
+                return senderEmail == currentEmail ? recipientEmail : senderEmail;
+            }))
             .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom((src, dest, destMember, context) =>
             {
                 var currentUsername = context.Items["currentUsername"] as string;

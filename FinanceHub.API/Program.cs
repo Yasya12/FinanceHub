@@ -3,12 +3,15 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using FinanceGub.Application;
 using FinanceGub.Application.Identity;
+using FinanceGub.Application.Interfaces;
 using FinanceGub.Application.Interfaces.Serviсes;
 using FinanceHub.Core.Entities;
 using FinanceHub.Infrastructure;
 using FinanceHub.Infrastructure.Data;
 using FinanceHub.Infrastructure.Services;
+using FinanceHub.Infrastructure.SignalR;
 using FinanceHub.Middleware;
+using FinanceHub.SignalR;
 using FinanceHub.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -63,11 +66,12 @@ if (builder.Environment.IsDevelopment())
     connectionString = "Host=localhost;Port=5432;Database=finhub;Username=finhub;Password=finhub";
 }
 
+
 builder.Services.AddDbContext<FinHubDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // Register Identity with custom User and Role types
-builder.Services.AddIdentity<User, AppRole>(options => 
+builder.Services.AddIdentity<User, AppRole>(options =>
     {
         // Configure Identity options if needed
     })
@@ -75,7 +79,7 @@ builder.Services.AddIdentity<User, AppRole>(options =>
     .AddEntityFrameworkStores<FinHubDbContext>()
     .AddRoleManager<RoleManager<AppRole>>() // Register the custom RoleManager
     .AddUserManager<UserManager<User>>() // Optional, to explicitly register the custom UserManager
-    .AddDefaultTokenProviders(); 
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(x =>
     {
@@ -94,6 +98,22 @@ builder.Services.AddAuthentication(x =>
             ValidIssuer = jwtIssuerSecret,
             ValidAudience = jwtAudienceSecret,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKeySecret))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -122,6 +142,10 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<PresenceTracker>();
+builder.Services.AddScoped<ILikeHub, LikeHub>(); 
+
+
 
 // Add services to the container.
 builder.Services.AddCors(options =>
@@ -132,12 +156,21 @@ builder.Services.AddCors(options =>
             .WithOrigins("http://localhost:4200") // or .AllowAnyOrigin() for dev
             .AllowAnyMethod()
             .AllowAnyHeader()
+            .AllowCredentials()
             .WithExposedHeaders("Pagination");
     });
 });
 
 
 var app = builder.Build();
+
+// Очистити таблицю "Connections" перед запуском хаба
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<FinHubDbContext>();
+    await context.Database.ExecuteSqlRawAsync("DELETE FROM \"Connections\"");
+}
+
 
 app.UseCors("CorsPolicy");
 
@@ -155,5 +188,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
 
 app.Run();

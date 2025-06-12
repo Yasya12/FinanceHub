@@ -12,9 +12,9 @@ namespace FinanceHub.Infrastructure.Services;
 
 public class MessageService(IMediator mediator, IMapper mapper, IMessageRepository messageRepository) : IMessageService
 {
-    public async Task<IEnumerable<ChatUserDto>> GetChatUsersAsync(string currentUsername)
+    public async Task<IEnumerable<ChatUserDto>> GetChatUsersAsync(string currentUsername, string currentEmail)
     {
-        return await messageRepository.GetLatestMessagesPerChatUserAsync(currentUsername);
+        return await messageRepository.GetLatestMessagesPerChatUserAsync(currentUsername, currentEmail);
 
         // var chatUserDtos = chatMessages
         //     .Select(m => mapper.Map<ChatUserDto>(m, opts =>

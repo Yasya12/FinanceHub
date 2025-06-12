@@ -43,7 +43,7 @@ public class MessageController(IMediator mediator, ILogger<BaseController> logge
         var user = await _mediator1.Send(new GetByEmailUserQuery(currentEmail));
         var currentUsername = user.UserName;
 
-        var chatUsers = await messageService.GetChatUsersAsync(currentUsername);
+        var chatUsers = await messageService.GetChatUsersAsync(currentUsername, currentEmail);
         return Ok(chatUsers);
     }
 
