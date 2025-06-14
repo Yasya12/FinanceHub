@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceHub.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class GroupAdded : Migration
+    public partial class NewSeed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -589,19 +589,9 @@ namespace FinanceHub.Infrastructure.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("193ae229-c193-4f02-bf68-a31c4708e4e3"), null, "Admin", "ADMIN" },
-                    { new Guid("8420a889-0f5a-4a0a-91fd-32ad30d617f6"), null, "Member", "MEMBER" },
-                    { new Guid("f18e0236-9faa-4218-8e7e-b3d34a543244"), null, "Moderator", "MODERATOR" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "Id", "Description", "Name" },
-                values: new object[,]
-                {
-                    { new Guid("319f3862-88f6-477a-9082-f63f92efc5f8"), "Posts related to the latest technology trends", "Technology" },
-                    { new Guid("445ed7a4-4263-48c3-8efb-14423ede2914"), "Health tips and news", "Health" },
-                    { new Guid("741e790b-7ad0-4892-8e83-2431e84370ea"), "Educational articles and resources", "Education" }
+                    { new Guid("10b10de2-fcf7-4c25-a5ba-4c6bd6e3f261"), null, "Moderator", "MODERATOR" },
+                    { new Guid("5c528ff1-5647-457d-ada2-592983e41677"), null, "Member", "MEMBER" },
+                    { new Guid("5c8d67f5-91f7-4e5f-8ace-e4e0313b002c"), null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -609,14 +599,11 @@ namespace FinanceHub.Infrastructure.Migrations
                 columns: new[] { "Id", "BackgroundPhotoUrl", "Description", "MainPhotoUrl", "Name", "PostPermission" },
                 values: new object[,]
                 {
-                    { new Guid("0b331df7-8907-416a-8746-fb1c16399060"), null, "Money habits and financial motivation.", null, "Mindset", "public" },
-                    { new Guid("294156e7-b65b-4d65-b324-735da2348080"), null, "Latest updates from the world of finance.", null, "Finance News", "moderated" },
-                    { new Guid("41f7bbb9-0f69-4a6c-8bfd-ef457539898a"), null, "Tips on managing money, saving, and budgeting.", null, "Budgeting", "public" },
-                    { new Guid("51535cd4-fb4d-4558-862e-29ed44e04a7c"), null, "Market updates, analysis, and stock picks.", null, "Stocks", "public" },
-                    { new Guid("7daf67f9-000d-4a90-9398-30a236740128"), null, "Investing in properties and REITs.", null, "Real Estate", "moderated" },
-                    { new Guid("8066fd18-46e8-48d5-b93c-e350dd04d58c"), null, "Financial independence and early retirement.", null, "FI/RE", "members" },
-                    { new Guid("ab7c4a9e-6b8a-4e08-86e6-140d7a8789f9"), null, "Ideas and stories on earning extra income.", null, "Side Hustles", "members" },
-                    { new Guid("d279e50d-4dd5-4346-92d8-3beb2953dbd7"), null, "News and trends in crypto and blockchain.", null, "Crypto", "public" }
+                    { new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), null, "Cпільнота для активних трейдерів.", null, "Криптотрейдинг 24/7", "public" },
+                    { new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), null, "Спільнота для тих, хто робить перші кроки у світі інвестицій.", null, "Інвестиції для початківців", "public" },
+                    { new Guid("77983140-1aae-49f0-9d71-bdbc6560e838"), null, "Глибокий аналіз компаній, секторів та ринкових трендів. Ділимося звітами та прогнозами.", null, "Аналіз фондового ринку", "moderated" },
+                    { new Guid("7810c753-2758-492d-a723-e4ba53344133"), null, "Все про купівлю, продаж та оренду нерухомості в Україні та за кордоном.", null, "Інвестиції в нерухомість", "public" },
+                    { new Guid("bbde15f8-f63c-4b86-a0e7-0f91d7344c78"), null, "Поради та лайфхаки про те, як ефективно управляти грошима і досягати фінансових цілей.", null, "Особистий бюджет та заощадження", "public" }
                 });
 
             migrationBuilder.InsertData(
@@ -624,20 +611,57 @@ namespace FinanceHub.Infrastructure.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Bio", "ConcurrencyStamp", "Country", "CreatedAt", "Email", "EmailConfirmed", "GoogleId", "LastActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfilePictureUrl", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("7a2ebf1d-df81-4551-a1e7-60c4131429a4"), 0, null, "25abac34-a07f-4ee4-ab29-a74560bc6921", "England", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@example.com", false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, null, "$2a$11$UlX0vD3Xq4qTv2ZTcuXlLuG5uyp/2.sczr3V.xpkMw4wLtaSoyzLe", null, false, null, null, false, "admin" },
-                    { new Guid("98d4e1f5-b043-45d9-aa0a-69ee89a499cf"), 0, "Passionate about smart money management and personal growth. Tracking goals, budgeting wisely, and always learning something new about finance.", "22c9d496-437c-4590-baaf-8edbab4cdd13", "Ukraine", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "lisa@1", false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, null, "$2a$11$fJPJpOljOds5pl2DRqcXmemnNkyf5x7kxdjQcsg7/Q9p2l4CN/WxG", null, false, null, null, false, "Lisa" },
-                    { new Guid("c07e82da-0d4a-49ed-914a-13dd23a53281"), 0, "Very cool investor.", "6ed1f94b-3900-43e4-8e12-5b84ddd480f7", "Ukraine", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tod@1", false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, null, "$2a$11$RVMUKFMIhNbhYU.bCfwvhO4n9XYOL1uenyLw2isHFxIJfHw6HnYnq", null, false, null, null, false, "tod" },
-                    { new Guid("eae5c4b7-af2d-4d08-835c-b07a464e76af"), 0, null, "8867bc26-881e-4c03-b0e0-6f4d49f40691", "Ukraine", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "johndoe@example.com", false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, null, "$2a$11$UV6r9pdjtxdSFaDyVgGzEeyHZMDWX2rrwXE5i1SkVxuPT8tjwnUc2", null, false, null, null, false, "johndoe" }
+                    { new Guid("6f52e78b-9776-4ba7-8e98-8a6d9082d9f2"), 0, "Passionate about smart money management and personal growth. Tracking goals, budgeting wisely, and always learning something new about finance.", "84444e42-40a4-4dd5-8e2e-edccf7f19ab0", "Україна", new DateTime(2025, 5, 30, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(5605), "lisa@1", false, null, new DateTime(2025, 6, 14, 9, 24, 14, 914, DateTimeKind.Utc).AddTicks(5611), false, null, null, null, "$2a$11$SlF5KvpSUMGtSJr1hpjx.OrX5wltzNaVXImgVutS28SiHujb8ccHW", null, false, null, null, false, "Ліза" },
+                    { new Guid("92721bf5-f5c1-4681-97db-1e7f45557497"), 0, "Досвідчений трейдер, ділюся аналітикою та ідеями.", "1a575f6f-1870-4d0d-ac57-2736cdc80583", "Польща", new DateTime(2025, 4, 30, 21, 24, 14, 411, DateTimeKind.Utc).AddTicks(6663), "maks.t@gmail.com", false, null, new DateTime(2025, 6, 14, 16, 24, 14, 411, DateTimeKind.Utc).AddTicks(6669), false, null, null, null, "$2a$11$6VqsO5d1x/PxPFw/M5DEIuM7XjP/1D2rkvjZJSl1rrIBhuw0CwgdG", null, false, null, null, false, "трейдер_макс" },
+                    { new Guid("9bc9f329-b54f-47f3-809a-2baa1b967a91"), 0, "Цікаво дізнатися більше про фінанси.", "21b9c504-91ea-4e85-9a3b-9867f2a29da7", "Україна", new DateTime(2025, 4, 25, 21, 24, 14, 15, DateTimeKind.Utc).AddTicks(434), "oleksii@gmail.com", false, null, new DateTime(2025, 6, 12, 21, 24, 14, 15, DateTimeKind.Utc).AddTicks(445), false, null, null, null, "$2a$11$E1eq8/YoFpYn56TnqkKFteapNDyyUGU/Eivu.0w/8HMABGPadU05i", null, false, null, null, false, "олексій" },
+                    { new Guid("c0fceb80-1eed-4cb2-83d1-76518570cf7a"), 0, "Твоя комфортна фінансова соціальна мережа.", "e46e4aa7-acd1-4758-bc37-eb36ddf5e797", "Україна", new DateTime(2025, 4, 25, 21, 24, 14, 276, DateTimeKind.Utc).AddTicks(4551), "finhub@gmail.com", false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, null, "$2a$11$XLZmvga4Od0B0nFWBia3SuFrF3SIHSlwxhlMxrF9kk.AJG0k8adeS", null, false, null, null, false, "finhub" },
+                    { new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), 0, "Фінансовий аналітик. Розбираю звітності компаній та макроекономічні тренди.", "85551de4-1bb4-49f2-a16b-9b8935ea03f1", "Німеччина", new DateTime(2025, 5, 25, 21, 24, 14, 662, DateTimeKind.Utc).AddTicks(4190), "andriy.a@emgmailil.com", false, null, new DateTime(2025, 6, 11, 21, 24, 14, 662, DateTimeKind.Utc).AddTicks(4195), false, null, null, null, "$2a$11$N9f7bWwIp3nDYcwLLHp3seTzjJm9oeAdUfta58.ZDM317sbzQlVXe", null, false, null, null, false, "аналітик_андрій" },
+                    { new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), 0, "Люблю інвестиції і фінанси.", "74221be3-100d-42a6-96f1-aacb07767bb9", "Україна", new DateTime(2025, 4, 25, 21, 24, 14, 147, DateTimeKind.Utc).AddTicks(6761), "olena.p@gmail.com", false, null, new DateTime(2025, 6, 12, 21, 24, 14, 147, DateTimeKind.Utc).AddTicks(6897), false, null, null, null, "$2a$11$8dw5twzrcKT6TU5GSqkgEeGw5E4x.PVV6kp7LDPCxId48Op.Gvcfi", null, false, null, null, false, "олена_інвест" },
+                    { new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), 0, "Веду блог про особисті фінанси, бюджетування та заощадження.", "8e1931fe-146e-49ee-b0f6-daf0880c0c26", "Україна", new DateTime(2025, 5, 30, 21, 24, 14, 788, DateTimeKind.Utc).AddTicks(3143), "yulia.f@gmail.com", false, null, new DateTime(2025, 6, 14, 9, 24, 14, 788, DateTimeKind.Utc).AddTicks(3150), false, null, null, null, "$2a$11$qXUk00RRA9fjzMAiH5SMp.LyJCLU5/ZiiB83Ny9.06AL1vi3zYX/C", null, false, null, null, false, "фінанси_юлія" },
+                    { new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14"), 0, "Все про блокчейн, NFT та криптовалюти. Слідкуйте за оновленнями!", "9e5af364-d83d-4869-bcb1-68da64b9d57b", "Україна", new DateTime(2025, 5, 15, 21, 24, 14, 536, DateTimeKind.Utc).AddTicks(9551), "kate.c@gmail.com", false, null, new DateTime(2025, 6, 14, 20, 24, 14, 536, DateTimeKind.Utc).AddTicks(9558), false, null, null, null, "$2a$11$yUhUaUlCF1ziL9ix16.5Q.JdCAvBB6hALagtoChVEYfdqQ10NYXji", null, false, null, null, false, "крипто_катя" }
                 });
 
             migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
+                table: "Followings",
+                columns: new[] { "Id", "CreatedAt", "FollowerId", "FollowingHubId", "FollowingUserId" },
                 values: new object[,]
                 {
-                    { new Guid("193ae229-c193-4f02-bf68-a31c4708e4e3"), new Guid("7a2ebf1d-df81-4551-a1e7-60c4131429a4") },
-                    { new Guid("8420a889-0f5a-4a0a-91fd-32ad30d617f6"), new Guid("98d4e1f5-b043-45d9-aa0a-69ee89a499cf") },
-                    { new Guid("8420a889-0f5a-4a0a-91fd-32ad30d617f6"), new Guid("eae5c4b7-af2d-4d08-835c-b07a464e76af") }
+                    { new Guid("3a31f6e3-996f-4d9e-987a-4a265de720d9"), new DateTime(2025, 6, 14, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7009), new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), null, new Guid("92721bf5-f5c1-4681-97db-1e7f45557497") },
+                    { new Guid("7dfa792d-a0d0-44c8-a2a6-6c4e266700a7"), new DateTime(2025, 6, 14, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7016), new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14"), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), null },
+                    { new Guid("90a1f1df-cf89-486d-9611-16551909aeb4"), new DateTime(2025, 6, 14, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7013), new Guid("92721bf5-f5c1-4681-97db-1e7f45557497"), null, new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc") },
+                    { new Guid("ac802bf2-d39c-4fec-a9fc-5f8440ca5c8a"), new DateTime(2025, 6, 14, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7014), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), null, new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc") }
+                });
+
+            migrationBuilder.InsertData(
+                table: "HubJoinRequests",
+                columns: new[] { "Id", "Content", "Description", "HubId", "RequestedAt", "Status", "UserId" },
+                values: new object[] { new Guid("743f3e37-c7ac-4852-8e8a-337d7c15517c"), "Привіт, маю досвід у трейдингу, хочу приєднатися до спільноти.", null, new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), new DateTime(2025, 6, 13, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7417), "Pending", new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d") });
+
+            migrationBuilder.InsertData(
+                table: "HubMembers",
+                columns: new[] { "Id", "Description", "HubId", "IsApproved", "JoinedAt", "Role", "UserId" },
+                values: new object[,]
+                {
+                    { new Guid("05e62932-ccd7-4d46-a123-ebf0230f5924"), null, new Guid("7810c753-2758-492d-a723-e4ba53344133"), true, new DateTime(2025, 5, 28, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6842), "Member", new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d") },
+                    { new Guid("1c3f2667-7381-4ec5-a728-fd582cb0dd71"), null, new Guid("bbde15f8-f63c-4b86-a0e7-0f91d7344c78"), true, new DateTime(2025, 5, 15, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6827), "Admin", new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d") },
+                    { new Guid("4f9615f1-da15-4cc9-8ce9-0ed7d51b58db"), null, new Guid("77983140-1aae-49f0-9d71-bdbc6560e838"), true, new DateTime(2025, 5, 30, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6834), "Member", new Guid("92721bf5-f5c1-4681-97db-1e7f45557497") },
+                    { new Guid("63f9a7e7-c52f-4840-b44c-7781fc7009c9"), null, new Guid("7810c753-2758-492d-a723-e4ba53344133"), true, new DateTime(2025, 5, 26, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6840), "Admin", new Guid("92721bf5-f5c1-4681-97db-1e7f45557497") },
+                    { new Guid("8bbfbc1f-b835-4d98-adc8-bc597bfc4c68"), null, new Guid("77983140-1aae-49f0-9d71-bdbc6560e838"), true, new DateTime(2025, 5, 31, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6838), "Member", new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc") },
+                    { new Guid("9f8b95ec-28c3-47c0-9692-1b10fc3f8b38"), null, new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), true, new DateTime(2025, 6, 4, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6822), "Member", new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d") },
+                    { new Guid("a1bb5002-b42f-44ae-aa29-9361c1166d66"), null, new Guid("77983140-1aae-49f0-9d71-bdbc6560e838"), true, new DateTime(2025, 5, 23, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6832), "Admin", new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d") },
+                    { new Guid("b09a13bf-9b38-4d5e-a44a-16bbc742ca88"), null, new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), true, new DateTime(2025, 5, 5, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6818), "Admin", new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc") },
+                    { new Guid("baa49208-3418-4e72-9e24-a4b366cc659c"), null, new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), true, new DateTime(2025, 5, 27, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6825), "Member", new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14") },
+                    { new Guid("cf79a435-6e90-4baa-9c29-d4ec1f40cb3e"), null, new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), true, new DateTime(2025, 5, 25, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6824), "Admin", new Guid("92721bf5-f5c1-4681-97db-1e7f45557497") },
+                    { new Guid("e638f1b1-1004-4ddb-a03c-dfd758a98c18"), null, new Guid("bbde15f8-f63c-4b86-a0e7-0f91d7344c78"), true, new DateTime(2025, 5, 20, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(6830), "Member", new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc") }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Notifications",
+                columns: new[] { "Id", "Content", "CreatedAt", "HubId", "IsRead", "PostId", "RequestId", "TriggeredBy", "Type", "UserId" },
+                values: new object[,]
+                {
+                    { new Guid("b0cd692d-2474-44d3-bba9-2f8bfdbe7cb7"), "олена_інвест почала стежити за вами.", new DateTime(2025, 5, 25, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7456), null, true, null, null, new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), "follow", new Guid("92721bf5-f5c1-4681-97db-1e7f45557497") },
+                    { new Guid("e1342ce7-ecac-4421-a74f-d09bdef5d91b"), "трейдер_макс вподобав ваш пост.", new DateTime(2025, 6, 13, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7452), null, false, new Guid("0d2999a8-7501-40eb-ae47-3c832a845a61"), null, new Guid("92721bf5-f5c1-4681-97db-1e7f45557497"), "like", new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc") }
                 });
 
             migrationBuilder.InsertData(
@@ -645,8 +669,30 @@ namespace FinanceHub.Infrastructure.Migrations
                 columns: new[] { "Id", "AuthorId", "Content", "CreatedAt", "HubId", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("696bd39b-7eb1-4b1a-a223-e2e9992d6d76"), new Guid("7a2ebf1d-df81-4551-a1e7-60c4131429a4"), "Exploring advanced strategies in finance.", new DateTime(2025, 5, 23, 11, 5, 57, 366, DateTimeKind.Utc).AddTicks(3908), null, new DateTime(2025, 6, 10, 11, 5, 57, 366, DateTimeKind.Utc).AddTicks(3909) },
-                    { new Guid("f3cae454-4730-4752-b6e3-803e109a54e0"), new Guid("eae5c4b7-af2d-4d08-835c-b07a464e76af"), "This is an introductory post about finance.", new DateTime(2025, 6, 2, 11, 5, 57, 366, DateTimeKind.Utc).AddTicks(3888), null, new DateTime(2025, 6, 7, 11, 5, 57, 366, DateTimeKind.Utc).AddTicks(3906) }
+                    { new Guid("00c21421-57fb-4d5c-9c0b-8d7a874145c9"), new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), "Інфляція в єврозоні сповільнюється, але повільніше, ніж очікувалося. Це може змусити ЄЦБ тримати ставки високими довше.", new DateTime(2025, 6, 9, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7178), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("0966922d-4a6b-4d52-9cc2-7f9e78858d92"), new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), "Для початківців ETF – чудовий старт. Купуючи один інструмент, ви одразу інвестуєте в сотні компаній. Наприклад, в індекс S&P 500.", new DateTime(2025, 6, 4, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7126), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("0d2999a8-7501-40eb-ae47-3c832a845a61"), new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), "Друзі, як диверсифікуєте свій портфель? Скільки відсотків тримаєте в акціях, а скільки в облігаціях?", new DateTime(2025, 6, 2, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7123), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("2945ed78-e5e1-4ed4-b8d6-c6c9d45f784d"), new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14"), "HODL – це не просто мем, це стратегія. В довгостроковій перспективі віра в технологію винагороджується.", new DateTime(2025, 6, 7, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7143), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("36ccf556-af1a-4ab0-abee-b002d5149395"), new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), "Хто що думає про акції Microsoft на довгострок? Здається, їхній фокус на AI дасть хороші плоди.", new DateTime(2025, 6, 9, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7131), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("3834e9eb-de7a-4bfc-bf42-5d9409488fa4"), new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), "Alphabet ($GOOGL) — це машина для друку грошей. Монополія в пошуку та доходи від YouTube/Android дають їм змогу фінансувати будь-які 'інші ставки'. Поки їхній рекламний бізнес сильний, акції залишатимуться фундаментально міцними.", new DateTime(2025, 6, 11, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7233), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("3aa55377-f7c5-4df8-8c0b-ceb902fe2b84"), new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), "Сектор напівпровідників виглядає перегрітим. P/E коефіцієнти деяких компаній, як-от Nvidia, просто захмарні.", new DateTime(2025, 6, 6, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7176), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("3dd6a9b8-3d89-4b80-af1f-85684ea13a9a"), new Guid("92721bf5-f5c1-4681-97db-1e7f45557497"), "Найважче в трейдингу – це дисципліна. Вміння чекати на свій сетап і не піддаватися FOMO – ключ до успіху.", new DateTime(2025, 6, 8, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7135), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("4d1222e9-6f36-4434-bf19-8ac25ef086a6"), new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14"), "Не забувайте переводити крипту з бірж на холодні гаманці. 'Not your keys, not your coins!' – золоте правило.", new DateTime(2025, 6, 10, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7145), new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("8b89992d-d917-4d3a-b29c-b461c183e57b"), new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), "Сьогодні вперше отримала дивіденди. Невелика сума, але як же приємно розуміти, що твої гроші працюють!", new DateTime(2025, 6, 6, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7130), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("8c80990c-b46f-46d8-94af-b55efa872713"), new Guid("92721bf5-f5c1-4681-97db-1e7f45557497"), "На графіку EUR/USD формується 'голова і плечі'. Схоже, насувається корекція. Будьте обережні.", new DateTime(2025, 6, 11, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7137), new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("94c52d3d-2b77-4070-8a26-cfeacd7ba2f5"), new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), "Згідно зі звітом Goldman Sachs, ринки, що розвиваються, можуть показати кращу динаміку в наступному році. Погоджуєтесь?", new DateTime(2025, 6, 10, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7179), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("9b12b235-d873-4234-94a3-e4acc8e60074"), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), "Найкраща інвестиція – це інвестиція в себе. Курси, книги, здоров'я – це те, що завжди окупиться.", new DateTime(2025, 6, 8, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7172), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("a8ff694e-868f-4f1a-914c-c4e633f615b5"), new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), "Microsoft ($MSFT) продовжує вражати. Їхній сегмент 'Intelligent Cloud' з Azure зростає шаленими темпами. Це вже не просто 'Windows і Office', а справжній хмарний гігант.", new DateTime(2025, 6, 10, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7230), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("b639f0ae-19b8-44e8-ac01-c49f16e59ab1"), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), "Спробувала правило 50/30/20 для бюджетування (50% – потреби, 30% – бажання, 20% – заощадження). Дуже дисциплінує!", new DateTime(2025, 6, 3, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7165), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("b937fb2c-16f3-4b23-ad9d-800a2bad9361"), new Guid("92721bf5-f5c1-4681-97db-1e7f45557497"), "Ринок сьогодні дуже волатильний. Фіксую частину прибутку, краще синиця в руках.", new DateTime(2025, 6, 7, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7133), new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("bad3b84f-724f-4af4-867e-3be5ae952571"), new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14"), "Попри всі регуляторні виклики, Binance залишається найбільшою біржею за обсягом торгів. Їхня екосистема з BNB Chain, Launchpad та іншими сервісами все ще домінує на ринку.", new DateTime(2025, 6, 12, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7235), new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("bb3e9caf-72ca-49a5-8799-b45b46d2ca55"), new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14"), "Що думаєте про перспективи Solana (SOL)? Технологія вражає, але чи зможе вона конкурувати з Ethereum?", new DateTime(2025, 6, 5, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7139), new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("cebd0027-084d-4b05-9187-435938c25ae7"), new Guid("c0fceb80-1eed-4cb2-83d1-76518570cf7a"), "Вітаємо на FinanceHub! Ми оновили правила спільноти. Будь ласка, ознайомтеся.", new DateTime(2025, 5, 30, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7228), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("e46c1463-c330-4ea0-bcce-954f9cf49284"), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), "Де ви зберігаєте свою фінансову подушку? Депозит, ОВДП чи просто на картці? Шукаю найнадійніший варіант.", new DateTime(2025, 6, 5, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7170), new Guid("55865bcd-48d6-45f8-a028-77caf9d2e7ac"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("e4ab35ca-a0ce-47db-bfee-1f56d55e1540"), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), "Багато хто питає, з чого почати інвестувати. Відповідь проста: почніть заощаджувати. Неможливо інвестувати гроші, яких у вас немає. Створіть 'фонд для інвестицій', відкладаючи хоча б 10% доходу.", new DateTime(2025, 6, 13, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7237), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("eb6e6ffa-d646-459a-b8b6-786ba44b0db2"), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), "Щоб не робити імпульсивних покупок, завжди чекаю 24 години перед тим, як щось купити онлайн. Часто бажання зникає.", new DateTime(2025, 6, 11, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7173), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("f7c8cadb-6f04-4eb0-8e2b-b954eaacefe6"), new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), "Ніколи не інвестуйте в бізнес, який ви не розумієте. Це просте правило Воррена Баффета врятувало мені багато грошей.", new DateTime(2025, 6, 12, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7181), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("fd24df51-46c3-42ae-b766-8b5cc381aa96"), new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14"), "Ринок NFT зараз переживає не найкращі часи, але це гарна можливість придивитися до фундаментально сильних проєктів.", new DateTime(2025, 6, 12, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7163), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -654,9 +700,8 @@ namespace FinanceHub.Infrastructure.Migrations
                 columns: new[] { "Id", "AuthorId", "Content", "CreatedAt", "IsModified", "ParentId", "PostId" },
                 values: new object[,]
                 {
-                    { new Guid("33bbf81b-11d6-48d2-8cb9-9ded7cb0011b"), new Guid("eae5c4b7-af2d-4d08-835c-b07a464e76af"), "I found this article very helpful!", new DateTime(2025, 6, 9, 11, 5, 57, 366, DateTimeKind.Utc).AddTicks(4121), false, null, new Guid("696bd39b-7eb1-4b1a-a223-e2e9992d6d76") },
-                    { new Guid("5b06a8c5-dc7d-4dca-af28-555110cf63e9"), new Guid("7a2ebf1d-df81-4551-a1e7-60c4131429a4"), "Interesting perspective on finance.", new DateTime(2025, 6, 8, 11, 5, 57, 366, DateTimeKind.Utc).AddTicks(4118), false, null, new Guid("f3cae454-4730-4752-b6e3-803e109a54e0") },
-                    { new Guid("b9da3185-13b2-40f2-a5a6-339ba4e093e5"), new Guid("eae5c4b7-af2d-4d08-835c-b07a464e76af"), "Great introduction! Looking forward to learning more.", new DateTime(2025, 6, 7, 11, 5, 57, 366, DateTimeKind.Utc).AddTicks(4115), false, null, new Guid("f3cae454-4730-4752-b6e3-803e109a54e0") }
+                    { new Guid("1190517d-9e50-4296-ad1c-7c81c31fdfc6"), new Guid("92721bf5-f5c1-4681-97db-1e7f45557497"), "Дякую за детальний аналіз!", new DateTime(2025, 6, 14, 15, 24, 14, 914, DateTimeKind.Utc).AddTicks(7345), false, null, new Guid("8b89992d-d917-4d3a-b29c-b461c183e57b") },
+                    { new Guid("e8a0e462-a9b1-4aea-89bd-ac8d0f239133"), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d"), "Дуже корисна стаття, дякую! Особливо для новачків.", new DateTime(2025, 6, 5, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7335), false, null, new Guid("0d2999a8-7501-40eb-ae47-3c832a845a61") }
                 });
 
             migrationBuilder.InsertData(
@@ -664,21 +709,32 @@ namespace FinanceHub.Infrastructure.Migrations
                 columns: new[] { "Id", "PostId", "UserId" },
                 values: new object[,]
                 {
-                    { new Guid("1f90290a-4b42-48da-89df-d0195d1f1c46"), new Guid("696bd39b-7eb1-4b1a-a223-e2e9992d6d76"), new Guid("eae5c4b7-af2d-4d08-835c-b07a464e76af") },
-                    { new Guid("8aa277bc-5f04-4f9d-81bf-65362bc60b7f"), new Guid("f3cae454-4730-4752-b6e3-803e109a54e0"), new Guid("7a2ebf1d-df81-4551-a1e7-60c4131429a4") },
-                    { new Guid("ab100f68-7db1-4486-9c18-23eec1b41c2c"), new Guid("f3cae454-4730-4752-b6e3-803e109a54e0"), new Guid("eae5c4b7-af2d-4d08-835c-b07a464e76af") }
+                    { new Guid("0efde790-517f-4ee9-9eec-fef3b2b04ef1"), new Guid("0d2999a8-7501-40eb-ae47-3c832a845a61"), new Guid("92721bf5-f5c1-4681-97db-1e7f45557497") },
+                    { new Guid("3c3d075e-8f9b-414b-8961-98238c6d27f0"), new Guid("b937fb2c-16f3-4b23-ad9d-800a2bad9361"), new Guid("f753893e-7141-44e9-bb0b-50cc31385b0d") },
+                    { new Guid("8533cea6-edd6-4cc4-9ce2-028a77c83e3a"), new Guid("36ccf556-af1a-4ab0-abee-b002d5149395"), new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc") },
+                    { new Guid("f2f10449-ee30-4355-87a5-c278bd38aa75"), new Guid("8b89992d-d917-4d3a-b29c-b461c183e57b"), new Guid("fb58c252-c3a6-47cb-ad91-2efd64910a14") }
                 });
 
             migrationBuilder.InsertData(
-                table: "PostCategories",
-                columns: new[] { "CategoryId", "PostId" },
+                table: "Notifications",
+                columns: new[] { "Id", "Content", "CreatedAt", "HubId", "IsRead", "PostId", "RequestId", "TriggeredBy", "Type", "UserId" },
+                values: new object[] { new Guid("8ef60ca9-ee1f-4ea9-8a33-ce4cd4a1a92b"), "аналітик_андрій хоче приєднатися до вашого хабу 'Криптотрейдинг 24/7'.", new DateTime(2025, 6, 13, 21, 24, 14, 914, DateTimeKind.Utc).AddTicks(7459), new Guid("1d5320e6-358f-411b-8d67-d5534b8a7d12"), false, null, new Guid("743f3e37-c7ac-4852-8e8a-337d7c15517c"), new Guid("dfe0f55d-bff6-4fd6-a9bf-21b93e03654d"), "joinRequest", new Guid("92721bf5-f5c1-4681-97db-1e7f45557497") });
+
+            migrationBuilder.InsertData(
+                table: "PostImages",
+                columns: new[] { "Id", "ImageUrl", "PostId" },
                 values: new object[,]
                 {
-                    { new Guid("445ed7a4-4263-48c3-8efb-14423ede2914"), new Guid("696bd39b-7eb1-4b1a-a223-e2e9992d6d76") },
-                    { new Guid("741e790b-7ad0-4892-8e83-2431e84370ea"), new Guid("696bd39b-7eb1-4b1a-a223-e2e9992d6d76") },
-                    { new Guid("319f3862-88f6-477a-9082-f63f92efc5f8"), new Guid("f3cae454-4730-4752-b6e3-803e109a54e0") },
-                    { new Guid("741e790b-7ad0-4892-8e83-2431e84370ea"), new Guid("f3cae454-4730-4752-b6e3-803e109a54e0") }
+                    { new Guid("76e924fc-61a2-4e32-87a3-ac479d673648"), "https://finhubimagesstorage.blob.core.windows.net/finhubimagesstorage/posts/post1.webp", new Guid("e4ab35ca-a0ce-47db-bfee-1f56d55e1540") },
+                    { new Guid("98054baa-c268-4d7b-94b3-d1855bedba47"), "https://finhubimagesstorage.blob.core.windows.net/finhubimagesstorage/posts/post3.jpg", new Guid("a8ff694e-868f-4f1a-914c-c4e633f615b5") },
+                    { new Guid("e3255522-bacc-44db-90c3-0f5a4dadfe48"), "https://finhubimagesstorage.blob.core.windows.net/finhubimagesstorage/posts/poat4.webp", new Guid("3834e9eb-de7a-4bfc-bf42-5d9409488fa4") },
+                    { new Guid("e8ef6654-3d28-4816-a4d8-37c636af958f"), "https://finhubimagesstorage.blob.core.windows.net/finhubimagesstorage/posts/post2.webp", new Guid("bad3b84f-724f-4af4-867e-3be5ae952571") }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Comments",
+                columns: new[] { "Id", "AuthorId", "Content", "CreatedAt", "IsModified", "ParentId", "PostId" },
+                values: new object[] { new Guid("4c323a31-056a-4a77-88f9-8e1bc49164f3"), new Guid("f560a591-5e20-4c81-8c33-f510b57bf0dc"), "Рада, що було корисно!", new DateTime(2025, 6, 5, 23, 24, 14, 914, DateTimeKind.Utc).AddTicks(7343), false, new Guid("e8a0e462-a9b1-4aea-89bd-ac8d0f239133"), new Guid("36ccf556-af1a-4ab0-abee-b002d5149395") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

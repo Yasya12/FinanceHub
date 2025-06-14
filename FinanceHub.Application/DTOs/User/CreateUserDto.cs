@@ -18,8 +18,7 @@ public class CreateUserDto
 
     [Required]
     [StringLength(20, MinimumLength = 3)]
-    [RegularExpression(@"^[a-zA-Z0-9_]+$",
-        ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
+    [RegularExpression(@"^[\p{L}0-9_]+$", ErrorMessage = "Username can only contain letters, numbers, and underscores.")]
     public string Username { get; set; }
 
     [StringLength(50, ErrorMessage = "Country name cannot be longer than 50 characters.")]
@@ -27,6 +26,6 @@ public class CreateUserDto
 
     [DataType(DataType.Date, ErrorMessage = "Invalid date format.")]
     public DateTime? DateOfBirth { get; set; }
-    
+
     public string? Bio { get; set; }
 }
